@@ -11,11 +11,13 @@
 	outdoors = TRUE
 	var/depth = 1 // Higher numbers indicates deeper water.
 	initial_flooring = /decl/flooring/water
-
+	light_color = "#add8e6"
+	light_range = 2
 
 /turf/simulated/floor/water/initialize()
 	. = ..()
 	update_icon()
+	set_light(2, 1, "#add8e6")
 
 /turf/simulated/floor/water/update_icon()
 	..() // To get the edges.
