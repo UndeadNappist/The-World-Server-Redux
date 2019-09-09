@@ -79,13 +79,13 @@
 
 
 /datum/law/misdemeanor/jaywalking
-	name = "Jaywalking
+	name = "Jaywalking"
 	description = "Crossing without a crosswalk or crossing when the light is green."
 
 	fine = 1
 
 /datum/law/misdemeanor/traffic
 	name = "Traffic Violations"
-	description = "Disobeying street signs, street blockades, driving over sidewalks, or running red lights. This is independent of hittng someone."
+	description = "Disobeying street signs, street blockades, driving over sidewalks, or running red lights. This is independent of hitting someone."
 
 	fine = 50
