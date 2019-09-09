@@ -67,9 +67,9 @@
 	icon = 'icons/obj/storage.dmi'
 	icon_state = "giftbag0"
 	item_state_slots = list(slot_r_hand_str = "giftbag", slot_l_hand_str = "giftbag")
-	w_class = ITEMSIZE_LARGE
+	w_class = ITEMSIZE_HUGE // bigger than a backpack
 	max_w_class = ITEMSIZE_NORMAL
-	max_storage_space = ITEMSIZE_COST_NORMAL * 100 // can store a ton of shit!
+	max_storage_space = INVENTORY_STANDARD_SPACE * 3 // three as much inventory space as a backpack, can't carry as big as items
 	item_state_slots = null
 
 /obj/item/weapon/storage/backpack/cultpack
