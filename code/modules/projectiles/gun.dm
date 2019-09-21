@@ -733,3 +733,8 @@
 
 /obj/item/weapon/gun/attack_self(mob/user)
 	switch_firemodes(user)
+
+/obj/item/weapon/gun/weapondraw(obj/item/weapon/gun/G, mob/living/user)
+	user.visible_message("<span class='danger'>[user] grabs \a [G]!</span>")
+	//user.SetWeaponDrawDelay(max((4 * G.weapon_weight + 1),(user.AmountWeaponDrawDelay())))
+	//Commented out code for setting a weapondraw delay based on how heavy the weapon is. Personal preference is to remove instantaneous firing and switch back to slow-moving pellets and not do this.
