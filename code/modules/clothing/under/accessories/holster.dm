@@ -34,7 +34,7 @@
 	holstered = null
 	name = initial(name)
 
-/obj/item/clothing/accessory/holster/proc/unholster(mob/user as mob)
+/obj/item/clothing/accessory/holster/proc/unholster(mob/user as mob) // they really made a snowflake proc for this instead of just using pickup()? what the fuck.
 	if(!holstered)
 		return
 
