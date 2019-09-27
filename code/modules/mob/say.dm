@@ -109,7 +109,6 @@
 			return usr << "Stop spamming."
 	else
 		spam_alert = max(0, spam_alert--)
-		continue
 
 	last_emote_time = world.time
 	if(act == "me")
