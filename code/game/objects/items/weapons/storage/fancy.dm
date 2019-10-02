@@ -173,6 +173,7 @@
 	icon_type = "cigarette"
 	starts_with = list(/obj/item/clothing/mask/smokable/cigarette = 6)
 	var/brand = "\improper Trans-Stellar Duty-free"
+	tax_type = tobacco_tax
 
 /obj/item/weapon/storage/fancy/cigarettes/initialize()
 	. = ..()
@@ -280,6 +281,7 @@
 	can_hold = list(/obj/item/clothing/mask/smokable/cigarette/cigar)
 	icon_type = "cigar"
 	starts_with = list(/obj/item/clothing/mask/smokable/cigarette/cigar = 7)
+	tax_type = tobacco_tax
 
 /obj/item/weapon/storage/fancy/cigar/initialize()
 	. = ..()

@@ -8,7 +8,7 @@
 /*
  * Classic Baton
  */
-/obj/item/weapon/melee
+/obj/item/weapon/melee // You would not believe how much of a pain it was to find this parent. I should move it somewhere.
 	name = "weapon"
 	desc = "Murder device."
 	icon = 'icons/obj/weapons.dmi'
@@ -17,7 +17,7 @@
 	slot_flags = SLOT_BELT
 	force = 10
 	drop_sound = 'sound/items/drop/metalweapon.ogg'
-
+	tax_type = weapons_tax
 
 /obj/item/weapon/melee/classic_baton
 	name = "police baton"

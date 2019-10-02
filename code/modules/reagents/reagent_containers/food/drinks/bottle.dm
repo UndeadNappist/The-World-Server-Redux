@@ -16,6 +16,8 @@
 
 	on_reagent_change() return // To suppress price updating. Bottles have their own price tags.
 
+	tax_type = alcoholic_tax
+
 /obj/item/weapon/reagent_containers/food/drinks/bottle/New()
 	..()
 	if(isGlass) unacidable = 1
