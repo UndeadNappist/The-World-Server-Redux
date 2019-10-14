@@ -105,8 +105,8 @@
 /mob/proc/emote(var/act, var/type, var/message)
 	if(world.time - last_emote_time < spam_delay)
 		spam_alert++
-		if(spam_alert > 5)
-			return usr << "Stop spamming."
+	if(spam_alert > 5)
+		return usr << "Stop spamming."
 	else
 		spam_alert = max(0, spam_alert--)
 
