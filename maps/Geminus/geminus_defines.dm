@@ -18,7 +18,7 @@
 
 	station_name  = "Geminus City"
 	station_short = "Geminus"
-	dock_name     = "Geminus City Spaceport"
+	dock_name     = "Geminus City Airbus"
 	boss_name     = "Central Polluxian Government"
 	boss_short    = "Pollux Gov"
 	company_name  = "Nanotrasen"
@@ -34,9 +34,11 @@
 	emergency_shuttle_called_message = "An emergency evacuation shuttle has been called. It will arrive at the west side of the city in approximately %ETA%"
 	emergency_shuttle_recall_message = "The emergency shuttle has been recalled."
 
-	allowed_spawns = list("Arrivals Shuttle")
+	allowed_spawns = list("City Arrivals Airbus", "Cryogenic Storage", "Prison")
 
-	usable_email_tlds = list("freemail.net", "ntmail.nt", "interpollux.org")
+	planet_datums_to_make = list(/datum/planet/pollux)
+
+	usable_email_tlds = list("freemail.net", "ntmail.nt", "interpollux.org", "solnet.org", "vetralife.nt", "andromedian.org")
 	default_law_type = /datum/ai_laws/pollux
 
 	station_networks = list(
@@ -58,6 +60,8 @@
 							NETWORK_INTERROGATION
 							)
 
+	council_email = "city-council@geminus.nt"
+
 // For making the 6-in-1 holomap, we calculate some offsets
 #define GEMINUS_MAP_SIZE 177 // Width and height of compiled in Southern Cross z levels.
 #define GEMINUS_HOLOMAP_CENTER_GUTTER 40 // 40px central gutter between columns
@@ -66,10 +70,8 @@
 
 
 /datum/map/geminus/perform_map_generation()
-//	new /datum/random_map/automata/cave_system(null, 1, 1, Z_LEVEL_FIRST_GEMINUS	, world.maxx, world.maxy) // Create the mining Z-level.
+	new /datum/random_map/automata/cave_system(null, 1, 1, Z_LEVEL_FIRST_GEMINUS	, world.maxx, world.maxy) // Create the mining Z-level.
 	new /datum/random_map/noise/ore(null, 1, 1, Z_LEVEL_FIRST_GEMINUS	, 64, 64)         // Create the mining ore distribution map.
-
-//	new /datum/random_map/automata/cave_system(null, 1, 1, Z_LEVEL_SECOND_GEMINUS, world.maxx, world.maxy) // Create the mining Z-level.
 	new /datum/random_map/noise/ore(null, 1, 1, Z_LEVEL_SECOND_GEMINUS, 64, 64)         // Create the mining ore distribution map.
 
 	return 1
@@ -101,7 +103,7 @@
 //	holomap_offset_x = GEMINUS_HOLOMAP_MARGIN_X - 40
 //	holomap_offset_y = GEMINUS_HOLOMAP_MARGIN_Y + GEMINUS_MAP_SIZE*0
 
-/datum/planet/sif
+/datum/planet/pollux
 	expected_z_levels = list(
 		Z_LEVEL_SKY_GEMINUS,
 		Z_LEVEL_SECOND_GEMINUS

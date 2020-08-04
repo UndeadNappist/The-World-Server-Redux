@@ -6,7 +6,8 @@ var/datum/antagonist/thug/thugs
 	role_text = "Thug"
 	role_text_plural = "Thugs"
 	bantype = "renegade"
-	restricted_jobs = list("AI", "Cyborg","Mayor","Chief of Police","Chief Medical Officer","Chief Engineer","Research Director","Judge")
+	restricted_jobs = list("AI", "Cyborg","Mayor","Chief of Police","Police Officer",\
+	"Prison Warden","Detective","Chief Medical Officer","Chief Engineer","Research Director","Judge")
 	welcome_text = "Sometimes, people just need to get messed up.Luckily, that's what you're here to do."
 	antag_text = "You are a <b>thug</b>! Within the server rules, do whatever it is \
 		that you came to the city to do, be it violence, drug dealing, theft, or \
@@ -34,6 +35,8 @@ var/datum/antagonist/thug/thugs
 	var/accessory
 	var/weapon
 
+	allow_lobbyjoin = TRUE
+
 /datum/antagonist/thug/New()
 	..()
 	pick_outfit()
@@ -57,7 +60,7 @@ var/datum/antagonist/thug/thugs
 	switch(gang_gimmick)
 		if("skull_crew")
 			hat = /obj/item/clothing/mask/bandana/skull
-			uniform = /obj/item/clothing/under/assistantformal
+			uniform = /obj/item/clothing/under/aristocrat
 			suit = /obj/item/clothing/suit/storage/flannel
 			shoes = /obj/item/clothing/shoes/hitops/black
 			accessory = /obj/item/clothing/accessory/scarf/zebra
@@ -90,9 +93,10 @@ var/datum/antagonist/thug/thugs
 	if(!..())
 		return
 
-	player << "<span class='danger'>You remember that you brought your uniform and weapons in a box with you - as discussed from a meeting with your gang...</span>"
+	to_chat(player, "<span class='danger'>You remember that you brought your uniform and weapons in a box with you - as discussed from a meeting with your gang...</span>")
 
 	var/obj/item/weapon/storage/box/kit = new(get_turf(player))
+	kit.dont_save = TRUE
 	kit.max_storage_space = 35
 	kit.max_w_class = 8
 	kit.name = "large strange kit"

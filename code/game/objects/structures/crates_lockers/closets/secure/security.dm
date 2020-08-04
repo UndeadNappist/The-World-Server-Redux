@@ -48,6 +48,9 @@
 		new /obj/item/weapon/gun/projectile/sec/flash(src)
 		new /obj/item/device/flash(src)
 		new /obj/item/weapon/storage/box/gun_permits(src)
+		new /obj/item/weapon/storage/box/social_service_cards(src)
+		new /obj/item/weapon/storage/box/social_service_cards( src )
+		new /obj/item/weapon/storage/lockbox/passport(src)
 		return
 
 /obj/structure/closet/secure_closet/hop2
@@ -291,7 +294,7 @@
 		..()
 		new /obj/item/clothing/accessory/badge/holo/detective(src)
 		new /obj/item/clothing/gloves/black(src)
-		new /obj/item/weapon/gun/projectile/revolver/deckard(src)
+		new /obj/item/weapon/gun/projectile/revolver/deckard/rubber(src)
 		new /obj/item/ammo_magazine/s38(src)
 		new /obj/item/ammo_magazine/s38(src)
 		new /obj/item/weapon/storage/belt/detective(src)
@@ -304,8 +307,8 @@
 		new /obj/item/device/flashlight/maglight(src)
 		new /obj/item/weapon/reagent_containers/food/drinks/flask/detflask(src)
 		new /obj/item/weapon/storage/briefcase/crimekit(src)
+		new /obj/item/weapon/storage/box/csi_markers(src)
 		new /obj/item/device/taperecorder(src)
-		new /obj/item/device/tape/random(src)
 		new /obj/item/device/tape/random(src)
 		new /obj/item/device/tape/random(src)
 		return

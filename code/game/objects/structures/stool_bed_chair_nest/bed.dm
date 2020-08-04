@@ -23,6 +23,7 @@
 	var/material/padding_material
 	var/base_icon = "bed"
 	var/applies_material_colour = 1
+	var/armrest_icon = FALSE		//if TRUE, this will overlay on the chair.
 
 /obj/structure/bed/New(var/newloc, var/new_material, var/new_padding_material)
 	..(newloc)
@@ -39,6 +40,31 @@
 
 /obj/structure/bed/get_material()
 	return material
+
+/obj/structure/bed/get_persistent_metadata()
+	if(!material)
+		return FALSE
+
+	var/list/table_data = list()
+	table_data["material"] = material.name
+	if(padding_material)
+		table_data["padding_material"] = padding_material.name
+
+	return table_data
+
+/obj/structure/bed/load_persistent_metadata(metadata)
+	var/list/table_data = metadata
+	if(!islist(table_data))
+		return
+	if(get_material_by_name(table_data["material"]))
+		material = get_material_by_name(table_data["material"])
+	if(get_material_by_name(table_data["padding_material"]))
+		padding_material = get_material_by_name(table_data["padding_material"])
+
+	update_icon()
+
+	return TRUE
+
 
 // Reuse the cache/code from stools, todo maybe unify.
 /obj/structure/bed/update_icon()
@@ -61,6 +87,16 @@
 			I.color = padding_material.icon_colour
 			stool_cache[padding_cache_key] = I
 		overlays |= stool_cache[padding_cache_key]
+	// armrest/overlay icon
+	if(armrest_icon && buckled_mobs)
+		var/armrest_cache_key = "[armrest_icon]-padding-[padding_material.name]"
+		if(isnull(stool_cache[armrest_cache_key]))
+			var/image/I =  image(icon, "[base_icon]_armrest")
+			I.color = padding_material.icon_colour
+			I.layer = ABOVE_MOB_LAYER
+			stool_cache[armrest_cache_key] = I
+		overlays |= stool_cache[armrest_cache_key]
+
 	// Strings.
 	desc = initial(desc)
 	if(padding_material)
@@ -159,7 +195,7 @@
 	padding_material = get_material_by_name(padding_type)
 	update_icon()
 
-/obj/structure/bed/proc/dismantle()
+/obj/structure/bed/dismantle()
 	material.place_sheet(get_turf(src))
 	if(padding_material)
 		padding_material.place_sheet(get_turf(src))
@@ -204,6 +240,7 @@
 	surgery_odds = 75
 	var/bedtype = /obj/structure/bed/roller
 	var/rollertype = /obj/item/roller
+	matter = list(DEFAULT_WALL_MATERIAL = 3875)
 
 /obj/structure/bed/roller/adv
 	name = "advanced roller bed"
@@ -335,3 +372,8 @@
 /obj/structure/bed/alien/attackby(obj/item/weapon/W, mob/user)
 	return // No deconning.
 
+/obj/structure/bed/user_unbuckle_mob(mob/living/M)
+	..()
+
+	if(armrest_icon && !has_buckled_mobs())
+		overlays -= stool_cache["[armrest_icon]-padding-[padding_material.name]"]

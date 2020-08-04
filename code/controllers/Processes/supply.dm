@@ -17,8 +17,10 @@
 	var/comment = null						// What reason was given for the order
 	var/approved_by = null					// Who approved the order
 	var/ordered_at							// Date and time the order was requested at
-	var/approved_at							// Date and time the order was approved at
-	var/status								// [Requested, Accepted, Denied, Shipped]
+	var/approved_at						// Date and time the order was approved at
+	var/status							// [Requested, Accepted, Denied, Shipped]
+	var/bank_id							// bank id of the person ordering.
+	var/dept_uid							// unique id of department card - if card is still around, it will deduct from its spending balance if approved
 
 /datum/exported_crate
 	var/name
@@ -29,8 +31,6 @@ var/datum/controller/supply/supply_controller = new()
 
 /datum/controller/supply
 	//supply points
-	var/points = 50
-	var/points_per_process = 1.5
 	var/points_per_slip = 2
 	var/points_per_money = 0.02 // 1 point for $50
 	//control
@@ -60,14 +60,6 @@ var/datum/controller/supply/supply_controller = new()
 /datum/controller/process/supply/setup()
 	name = "supply controller"
 	schedule_interval = 300 // every 30 seconds
-
-/datum/controller/process/supply/doWork()
-	supply_controller.process()
-
-// Supply shuttle ticker - handles supply point regeneration
-// This is called by the process scheduler every thirty seconds
-/datum/controller/supply/process()
-	points += points_per_process
 
 //To stop things being sent to CentCom which should not be sent to centcomm. Recursively checks for these types.
 /datum/controller/supply/proc/forbidden_atoms_check(atom/A)
@@ -106,8 +98,7 @@ var/datum/controller/supply/supply_controller = new()
 			var/obj/structure/closet/crate/CR = MA
 			callHook("sell_crate", list(CR, area_shuttle))
 
-			points += CR.points_per_crate
-			var/find_slip = 1
+			adjust_dept_funds(DEPT_FACTORY, CR.points_per_crate)
 
 			for(var/atom/A in CR)
 				EC.contents[++EC.contents.len] = list(
@@ -116,30 +107,11 @@ var/datum/controller/supply/supply_controller = new()
 						"quantity" = 1
 					)
 
-				// Sell manifests
-				if(find_slip && istype(A,/obj/item/weapon/paper/manifest))
-					var/obj/item/weapon/paper/manifest/slip = A
-					if(!slip.is_copy && slip.stamped && slip.stamped.len) //yes, the clown stamp will work. clown is the highest authority on the station, it makes sense
-						points += points_per_slip
-						EC.contents[EC.contents.len]["value"] = points_per_slip
-						find_slip = 0
-					continue
 
-				// Sell phoron and platinum
-				if(istype(A, /obj/item/stack))
-					var/obj/item/stack/P = A
-					if(material_points_conversion[P.get_material_name()])
-						EC.contents[EC.contents.len]["value"] = P.get_amount() * material_points_conversion[P.get_material_name()]
-					EC.contents[EC.contents.len]["quantity"] = P.get_amount()
-					EC.value += EC.contents[EC.contents.len]["value"]
-
-
-				//Sell spacebucks
-				if(istype(A, /obj/item/weapon/spacecash))
-					var/obj/item/weapon/spacecash/cashmoney = A
-					EC.contents[EC.contents.len]["value"] = cashmoney.worth * points_per_money
-					EC.contents[EC.contents.len]["quantity"] = cashmoney.worth
-					EC.value += EC.contents[EC.contents.len]["value"]
+				var/obj/sold = A
+				EC.contents[EC.contents.len]["value"] = sold.get_item_cost()
+				EC.contents[EC.contents.len]["quantity"] = 1
+				EC.value += EC.contents[EC.contents.len]["value"]
 
 
 
@@ -150,7 +122,7 @@ var/datum/controller/supply/supply_controller = new()
 				)
 
 		exported_crates += EC
-		points += EC.value
+		adjust_dept_funds(DEPT_FACTORY, EC.value, "Crate: [EC.name]")
 
 		// Duplicate the receipt for the admin-side log
 		var/datum/exported_crate/adm = new()
@@ -255,9 +227,34 @@ var/datum/controller/supply/supply_controller = new()
 
 // Will attempt to purchase the specified order, returning TRUE on success, FALSE on failure
 /datum/controller/supply/proc/approve_order(var/datum/supply_order/O, var/mob/user)
-	// Not enough points to purchase the crate
-	if(supply_controller.points <= O.object.cost)
+
+	var/obj/item/weapon/card/department/DC
+
+	if(O.dept_uid)
+		DC = get_deptcard_by_id(O.dept_uid)
+
+		if(!DC || O.object.cost > DC.spending_limit)
+			to_chat(user, "<span class='warning'>ERROR: Issue with associated department card, either does not exist or lacks funds for this purchase.</span>")
+			return FALSE
+
+	var/datum/money_account/M = get_account(O.bank_id)
+
+	if(!M)
+		to_chat(user, "<span class='warning'>ERROR: Bank ID of order is incorrect or invalid.</span>")
 		return FALSE
+
+	if(O.object.cost > M.money)
+		to_chat(user, "<span class='warning'>ERROR: Associated order bank account lacks sufficient funds for this order. Payment can not continue.</span>")
+		return FALSE
+
+	if(M.suspended)
+		to_chat(user, "<span class='warning'>ERROR: Associated order bank account is suspended. Payment can not continue.</span>")
+		return FALSE
+
+	if(!charge_to_account(O.bank_id, "Supply Systems[DC ? " (via [DC])" : ""]", "[O.object.name]", "Factory Computer" , -O.object.cost))
+		to_chat(user, "<span class='warning'>ERROR: Unable to charge bank account associated with provided order bank details.</span>")
+		return FALSE
+
 
 	// Based on the current model, there shouldn't be any entries in order_history, requestlist, or shoppinglist, that aren't matched in adm_order_history
 	var/datum/supply_order/adm_order
@@ -283,7 +280,9 @@ var/datum/controller/supply/supply_controller = new()
 	adm_order.approved_at = stationdate2text() + " - " + stationtime2text()
 
 	// Deduct cost
-	supply_controller.points -= O.object.cost
+	adjust_dept_funds(DEPT_FACTORY, O.object.cost, "[O.ordernum]: [O.object.name] | Ordered by: [O.ordered_by] | Approved by: [O.approved_by]")
+	DC.spending_limit -= O.object.cost
+
 	return TRUE
 
 // Will deny the specified order. Only useful if the order is currently requested, but available at any status
@@ -328,7 +327,7 @@ var/datum/controller/supply/supply_controller = new()
 	return
 
 // Will generate a new, requested order, for the given supply pack type
-/datum/controller/supply/proc/create_order(var/datum/supply_pack/S, var/mob/user, var/reason)
+/datum/controller/supply/proc/create_order(var/datum/supply_pack/S, var/mob/user, var/reason, var/bank_id, var/dept_card_uid)
 	var/datum/supply_order/new_order = new()
 	var/datum/supply_order/adm_order = new() // Admin-recorded order must be a separate copy in memory, or user-made edits will corrupt it
 
@@ -339,6 +338,8 @@ var/datum/controller/supply/supply_controller = new()
 	else if(issilicon(user))
 		idname = user.real_name
 
+
+
 	new_order.ordernum = ++ordernum // Ordernum is used to track the order between the playerside list of orders and the adminside list
 	new_order.index = new_order.ordernum // Index can be fabricated, or falsified. Ordernum is a permanent marker used to track the order
 	new_order.object = S
@@ -348,6 +349,7 @@ var/datum/controller/supply/supply_controller = new()
 	new_order.comment = reason
 	new_order.ordered_at = stationdate2text() + " - " + stationtime2text()
 	new_order.status = SUP_ORDER_REQUESTED
+	new_order.bank_id = bank_id
 
 	adm_order.ordernum = new_order.ordernum
 	adm_order.index = new_order.index
@@ -358,9 +360,16 @@ var/datum/controller/supply/supply_controller = new()
 	adm_order.comment = new_order.comment
 	adm_order.ordered_at = new_order.ordered_at
 	adm_order.status = new_order.status
+	adm_order.status = new_order.bank_id
+
+	if(dept_card_uid)
+		new_order.dept_uid = dept_card_uid
+		adm_order.dept_uid = dept_card_uid
 
 	order_history += new_order
 	adm_order_history += adm_order
+
+	return new_order
 
 // Will delete the specified export receipt from the user-side list
 /datum/controller/supply/proc/delete_export(var/datum/exported_crate/E, var/mob/user)

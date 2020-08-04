@@ -12,8 +12,8 @@
 	votable = 0 // temporarily disable this mode for voting
 	end_on_antag_death = 1
 
-	var/var/list/datum/mind/first_hosts = list()
-	var/var/list/assigned_hosts = list()
+	var/list/datum/mind/first_hosts = list()
+	var/list/assigned_hosts = list()
 
 	var/const/prob_int_murder_target = 50 // intercept names the assassination target half the time
 	var/const/prob_right_murder_target_l = 25 // lower bound on probability of naming right assassination target
@@ -34,6 +34,7 @@
 
 	var/const/waittime_l = 600 //lower bound on time before intercept arrives (in tenths of seconds)
 	var/const/waittime_h = 1800 //upper bound on time before intercept arrives (in tenths of seconds)
+	votable = 0
 
 /datum/game_mode/meme/announce()
 	world << "<B>The current game mode is - Meme!</B>"

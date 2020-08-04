@@ -142,9 +142,6 @@
 #define ANIMAL_SPAWN_DELAY round(config.respawn_delay / 6)
 #define DRONE_SPAWN_DELAY  round(config.respawn_delay / 3)
 
-#define ANIMAL_SPAWN_DELAY round(config.respawn_delay / 6)
-#define DRONE_SPAWN_DELAY  round(config.respawn_delay / 3)
-
 // Incapacitation flags, used by the mob/proc/incapacitated() proc
 #define INCAPACITATION_RESTRAINED 1
 #define INCAPACITATION_BUCKLED_PARTIALLY 2
@@ -165,6 +162,20 @@
 
 #define MODIFIER_GENETIC	1	// Modifiers with this flag will be copied to mobs who get cloned.
 
+// Augments
+#define O_AUG_EYES "occular augment"
+
+#define O_AUG_L_FOREARM "left forearm augment"
+#define O_AUG_R_FOREARM "right forearm augment"
+#define O_AUG_L_UPPERARM "left upperarm augment"
+#define O_AUG_R_UPPERARM "right upperarm augment"
+#define O_AUG_L_HAND "left hand augment"
+#define O_AUG_R_HAND "right hand augment"
+
+#define O_AUG_RIBS "rib augment"
+#define O_AUG_SPINE "spinal augment"
+#define O_AUG_PELVIC "pelvic augment"
+
 // Bodyparts and organs.
 #define O_MOUTH    "mouth"
 #define O_EYES     "eyes"
@@ -175,7 +186,12 @@
 #define O_LIVER    "liver"
 #define O_KIDNEYS  "kidneys"
 #define O_APPENDIX "appendix"
-#define O_PLASMA   "plasma vessel"
+#define O_VOICE    "voicebox"
+#define O_SPLEEN   "spleen"
+#define O_STOMACH  "stomach"
+#define O_INTESTINE "intestine"
+
+#define O_PLASMA   "phoron vessel"
 #define O_HIVE     "hive node"
 #define O_NUTRIENT "nutrient vessel"
 #define O_STRATA   "neural strata"
@@ -187,6 +203,8 @@
 #define O_EGG      "egg sac"
 #define O_RESIN    "resin spinner"
 #define O_ZOMBIE   "zombie vessel"
+#define O_FAKEBRAIN "brain"
+#define O_STACK "cortical stack"
 
 #define BP_L_FOOT "l_foot"
 #define BP_R_FOOT "r_foot"
@@ -229,9 +247,10 @@
 
 // 'Regular' species.
 #define SPECIES_HUMAN			"Human"
-#define SPECIES_HUMAN_CHILD	"Human Child"
+#define SPECIES_HUMAN_CHILD		"Human Child"
 #define SPECIES_HUMAN_TEEN		"Human Adolescent"
-#define SPECIES_HUMAN_VATBORN	"Vatborn"
+#define SPECIES_HUMAN_VATBORN	"Baseline Vatborn"
+#define SPECIES_HUMAN_VATBORN_MPL "Mass-Produced Vatborn"
 #define SPECIES_UNATHI			"Unathi"
 #define SPECIES_SKRELL			"Skrell"
 #define SPECIES_TESHARI			"Teshari"
@@ -239,6 +258,7 @@
 #define SPECIES_PROMETHEAN		"Promethean"
 #define SPECIES_DIONA			"Diona"
 #define SPECIES_VOX				"Vox"
+#define SPECIES_PRECURSOR		"Precursor"
 
 // Monkey and alien monkeys.
 #define SPECIES_MONKEY			"Monkey"

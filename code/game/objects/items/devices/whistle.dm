@@ -11,6 +11,10 @@
 	var/spamcheck = 0
 	var/insults
 
+	unique_save_vars = list("use_message")
+
+	price_tag = 20
+
 /obj/item/device/hailer/verb/set_message()
 	set name = "Set Hailer Message"
 	set category = "Object"
@@ -27,8 +31,8 @@
 		use_message = capitalize(copytext(sanitize(new_message), 1, MAX_MESSAGE_LEN))
 
 	usr << "You configure the hailer to shout \"[use_message]\"."
-/
-obj/item/device/hailer/attack_self(mob/living/carbon/user as mob)
+
+/obj/item/device/hailer/attack_self(mob/living/carbon/user as mob)
 	if (spamcheck)
 		return
 

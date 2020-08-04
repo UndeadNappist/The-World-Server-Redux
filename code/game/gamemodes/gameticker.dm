@@ -43,28 +43,23 @@ var/global/datum/controller/gameticker/ticker
 	'sound/music/starvetheego.ogg')
 
 	send2mainirc("Server lobby is loaded and open at byond://[config.serverurl ? config.serverurl : (config.server ? config.server : "[world.address]:[world.port]")]")
-	global_initialize_webhooks()
 
 	do
 		pregame_timeleft = 180
 		to_chat(world, "<B><FONT color='blue'>Welcome to the pregame lobby!</FONT></B>")
 		to_chat(world, "Please set up your character and select ready. The round will start in [pregame_timeleft] seconds.")
 		while(current_state == GAME_STATE_PREGAME)
-			for(var/i=0, i<10, i++)
-				sleep(1)
-				vote.process()
 			if(round_progressing)
 				pregame_timeleft--
 			if(pregame_timeleft == config.vote_autogamemode_timeleft)
-				if(!vote.time_remaining)
-					vote.autogamemode()	//Quit calling this over and over and over and over.
-					while(vote.time_remaining)
-						for(var/i=0, i<10, i++)
-							sleep(1)
-							vote.process()
+				if(!SSvote.time_remaining)
+					SSvote.autogamemode()	//Quit calling this over and over and over and over.
+					while(SSvote.time_remaining)
+						sleep(1)
 			if(pregame_timeleft <= 0)
 				current_state = GAME_STATE_SETTING_UP
 				Master.SetRunLevel(RUNLEVEL_SETUP)
+			sleep(10)
 	while (!setup())
 
 
@@ -96,10 +91,10 @@ var/global/datum/controller/gameticker/ticker
 		to_chat(world, "<span class='danger'>Serious error in mode setup!</span> Reverting to pregame lobby.") //Uses setup instead of set up due to computational context.
 		return 0
 
-	job_master.ResetOccupations()
+	SSjobs.ResetOccupations()
 	src.mode.create_antagonists()
 	src.mode.pre_setup()
-	job_master.DivideOccupations() // Apparently important for new antagonist system to register specific job antags properly.
+	SSjobs.DivideOccupations() // Apparently important for new antagonist system to register specific job antags properly.
 
 	if(!src.mode.can_start())
 		world << "<B>Unable to start [mode.name].</B> Not enough players readied, [mode.required_players] players needed. Reverting to pregame lobby."
@@ -107,7 +102,7 @@ var/global/datum/controller/gameticker/ticker
 		Master.SetRunLevel(RUNLEVEL_LOBBY)
 		mode.fail_setup()
 		mode = null
-		job_master.ResetOccupations()
+		SSjobs.ResetOccupations()
 		return 0
 
 	if(hide_mode)
@@ -124,7 +119,6 @@ var/global/datum/controller/gameticker/ticker
 
 	to_chat(world, "[get_president_info()]")
 
-	setup_economy()
 	current_state = GAME_STATE_PLAYING
 	create_characters() //Create player characters and transfer them.
 	collect_minds()
@@ -163,6 +157,8 @@ var/global/datum/controller/gameticker/ticker
 
 	processScheduler.start()
 	Master.SetRunLevel(RUNLEVEL_GAME)
+	SSlots.refresh_all_lot_turfs()
+	SSbusiness.refresh_all_businesses()
 
 	if(config.sql_enabled)
 		statistic_cycle() // Polls population totals regularly and stores them in an SQL DB -- TLE
@@ -203,7 +199,7 @@ var/global/datum/controller/gameticker/ticker
 				switch(M.z)
 					if(0)	//inside a crate or something
 						var/turf/T = get_turf(M)
-						if(T && T.z in using_map.station_levels)				//we don't use M.death(0) because it calls a for(/mob) loop and
+						if(T && (T.z in using_map.station_levels))			//we don't use M.death(0) because it calls a for(/mob) loop and
 							M.health = 0
 							M.stat = DEAD
 					if(1)	//on a z-level 1 turf.
@@ -300,7 +296,7 @@ var/global/datum/controller/gameticker/ticker
 				if(player.mind.assigned_role == "Mayor")
 					captainless=0
 				if(!player_is_antag(player.mind, only_offstation_roles = 1))
-					job_master.EquipRank(player, player.mind.assigned_role, 0)
+					SSjobs.EquipRank(player, player.mind.assigned_role, 0)
 					UpdateFactionList(player)
 					equip_custom_items(player)
 					player.apply_traits()
@@ -352,6 +348,10 @@ var/global/datum/controller/gameticker/ticker
 				if(blackbox)
 					blackbox.save_all_data_to_sql()
 
+				if(config.canonicity)
+					if(save_world())
+						to_chat(world, "<H3>The world has been saved!</H3>")
+
 				var/wait_for_tickets
 				var/delay_notified = 0
 				do
@@ -394,7 +394,7 @@ var/global/datum/controller/gameticker/ticker
 				if(!round_end_announced) // Spam Prevention. Now it should announce only once.
 					to_chat(world, "<span class='danger'>The round has ended!</span>")
 					round_end_announced = 1
-				vote.autotransfer()
+				SSvote.autotransfer()
 
 		return 1
 
@@ -405,20 +405,9 @@ var/global/datum/controller/gameticker/ticker
 		world << "<H2>This round was not canon. It was all a dream.</H2>"
 		roll_titles()
 	else
-		world << "<H2>This round was canon.</H2>"
+		to_chat(world, "<H2>This round was canon.</H2>")
+		to_chat(world, "<H3>Saving world...</H3>")
 
-		//saves all department accounts
-		persistent_economy.save_accounts()
-
-		//save politics related data
-		SSelections.save_data.save_candidates()
-		
-		//save news
-		news_data.save_main_news()
-
-		//saves all characters
-		for (var/mob/living/carbon/human/H in mob_list) //only humans, we don't really save AIs or robots.
-			H.save_mob_to_prefs()
 
 
 	for(var/mob/Player in player_list)

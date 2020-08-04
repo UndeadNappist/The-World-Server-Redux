@@ -1,11 +1,13 @@
 //Material earrings
+
+// Stud earrings
 /obj/item/clothing/ears/earring
 	name = "earring"
 	desc = "An earring of some kind."
 	icon = 'icons/obj/clothing/ears.dmi'
 
 /obj/item/clothing/ears/earring/stud
-	name = "pearl stud earrings"
+	name = "stud earrings"
 	desc = "A pair of small stud earrings."
 	icon_state = "ear_stud"
 	color = "#eae0c8"
@@ -42,7 +44,18 @@
 	name = "diamond stud earrings"
 	color = "#00ffe1"
 
+/obj/item/clothing/ears/earring/stud/rose_quartz
+	name = "rose quartz stud earrings"
+	color = "#e3a3a3"
+
+/obj/item/clothing/ears/earring/stud/black_onyx
+	name = "black_onyx dangle earrings"
+	color = "#3d3d3d"
+
+// Dangle earrings
+
 /obj/item/clothing/ears/earring/dangle
+	name = "dangle earrings"
 	icon_state = "ear_dangle"
 
 /obj/item/clothing/ears/earring/dangle/glass
@@ -76,3 +89,11 @@
 /obj/item/clothing/ears/earring/dangle/diamond
 	name = "diamond dangle earrings"
 	color = "#00ffe1"
+
+/obj/item/clothing/ears/earring/dangle/rose_quartz
+	name = "rose quartz dangle earrings"
+	color = "#e3a3a3"
+
+/obj/item/clothing/ears/earring/dangle/black_onyx
+	name = "black onyx dangle earrings"
+	color = "#3d3d3d"

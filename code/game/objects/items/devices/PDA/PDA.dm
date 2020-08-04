@@ -64,6 +64,8 @@ var/global/list/obj/item/device/pda/PDAs = list()
 
 	var/obj/item/device/paicard/pai = null	// A slot for a personal AI device
 
+	dont_save = TRUE
+
 /obj/item/device/pda/examine(mob/user)
 	if(..(user, 1))
 		to_chat(user, "The time [stationtime2text()] is displayed in the corner of the screen.")
@@ -471,7 +473,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 	var/auto_update = 1
 	if(mode in no_auto_update)
 		auto_update = 0
-	if(old_ui && (mode == lastmode && ui_tick % 5 && mode in update_every_five))
+	if(old_ui && (mode == lastmode && ui_tick % 5 && (mode in update_every_five)))
 		return
 
 	lastmode = mode
@@ -1362,11 +1364,11 @@ var/global/list/obj/item/device/pda/PDAs = list()
 					else
 						user.show_message("<span class='notice'>    Limbs are OK.</span>",1)
 
-			if(2)
+			if(2) //TODO: Refactor this bad code.
 				if (!istype(C:dna, /datum/dna))
 					to_chat(user, "<span class='notice'>No fingerprints found on [C]</span>")
 				else
-					to_chat(user, text("<span class='notice'>\The [C]'s Fingerprints: [md5(C:dna.uni_identity)]</span>"))
+					to_chat(user, text("<span class='notice'>\The [C]'s Fingerprints: [md5(C.dna.uni_identity)]</span>"))
 				if ( !(C:blood_DNA) )
 					to_chat(user, "<span class='notice'>No blood found on [C]</span>")
 					if(C:blood_DNA)

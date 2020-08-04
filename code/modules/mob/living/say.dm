@@ -12,8 +12,8 @@ var/list/department_radio_keys = list(
 	  ":w" = "whisper",		".w" = "whisper",
 	  ":t" = "Mercenary",	".t" = "Mercenary",
 	  ":x" = "Raider",		".x" = "Raider",
-	  ":u" = "Supply",		".u" = "Supply",
-	  ":v" = "Service",		".v" = "Service",
+	  ":u" = "Factory",		".u" = "Factory",
+	  ":d" = "Diner",		".d" = "Diner",
 	  ":o" = "Legal",		".o" = "Legal",
 	  ":v" = "Government",	".v" = "Government",
 	  ":p" = "AI Private",	".p" = "AI Private",
@@ -31,8 +31,8 @@ var/list/department_radio_keys = list(
 	  ":W" = "whisper",		".W" = "whisper",
 	  ":T" = "Mercenary",	".T" = "Mercenary",
 	  ":X" = "Raider",		".X" = "Raider",
-	  ":U" = "Supply",		".U" = "Supply",
-	  ":V" = "Service",		".V" = "Service",
+	  ":U" = "Factory",		".U" = "Factory",
+	  ":D" = "Diner",		".D" = "Diner",
 	  ":O" = "Legal",		".O" = "Legal",
 	  ":V" = "Government",	".V" = "Government",
 	  ":P" = "AI Private",	".P" = "AI Private",
@@ -51,7 +51,7 @@ var/list/department_radio_keys = list(
 	  ":û" = "Police",		".û" = "Police",
 	  ":ö" = "whisper",		".ö" = "whisper",
 	  ":å" = "Mercenary",	".å" = "Mercenary",
-	  ":é" = "Supply",		".é" = "Supply",
+	  ":é" = "Factory",		".é" = "Factory",
 )
 
 
@@ -138,6 +138,7 @@ proc/get_radio_key_from_channel(var/channel)
 
 
 /mob/living/say(var/message, var/datum/language/speaking = null, var/verb="says", var/alt_name="", var/whispering = 0)
+//	var/spoken_emote = FALSE
 	//If you're muted for IC chat
 	if(client)
 		if(message)
@@ -162,6 +163,14 @@ proc/get_radio_key_from_channel(var/channel)
 	switch(copytext(message,1,2))
 		if("*") return emote(copytext(message,2))
 		if("^") return custom_emote(1, copytext(message,2))
+//		if("!") spoken_emote = TRUE
+
+	//If there's no punctuation, add punctuation.
+	var/p_ending = copytext(message, length(message))
+	var/p_message = "[message]."
+	if(!(p_ending in list(".","?","!")))
+		if(message)
+			message = p_message
 
 	//Parse the radio code and consume it
 	if (message_mode)
@@ -190,12 +199,6 @@ proc/get_radio_key_from_channel(var/channel)
 		speaking.broadcast(src,trim(message))
 		return 1
 
-	//If there's no punctuation, add punctuation.
-	var/p_ending = copytext(message, length(message))
-	var/p_message = "[message]."
-	if(!(p_ending in list(".","?","!")))
-		if(message)
-			message = p_message
 	//If it looks like accidental IC-OOK/emoting
 	if((copytext(message, 1, 2) in list("say","me")) || (findtext(lowertext(copytext(message, 1, 5)), "ooc")))
 		if(alert("Your message \"[message]\" looks like it was meant for OOC instead of IC, say it in IC still?", "Confirm if meant for IC?", "No", "Yes") != "Yes")
@@ -217,7 +220,8 @@ proc/get_radio_key_from_channel(var/channel)
 	//Whisper vars
 	var/w_scramble_range = 5	//The range at which you get ***as*th**wi****
 	var/w_adverb				//An adverb prepended to the verb in whispers
-	var/w_not_heard				//The message for people in watching range
+	var/w_not_heard
+		//The message for people in watching range
 
 	//Handle language-specific verbs and adverb setup if necessary
 	if(!whispering) //Just doing normal 'say' (for now, may change below)
@@ -275,8 +279,11 @@ proc/get_radio_key_from_channel(var/channel)
 		for(var/mob/living/M in hearers(5, src))
 			if((M != src) && msg)
 				M.show_message(msg)
+
 			if (speech_sound)
 				sound_vol *= 0.5
+
+
 
 	//Set vars if we're still whispering by this point
 	if(whispering)
@@ -286,13 +293,13 @@ proc/get_radio_key_from_channel(var/channel)
 
 	//Handle nonverbal and sign languages here
 	if (speaking)
-		if (speaking.flags & NONVERBAL)
-			if (prob(30))
-				src.custom_emote(1, "[pick(speaking.signlang_verb)].")
-
 		if (speaking.flags & SIGNLANG)
 			log_say("(SIGN) [message]", src)
 			return say_signlang(message, pick(speaking.signlang_verb), speaking)
+
+		if (speaking.flags & NONVERBAL)
+			if (prob(30))
+				src.custom_emote(1, "[pick(speaking.signlang_verb)].")
 
 	//These will contain the main receivers of the message
 	var/list/listening = list()
@@ -300,89 +307,64 @@ proc/get_radio_key_from_channel(var/channel)
 
 	//Atmosphere calculations (speaker's side only, for now)
 	var/turf/T = get_turf(src)
+
 	if(T)
-		//Air is too thin to carry sound at all, contact speech only
+		//make sure the air can transmit speech - speaker's side
 		var/datum/gas_mixture/environment = T.return_air()
-		var/pressure = (environment)? environment.return_pressure() : 0
+		var/pressure = (environment) ? environment.return_pressure() : 0
 		if(pressure < SOUND_MINIMUM_PRESSURE)
 			message_range = 1
 
-		//Air is nearing minimum levels, make text italics as a hint, and muffle sound
-		if (pressure < ONE_ATMOSPHERE*0.4)
-			italics = 1
-			sound_vol *= 0.5
+		//sound distortion pressure, to help clue people in that the air is thin, even if it isn't a vacuum yet
+		if(pressure < ONE_ATMOSPHERE * 0.4)
+			italics = TRUE
+			sound_vol *= 0.5 //muffle the sound a bit, so it's like we're actually talking through contact
 
-		//Obtain the mobs and objects in the message range
+		//DO NOT FUCKING CHANGE THIS TO GET_OBJ_OR_MOB_AND_BULLSHIT() -- Hugs and Kisses ~Ccomp
+		var/list/hear = hear(message_range, T)
+
+		for(var/mob/M in mob_list)
+			if(M.locs.len && (M.locs[1] in hear))
+				listening |= M
+			else if(M.stat == DEAD && M.is_preference_enabled(/datum/client_preference/ghost_ears))
+				listening |= M
+
 		var/list/results = get_mobs_and_objs_in_view_fast(T, world.view, remote_ghosts = client ? TRUE : FALSE)
-		listening = results["mobs"]
-		listening_obj = results["objs"]
-	else
-		return 1 //If we're in nullspace, then forget it.
+		var/list/hearing_objs = results["objs"]
 
-	//Remember the speech images so we can remove them later and they can get GC'd
-	var/list/images_to_clients = list()
+		for(var/obj/O in hearing_objs)
+			if(O.locs.len && (O.locs[1] in hear))
+				listening_obj |= O
 
-	//The 'post-say' static speech bubble
 	var/speech_bubble_test = say_test(message)
-	var/speech_type = speech_bubble_appearance()
-	var/image/speech_bubble = image('icons/mob/talk.dmi',src,"[speech_type][speech_bubble_test]")
-	images_to_clients[speech_bubble] = list()
+	var/image/speech_bubble = image('icons/mob/talk.dmi', src, "h[speech_bubble_test]")
+	speech_bubble.layer = ABOVE_MOB_LAYER
+	spawn(30)
+		qdel(speech_bubble)
 
-	// Attempt Multi-Z Talking
-	var/mob/above = src.shadow
-	while(!QDELETED(above))
-		var/turf/ST = get_turf(above)
-		if(ST)
-			var/list/results = get_mobs_and_objs_in_view_fast(ST, world.view)
-			var/image/z_speech_bubble = image('icons/mob/talk.dmi', above, "h[speech_bubble_test]")
-			images_to_clients[z_speech_bubble] = list()
-			for(var/item in results["mobs"])
-				if(item != above && !(item in listening))
-					listening[item] = z_speech_bubble
-			listening_obj |= results["objs"]
-		above = above.shadow
-
-	//Main 'say' and 'whisper' message delivery
+	var/list/speech_bubble_recipients = list()
 	for(var/mob/M in listening)
-		spawn(0) //Using spawns to queue all the messages for AFTER this proc is done, and stop runtimes
+		if(M.client)
+			speech_bubble_recipients += M.client
+		M.hear_say(message, verb, speaking, alt_name, italics, src, speech_sound, sound_vol)
 
-			if(M && src) //If we still exist, when the spawn processes
-				var/dst = get_dist(get_turf(M),get_turf(src))
+		if(M && src) //If we still exist, when the spawn processes
+			var/dst = get_dist(get_turf(M),get_turf(src))
 
-				if(dst <= message_range || (M.stat == DEAD && !forbid_seeing_deadchat)) //Inside normal message range, or dead with ears (handled in the view proc)
-					if(M.client)
-						var/image/I1 = listening[M] || speech_bubble
-						images_to_clients[I1] |= M.client
-						M << I1
-					M.hear_say(message, verb, speaking, alt_name, italics, src, speech_sound, sound_vol)
-				if(whispering) //Don't even bother with these unless whispering
-					if(dst > message_range && dst <= w_scramble_range) //Inside whisper scramble range
-						if(M.client)
-							var/image/I2 = listening[M] || speech_bubble
-							images_to_clients[I2] |= M.client
-							M << I2
-						M.hear_say(stars(message), verb, speaking, alt_name, italics, src, speech_sound, sound_vol*0.2)
-					if(dst > w_scramble_range && dst <= world.view) //Inside whisper 'visible' range
-						M.show_message("<span class='game say'><span class='name'>[src.name]</span> [w_not_heard].</span>", 2)
+			if(whispering) //Don't even bother with these unless whispering
+				if(dst > message_range && dst <= w_scramble_range) //Inside whisper scramble range
+					M.hear_say(stars(message), verb, speaking, alt_name, italics, src, speech_sound, sound_vol*0.2)
+				if(dst > w_scramble_range && dst <= world.view) //Inside whisper 'visible' range
+					M.show_message("<span class='game say'><span class='name'>[src.name]</span> [w_not_heard].</span>", 2)
 
-	//Object message delivery
+	animate_speechbubble(speech_bubble, speech_bubble_recipients, 30)
+//	if(!spoken_emote)
+//		animate_chat(message, speaking, italics, speech_bubble_recipients, 40)
+
 	for(var/obj/O in listening_obj)
 		spawn(0)
-			if(O && src) //If we still exist, when the spawn processes
-				var/dst = get_dist(get_turf(O),get_turf(src))
-				if(dst <= message_range)
-					O.hear_talk(src, message, verb, speaking)
-
-	//Remove all those images. At least it's just ONE spawn this time.
-	spawn(30)
-		for(var/img in images_to_clients)
-			var/image/I = img
-			var/list/clients_from_image = images_to_clients[I]
-			for(var/client in clients_from_image)
-				var/client/C = client
-				if(C) //Could have disconnected after message sent, before removing bubble.
-					C.images -= I
-			qdel(I)
+			if(O) //It's possible that it could be deleted in the meantime.
+				O.hear_talk(src, message, verb, speaking)
 
 	if(whispering)
 		log_whisper(message,src)
@@ -391,11 +373,19 @@ proc/get_radio_key_from_channel(var/channel)
 	return 1
 
 /mob/living/proc/say_signlang(var/message, var/verb="gestures", var/datum/language/language)
-	var/list/potentials = get_mobs_and_objs_in_view_fast(src, world.view)
-	var/list/mobs = potentials["mobs"]
-	for(var/hearer in mobs)
-		var/mob/M = hearer
-		M.hear_signlang(message, verb, language, src)
+	var/turf/T = get_turf(src)
+	//We're in something, gesture to people inside the same thing
+	if(loc != T)
+		for(var/mob/M in loc)
+			M.hear_signlang(message, verb, language, src)
+
+	//We're on a turf, gesture to visible as if we were a normal language
+	else
+		var/list/potentials = get_mobs_and_objs_in_view_fast(T, world.view)
+		var/list/mobs = potentials["mobs"]
+		for(var/hearer in mobs)
+			var/mob/M = hearer
+			M.hear_signlang(message, verb, language, src)
 	return 1
 
 /obj/effect/speech_bubble
@@ -406,3 +396,17 @@ proc/get_radio_key_from_channel(var/channel)
 
 /mob/proc/speech_bubble_appearance()
 	return "normal"
+
+/proc/animate_speechbubble(image/I, list/show_to, duration)
+	var/matrix/M = matrix()
+	M.Scale(0,0)
+	I.transform = M
+	I.alpha = 0
+	for(var/client/C in show_to)
+		C.images += I
+	animate(I, transform = 0, alpha = 255, time = 5, easing = ELASTIC_EASING)
+	sleep(duration-5)
+	animate(I, alpha = 0, time = 5, easing = EASE_IN)
+	sleep(5)
+	for(var/client/C in show_to)
+		C.images -= I

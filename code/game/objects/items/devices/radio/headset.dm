@@ -17,6 +17,8 @@
 	var/ks1type = null
 	var/ks2type = null
 
+	dont_save = TRUE
+
 /obj/item/device/radio/headset/New()
 	..()
 	internal_channels.Cut()
@@ -57,10 +59,12 @@
 
 /obj/item/device/radio/headset/receive_range(freq, level, aiOverride = 0)
 	if (aiOverride)
+		playsound(loc, 'sound/effects/radio_common.ogg', 25, 1, 1)
 		return ..(freq, level)
 	if(ishuman(src.loc))
 		var/mob/living/carbon/human/H = src.loc
 		if(H.l_ear == src || H.r_ear == src)
+			playsound(loc, 'sound/effects/radio_common.ogg', 25, 1, 1)
 			return ..(freq, level)
 	return -1
 
@@ -168,13 +172,13 @@
 
 
 /obj/item/device/radio/headset/heads/captain
-	name = "colony director's headset"
+	name = "mayor's headset"
 	desc = "The headset of the boss."
 	icon_state = "com_headset"
 	ks2type = /obj/item/device/encryptionkey/heads/captain
 
 /obj/item/device/radio/headset/heads/captain/alt
-	name = "colony director's bowman headset"
+	name = "mayor's bowman headset"
 	desc = "The headset of the boss."
 	icon_state = "com_headset_alt"
 	ks2type = /obj/item/device/encryptionkey/heads/captain
@@ -250,13 +254,13 @@
 
 /obj/item/device/radio/headset/heads/hop
 	name = "head of personnel's headset"
-	desc = "The headset of the guy who will one day be Colony Director."
+	desc = "The headset of the guy who will one day be Mayor."
 	icon_state = "com_headset"
 	ks2type = /obj/item/device/encryptionkey/heads/hop
 
 /obj/item/device/radio/headset/heads/hop/alt
 	name = "head of personnel's bowman headset"
-	desc = "The headset of the guy who will one day be Colony Director."
+	desc = "The headset of the guy who will one day be Mayor."
 	icon_state = "com_headset_alt"
 	ks2type = /obj/item/device/encryptionkey/heads/hop
 
@@ -268,8 +272,8 @@
 	ks2type = /obj/item/device/encryptionkey/headset_cargo
 
 /obj/item/device/radio/headset/headset_cargo
-	name = "supply radio headset"
-	desc = "A headset used by the QM and his slaves."
+	name = "manager's radio headset"
+	desc = "A headset used by the FM and his slaves."
 	icon_state = "cargo_headset"
 	ks2type = /obj/item/device/encryptionkey/headset_cargo
 
@@ -337,6 +341,8 @@
 	var/radio_enabled = 1
 
 /obj/item/device/radio/headset/mmi_radio/receive_range(freq, level)
+	if(!src.loc)
+		return
 	if (!radio_enabled || istype(src.loc.loc, /mob/living/silicon) || istype(src.loc.loc, /obj/item/organ/internal))
 		return -1 //Transciever Disabled.
 	return ..(freq, level, 1)

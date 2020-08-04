@@ -5,12 +5,12 @@ SUBSYSTEM_DEF(persistence)
 	var/list/tracking_values = list()
 	var/list/persistence_datums = list()
 
-/datum/controller/subsystem/persistence/Initialize()
-	. = ..()
+/datum/controller/subsystem/persistence/Initialize(timeofday)
 	for(var/thing in subtypesof(/datum/persistent))
 		var/datum/persistent/P = new thing
 		persistence_datums[thing] = P
 		P.Initialize()
+	. = ..()
 
 /datum/controller/subsystem/persistence/Shutdown()
 	for(var/thing in persistence_datums)
@@ -27,7 +27,7 @@ SUBSYSTEM_DEF(persistence)
 		return
 
 //	if((!T.z in GLOB.using_map.station_levels) || !initialized)
-	if(!T.z in using_map.station_levels)
+	if(!(T.z in using_map.station_levels))
 		return
 
 	if(!tracking_values[track_type])

@@ -22,6 +22,7 @@ var/global/datum/global_init/init = new ()
 	initialize_chemical_reagents()
 	initialize_chemical_reactions()
 	initialize_integrated_circuits_list()
+	initialize_paperwork()
 
 	qdel(src) //we're done
 
@@ -57,16 +58,23 @@ var/global/datum/global_init/init = new ()
 		game_id = "[c[(t % l) + 1]][game_id]"
 		t = round(t / l)
 
-
+/world/proc/enable_debugger()
+    var/dll = world.GetConfig("env", "EXTOOLS_DLL")
+    if (dll)
+        call(dll, "debug_initialize")()
 
 #define RECOMMENDED_VERSION 501
 /world/New()
+	enable_debugger()
 	world.log << "Map Loading Complete"
 	//logs
 	log_path += time2text(world.realtime, "YYYY/MM-Month/DD-Day/[game_id]/round-hh-mm-ss")
 	diary = file("[log_path].log")
 	href_logfile = file("[log_path]-hrefs.htm")
 	error_log = file("[log_path]-error.log")
+	vote_log = file("data/logs/voting/[get_real_year()]/vote-[get_real_month()].log")
+	lot_log = file("data/logs/lots/[get_real_year()]/lots-[get_real_month()].log")
+	money_log = file("[log_path]-money.log")
 	debug_log = file("[log_path]-debug.log")
 	debug_log << "[log_end]\n[log_end]\nStarting up. [time_stamp()][log_end]\n---------------------[log_end]"
 	changelog_hash = md5('html/changelog.html')					//used for telling if the changelog has changed recently
@@ -103,12 +111,6 @@ var/global/datum/global_init/init = new ()
 	// This is kinda important. Set up details of what the hell things are made of.
 	populate_material_list()
 
-	// Loads all the pre-made submap templates.
-	load_map_templates()
-
-	if(config.generate_map)
-		if(using_map.perform_map_generation())
-			using_map.refresh_mining_turfs()
 /*
 	if(config.generate_asteroid)
 		// These values determine the specific area that the map is applied to.
@@ -196,6 +198,8 @@ var/world_topic_spam_protect_time = world.timeofday
 		s["stationtime"] = stationtime2text()
 		s["roundduration"] = roundduration2text()
 		s["stationname"] = station_name()
+		s["round_type"] = capitalize(ticker.mode.name)
+		s["security_level"] = get_security_level()
 
 		if(input["status"] == "2")
 			var/list/players = list()
@@ -560,15 +564,18 @@ var/world_topic_spam_protect_time = world.timeofday
 	if (config && config.server_name)
 		s += "<b>[config.server_name]</b> &#8212; "
 
-	s += "<b>The World Server Redux | Partially persistent city roleplay</b> - <b>[station_name()]</b>";
-	s += " | DEVELOPMENT MODE ("
-	s += "<a href=\"https://discord.gg/4KUpvnJ\">" //Change this to wherever you want the hub to link to.
+	s += "<b>Official World Server | Roleplaying</b>";
+	s += " | Persistent money, partial map saving, elections."
+
+	s += "(<a href=\"https://discord.gg/4KUpvnJ\">" //Change this to wherever you want the hub to link to.
 //	s += "[game_version]"
-	s += "DISCORD"  //Replace this with something else. Or ever better, delete it and uncomment the game version.
+	s += "DISCORD"
 	s += "</a>"
 	s += ")"
 
 	var/list/features = list()
+	if(SSelections && SSelections.current_president)
+		features += "<br><b>Current President:</b> [SSelections.current_president.name]"
 
 	if(ticker)
 		if(master_mode)
@@ -579,13 +586,13 @@ var/world_topic_spam_protect_time = world.timeofday
 	if (!config.enter_allowed)
 		features += "closed"
 
-	features += config.abandon_allowed ? "respawn" : "no respawn"
+//	features += config.abandon_allowed ? "respawn" : "no respawn"
 
-	if (config && config.allow_vote_mode)
-		features += "vote"
+//	if (config && config.allow_vote_mode)
+//		features += "vote"
 
-	if (config && config.allow_ai)
-		features += "AI allowed"
+//	if (config && config.allow_ai)
+//		features += "AI allowed"
 
 	var/n = 0
 	for (var/mob/M in player_list)
@@ -593,13 +600,13 @@ var/world_topic_spam_protect_time = world.timeofday
 			n++
 
 	if (n > 1)
-		features += "~[n] players"
+		features += "~[n] civilians"
 	else if (n > 0)
-		features += "~[n] player"
+		features += "~[n] civilian"
 
 
-	if (config && config.hostedby)
-		features += "hosted by <b>[config.hostedby]</b>"
+//	if (config && config.hostedby)
+//		features += "hosted by <b>[config.hostedby]</b>"
 
 	s += "<img src=\"https://i.imgur.com/RGXrBHu.gif\">" //Banner image
 

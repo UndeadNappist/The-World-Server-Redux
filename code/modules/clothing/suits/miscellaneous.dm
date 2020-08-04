@@ -305,6 +305,14 @@ obj/item/clothing/suit/kamishimo
 	item_state_slots = list(slot_r_hand_str = "leather_jacket", slot_l_hand_str = "leather_jacket")
 	flags_inv = HIDEHOLSTER
 
+/obj/item/clothing/suit/storage/toggle/coat
+	name = "coat"
+	desc = "Your typical coat, this particular brand has a lot of different colors."
+	icon_state = "jacket_chrom"
+	allowed = list (/obj/item/weapon/pen, /obj/item/weapon/paper, /obj/item/device/flashlight, /obj/item/weapon/tank/emergency/oxygen, /obj/item/weapon/storage/fancy/cigarettes, /obj/item/weapon/storage/box/matches, /obj/item/weapon/reagent_containers/food/drinks/flask)
+	item_state_slots = list(slot_r_hand_str = "leather_jacket", slot_l_hand_str = "leather_jacket")
+	flags_inv = HIDEHOLSTER
+
 /obj/item/clothing/suit/leathercoat/sec
 	name = "leather coat"
 	desc = "A long, thick black leather coat."
@@ -398,6 +406,14 @@ obj/item/clothing/suit/storage/toggle/peacoat
 /obj/item/clothing/suit/tailcoat/ladies/red
 	name = "ladies red victorian coat"
 	icon_state = "ladiesredvictoriancoat"
+
+
+/obj/item/clothing/suit/tailcoat/mayor
+	name = "mayor's tailcoat"
+	desc = "A fancy blue and gold pinstripe tailcoat. For when you wanted to be something more than the mayoral corps but had to settle in the end...."
+	icon_state = "mayortailcoat"
+	index = null
+
 /*
  * stripper
  */
@@ -578,8 +594,8 @@ obj/item/clothing/suit/storage/toggle/peacoat
 	item_state_slots = list(slot_r_hand_str = "denim_jacket", slot_l_hand_str = "denim_jacket")
 
 /obj/item/clothing/suit/storage/toggle/hoodie
-	name = "grey hoodie"
-	desc = "A warm, grey sweatshirt."
+	name = "hoodie"
+	desc = "A warm sweatshirt."
 	icon_state = "grey_hoodie"
 	item_state_slots = list(slot_r_hand_str = "suit_grey", slot_l_hand_str = "suit_grey")
 	min_cold_protection_temperature = T0C - 20
@@ -728,14 +744,14 @@ obj/item/clothing/suit/storage/toggle/peacoat
 	min_cold_protection_temperature = SPACE_SUIT_MIN_COLD_PROTECTION_TEMPERATURE
 
 /obj/item/clothing/suit/storage/hooded/wintercoat/captain
-	name = "colony director's winter coat"
+	name = "mayor's winter coat"
 	icon_state = "coatcaptain"
 	item_state_slots = list(slot_r_hand_str = "coatcaptain", slot_l_hand_str = "coatcaptain")
 	armor = list(melee = 20, bullet = 15, laser = 20, energy = 10, bomb = 15, bio = 0, rad = 0)
 	hoodtype = /obj/item/clothing/head/hood/winter/captain
 
 /obj/item/clothing/head/hood/winter/captain
-	name = "colony director's winter hood"
+	name = "mayor's winter hood"
 	armor = list(melee = 20, bullet = 15, laser = 20, energy = 10, bomb = 15, bio = 0, rad = 0)
 
 /obj/item/clothing/suit/storage/hooded/wintercoat/security
@@ -895,7 +911,7 @@ obj/item/clothing/suit/storage/toggle/peacoat
 	icon_state = "PresidentJacket"
 	item_state_slots = list(slot_r_hand_str = "PresidentJacket", slot_l_hand_str = "PresidentJacket")
 	flags_inv = HIDEHOLSTER
-	open = 0
+	open = 1
 
 /*
  * Department Jackets
@@ -1101,3 +1117,62 @@ obj/item/clothing/suit/storage/toggle/peacoat
 /obj/item/clothing/suit/storage/snowsuit/science
 	name = "science snowsuit"
 	icon_state = "snowsuit_science"
+
+/obj/item/clothing/suit/storage/toggle/hartcoat
+	name = "fur-lined greatcoat"
+	desc = "A fancy fur-lined greatcoat with golden buttons. It keeps you warm... in style."
+	icon_state = "hartcoat"
+	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
+	flags_inv = HIDEHOLSTER
+
+/obj/item/clothing/suit/storage/toggle/synthleatherjacket
+	name = "synth-leather jacket"
+	desc = "A sleek jacket made of synth-leather. Eco-friendly and eternally in season."
+	icon_state = "neoleath_jacket"
+	body_parts_covered = UPPER_TORSO|ARMS
+	flags_inv = HIDEHOLSTER
+
+/obj/item/clothing/suit/storage/toggle/hivisjacket
+	name = "high visibility jacket"
+	desc = "A jacket made of highly reflective material. It can often be found in use by industrial workers."
+	icon_state = "hivis_jacket"
+	body_parts_covered = UPPER_TORSO|ARMS
+	flags_inv = HIDEHOLSTER
+	allowed = list (/obj/item/device/analyzer, /obj/item/device/flashlight, /obj/item/device/multitool, /obj/item/device/pipe_painter, /obj/item/device/radio, /obj/item/device/t_scanner,
+	/obj/item/weapon/crowbar, /obj/item/weapon/screwdriver, /obj/item/weapon/weldingtool, /obj/item/weapon/wirecutters, /obj/item/weapon/wrench, /obj/item/weapon/tank/emergency/oxygen,
+	/obj/item/clothing/mask/gas, /obj/item/taperoll/engineering)
+
+/obj/item/clothing/suit/storage/redbiker
+	name = "red motorcycle jacket"
+	desc = "Good for health; Bad for education." // "KANEDA!" - Shima Tetsuo
+	icon_state = "kaneda"
+	flags_inv = HIDEHOLSTER
+	body_parts_covered = UPPER_TORSO
+
+/obj/item/clothing/suit/storage/poshblazer
+	name = "women's posh blazer"
+	desc = "This is a bit fancy, like the new recruit in a news office who is trying too hard to impress the managers."
+	icon_state = "poshblazer"
+	body_parts_covered = UPPER_TORSO|ARMS
+	index = 1
+
+/obj/item/clothing/suit/storage/formalblazer
+	name = "women's formal blazer"
+	desc = "This is the one who got promoted."
+	icon_state = "formalblazer"
+	body_parts_covered = UPPER_TORSO|ARMS
+	index = 1
+
+/obj/item/clothing/suit/storage/loosesleeveblazer
+	name = "loose sleeve blazer"
+	desc = "One of those hippie-formal wannabe blazers."
+	icon_state = "loosesleeve"
+	body_parts_covered = UPPER_TORSO|ARMS
+	index = 1
+
+/obj/item/clothing/suit/storage/peterpanblazer
+	name = "peter pan blazer"
+	desc = "For those grown ups that didn't wanna."
+	icon_state = "peterpanblazer"
+	body_parts_covered = UPPER_TORSO
+	index = 1

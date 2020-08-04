@@ -69,6 +69,8 @@
 	var/max_equip = 3
 	var/datum/events/events
 
+	unique_save_vars = list("health")
+
 /obj/mecha/drain_power(var/drain_check)
 
 	if(drain_check)
@@ -192,11 +194,6 @@
 	pr_give_air = new /datum/global_iterator/mecha_tank_give_air(list(src))
 	pr_internal_damage = new /datum/global_iterator/mecha_internal_damage(list(src),0)
 
-/obj/mecha/proc/do_after(delay as num)
-	sleep(delay)
-	if(src)
-		return 1
-	return 0
 
 /obj/mecha/proc/enter_after(delay as num, var/mob/user as mob, var/numticks = 5)
 	var/delayfraction = delay/numticks
@@ -505,7 +502,7 @@
 
 /obj/mecha/attack_hand(mob/user as mob)
 	user.setClickCooldown(user.get_attack_speed())
-	src.log_message("Attack by hand/paw. Attacker - [user].",1)
+	src.log_message("Attack by hand. Attacker - [user].",1)
 
 	if(istype(user,/mob/living/carbon/human))
 		var/mob/living/carbon/human/H = user
@@ -869,7 +866,7 @@
 	return 0
 
 /obj/mecha/proc/mmi_moved_inside(var/obj/item/device/mmi/mmi_as_oc as obj,mob/user as mob)
-	if(mmi_as_oc && user in range(1))
+	if(mmi_as_oc && (user in range(1)))
 		if(!mmi_as_oc.brainmob || !mmi_as_oc.brainmob.client)
 			to_chat(user,"Consciousness matrix not detected.")
 			return 0
@@ -1073,6 +1070,12 @@
 		to_chat(usr,"<span class='warning'>You can't climb into the exosuit while buckled!</span>")
 		return
 
+	var/mob/user = usr
+
+	if(user.IsAntiGrief())
+		to_chat(user, "<span class='danger'>You're not confident using this yet.</span>")
+		return
+
 	src.log_message("[usr] tries to move in.")
 	if(iscarbon(usr))
 		var/mob/living/carbon/C = usr
@@ -1116,7 +1119,7 @@
 	return
 
 /obj/mecha/proc/moved_inside(var/mob/living/carbon/human/H as mob)
-	if(H && H.client && H in range(1))
+	if(H && H.client && (H in range(1)))
 		H.reset_view(src)
 		/*
 		H.client.perspective = EYE_PERSPECTIVE

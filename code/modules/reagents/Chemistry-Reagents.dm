@@ -37,6 +37,8 @@
 	var/hydration_factor = 0 // Per unit
 	var/calories_factor = 0 // Per unit
 
+	price_tag = 0.1
+
 	var/color = "#000000"
 	var/color_weight = 1
 
@@ -142,6 +144,9 @@
 /datum/reagent/Destroy() // This should only be called by the holder, so it's already handled clearing its references
 	holder = null
 	. = ..()
+
+/datum/reagent/proc/is_contraband()
+	return
 
 /* DEPRECATED - TODO: REMOVE EVERYWHERE */
 

@@ -1,8 +1,3 @@
-//used for pref.alternate_option
-#define GET_RANDOM_JOB 0
-#define BE_ASSISTANT 1
-#define RETURN_TO_LOBBY 2
-
 /datum/category_item/player_setup_item/occupation
 	name = "Occupation"
 	sort_order = 1
@@ -56,16 +51,16 @@
 
 	if(!(pref.player_alt_titles)) pref.player_alt_titles = new()
 
-	if(!job_master)
+	if(!SSjobs)
 		return
 
-	for(var/datum/job/job in job_master.occupations)
+	for(var/datum/job/job in SSjobs.occupations)
 		var/alt_title = pref.player_alt_titles[job.title]
 		if(alt_title && !(alt_title in job.alt_titles))
 			pref.player_alt_titles -= job.title
 
 /datum/category_item/player_setup_item/occupation/content(mob/user, limit = 18, list/splitJobs = list("Fire Chief"))
-	if(!job_master)
+	if(!SSjobs)
 		return
 
 	. = list()
@@ -77,9 +72,10 @@
 
 	//The job before the current job. I only use this to get the previous jobs color when I'm filling in blank rows.
 	var/datum/job/lastJob
-	if (!job_master)		return
-	for(var/datum/job/job in job_master.occupations)
-
+	if (!SSjobs)		return
+	for(var/datum/job/job in SSjobs.occupations)
+		if(job.business)
+			continue
 		if((++index >= limit) || (job.title in splitJobs))
 /*******
 			if((index < limit) && (lastJob != null))
@@ -189,7 +185,7 @@
 		pref.player_alt_titles[job.title] = new_title
 
 /datum/category_item/player_setup_item/occupation/proc/SetJob(mob/user, role)
-	var/datum/job/job = job_master.GetJob(role)
+	var/datum/job/job = SSjobs.GetJob(role)
 	if(!job)
 		return 0
 

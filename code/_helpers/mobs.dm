@@ -116,7 +116,7 @@ proc/skintone2racedescription(tone)
 	switch (tone)
 		if(30 to INFINITY)		return "albino"
 		if(20 to 30)			return "pale"
-		if(5 to 15)				return "light skinned"
+		if(5 to 15)			return "light skinned"
 		if(-10 to 5)			return "white"
 		if(-25 to -10)			return "tan"
 		if(-45 to -25)			return "darker skinned"
@@ -326,7 +326,7 @@ proc/random_hair_color(var/mob/living/carbon/human/M)
 	var/green
 	var/blue
 
-	var/col = pick ("blonde", "black", "chestnut", "copper", "brown", "wheat", "punk")
+	var/col = pick ("blonde", "black", "chestnut", "copper", "brown", "wheat")
 	if(M.age > 70)
 		red = rand (100, 255)
 		green = red
@@ -357,10 +357,6 @@ proc/random_hair_color(var/mob/living/carbon/human/M)
 				red = 255
 				green = 255
 				blue = 153
-			if("punk")
-				red = rand (0, 255)
-				green = rand (0, 255)
-				blue = rand (0, 255)
 
 	red = max(min(red + rand (-25, 25), 255), 0)
 	green = max(min(green + rand (-25, 25), 255), 0)
@@ -438,13 +434,3 @@ proc/random_eye_color()
 
 	return eye_color
 
-
-/proc/get_tax_rate(var/class)
-
-	switch(class)
-		if(CLASS_UPPER)
-			return tax_rate_upper * 100
-		if(CLASS_MIDDLE)
-			return tax_rate_middle * 100
-		if(CLASS_WORKING)
-			return tax_rate_lower * 100

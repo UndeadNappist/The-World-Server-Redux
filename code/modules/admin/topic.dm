@@ -362,7 +362,7 @@
 		if(!M.ckey)	//sanity
 			usr << "This mob has no ckey"
 			return
-		if(!job_master)
+		if(!SSjobs)
 			usr << "Job Master has not been setup!"
 			return
 
@@ -383,7 +383,7 @@
 		jobs += "<tr align='center' bgcolor='ccccff'><th colspan='[length(command_positions)]'><a href='?src=\ref[src];jobban3=commanddept;jobban4=\ref[M]'>Command Positions</a></th></tr><tr align='center'>"
 		for(var/jobPos in command_positions)
 			if(!jobPos)	continue
-			var/datum/job/job = job_master.GetJob(jobPos)
+			var/datum/job/job = SSjobs.GetJob(jobPos)
 			if(!job) continue
 
 			if(jobban_isbanned(M, job.title))
@@ -404,7 +404,7 @@
 		jobs += "<tr bgcolor='ffddf0'><th colspan='[length(security_positions)]'><a href='?src=\ref[src];jobban3=securitydept;jobban4=\ref[M]'>Security Positions</a></th></tr><tr align='center'>"
 		for(var/jobPos in security_positions)
 			if(!jobPos)	continue
-			var/datum/job/job = job_master.GetJob(jobPos)
+			var/datum/job/job = SSjobs.GetJob(jobPos)
 			if(!job) continue
 
 			if(jobban_isbanned(M, job.title))
@@ -425,7 +425,7 @@
 		jobs += "<tr bgcolor='fff5cc'><th colspan='[length(engineering_positions)]'><a href='?src=\ref[src];jobban3=engineeringdept;jobban4=\ref[M]'>Engineering Positions</a></th></tr><tr align='center'>"
 		for(var/jobPos in engineering_positions)
 			if(!jobPos)	continue
-			var/datum/job/job = job_master.GetJob(jobPos)
+			var/datum/job/job = SSjobs.GetJob(jobPos)
 			if(!job) continue
 
 			if(jobban_isbanned(M, job.title))
@@ -446,7 +446,7 @@
 		jobs += "<tr bgcolor='fff5cc'><th colspan='[length(cargo_positions)]'><a href='?src=\ref[src];jobban3=cargodept;jobban4=\ref[M]'>Cargo Positions</a></th></tr><tr align='center'>"
 		for(var/jobPos in cargo_positions)
 			if(!jobPos)	continue
-			var/datum/job/job = job_master.GetJob(jobPos)
+			var/datum/job/job = SSjobs.GetJob(jobPos)
 			if(!job) continue
 
 			if(jobban_isbanned(M, job.title))
@@ -467,7 +467,7 @@
 		jobs += "<tr bgcolor='ffeef0'><th colspan='[length(medical_positions)]'><a href='?src=\ref[src];jobban3=medicaldept;jobban4=\ref[M]'>Medical Positions</a></th></tr><tr align='center'>"
 		for(var/jobPos in medical_positions)
 			if(!jobPos)	continue
-			var/datum/job/job = job_master.GetJob(jobPos)
+			var/datum/job/job = SSjobs.GetJob(jobPos)
 			if(!job) continue
 
 			if(jobban_isbanned(M, job.title))
@@ -488,7 +488,7 @@
 		jobs += "<tr bgcolor='e79fff'><th colspan='[length(science_positions)]'><a href='?src=\ref[src];jobban3=sciencedept;jobban4=\ref[M]'>Science Positions</a></th></tr><tr align='center'>"
 		for(var/jobPos in science_positions)
 			if(!jobPos)	continue
-			var/datum/job/job = job_master.GetJob(jobPos)
+			var/datum/job/job = SSjobs.GetJob(jobPos)
 			if(!job) continue
 
 			if(jobban_isbanned(M, job.title))
@@ -509,7 +509,7 @@
 		jobs += "<tr bgcolor='dddddd'><th colspan='[length(civilian_positions)]'><a href='?src=\ref[src];jobban3=civiliandept;jobban4=\ref[M]'>Civilian Positions</a></th></tr><tr align='center'>"
 		for(var/jobPos in civilian_positions)
 			if(!jobPos)	continue
-			var/datum/job/job = job_master.GetJob(jobPos)
+			var/datum/job/job = SSjobs.GetJob(jobPos)
 			if(!job) continue
 
 			if(jobban_isbanned(M, job.title))
@@ -536,7 +536,7 @@
 		jobs += "<tr bgcolor='ccffcc'><th colspan='[length(nonhuman_positions)+1]'><a href='?src=\ref[src];jobban3=nonhumandept;jobban4=\ref[M]'>Non-human Positions</a></th></tr><tr align='center'>"
 		for(var/jobPos in nonhuman_positions)
 			if(!jobPos)	continue
-			var/datum/job/job = job_master.GetJob(jobPos)
+			var/datum/job/job = SSjobs.GetJob(jobPos)
 			if(!job) continue
 
 			if(jobban_isbanned(M, job.title))
@@ -611,7 +611,7 @@
 				alert("You cannot perform this action. You must be of a higher administrative rank!")
 				return
 
-		if(!job_master)
+		if(!SSjobs)
 			usr << "Job Master has not been setup!"
 			return
 
@@ -621,50 +621,50 @@
 			if("commanddept")
 				for(var/jobPos in command_positions)
 					if(!jobPos)	continue
-					var/datum/job/temp = job_master.GetJob(jobPos)
+					var/datum/job/temp = SSjobs.GetJob(jobPos)
 					if(!temp) continue
 					joblist += temp.title
 			if("securitydept")
 				for(var/jobPos in security_positions)
 					if(!jobPos)	continue
-					var/datum/job/temp = job_master.GetJob(jobPos)
+					var/datum/job/temp = SSjobs.GetJob(jobPos)
 					if(!temp) continue
 					joblist += temp.title
 			if("engineeringdept")
 				for(var/jobPos in engineering_positions)
 					if(!jobPos)	continue
-					var/datum/job/temp = job_master.GetJob(jobPos)
+					var/datum/job/temp = SSjobs.GetJob(jobPos)
 					if(!temp) continue
 					joblist += temp.title
 			if("cargodept")
 				for(var/jobPos in cargo_positions)
 					if(!jobPos)	continue
-					var/datum/job/temp = job_master.GetJob(jobPos)
+					var/datum/job/temp = SSjobs.GetJob(jobPos)
 					if(!temp) continue
 					joblist += temp.title
 			if("medicaldept")
 				for(var/jobPos in medical_positions)
 					if(!jobPos)	continue
-					var/datum/job/temp = job_master.GetJob(jobPos)
+					var/datum/job/temp = SSjobs.GetJob(jobPos)
 					if(!temp) continue
 					joblist += temp.title
 			if("sciencedept")
 				for(var/jobPos in science_positions)
 					if(!jobPos)	continue
-					var/datum/job/temp = job_master.GetJob(jobPos)
+					var/datum/job/temp = SSjobs.GetJob(jobPos)
 					if(!temp) continue
 					joblist += temp.title
 			if("civiliandept")
 				for(var/jobPos in civilian_positions)
 					if(!jobPos)	continue
-					var/datum/job/temp = job_master.GetJob(jobPos)
+					var/datum/job/temp = SSjobs.GetJob(jobPos)
 					if(!temp) continue
 					joblist += temp.title
 			if("nonhumandept")
 				joblist += "pAI"
 				for(var/jobPos in nonhuman_positions)
 					if(!jobPos)	continue
-					var/datum/job/temp = job_master.GetJob(jobPos)
+					var/datum/job/temp = SSjobs.GetJob(jobPos)
 					if(!temp) continue
 					joblist += temp.title
 			else
@@ -825,7 +825,12 @@
 				var/reason = sanitize(input(usr,"Reason?","reason","Griefer") as text|null)
 				if(!reason)
 					return
+
+				if(!M.ckey && M.client && M.client.ckey)	// patch for if they ghost during ban
+					M.ckey = M.client.ckey
+
 				AddBan(M.ckey, M.computer_id, reason, usr.ckey, 1, mins)
+
 				ban_unban_log_save("[usr.client.ckey] has banned [M.ckey]. - Reason: [reason] - This will be removed in [mins] minutes.")
 				notes_add(M.ckey,"[usr.client.ckey] has banned [M.ckey]. - Reason: [reason] - This will be removed in [mins] minutes.",usr)
 				M << "<font color='red'><BIG><B>You have been banned by [usr.client.ckey].\nReason: [reason].</B></BIG></font>"
@@ -1014,6 +1019,43 @@
 		M << "<font color='red'>You have been sent to the prison station!</font>"
 		log_admin("[key_name(usr)] sent [key_name(M)] to the prison station.")
 		message_admins("<font color='blue'>[key_name_admin(usr)] sent [key_name_admin(M)] to the prison station.</font>", 1)
+
+
+	else if(href_list["togglessdguard"])
+		var/mob/M = locate(href_list["togglessdguard"])
+
+		if(!check_rights(R_ADMIN))
+			return
+
+		if(!M.client)
+			to_chat(usr, "<span class='warning'>[M] doesn't have an attached client.</span>")
+			return
+
+		var/onoff = "DISABLED"
+		if(M.client.bypass_ssd_guard)
+			M.client.bypass_ssd_guard = FALSE
+			onoff = "ENABLED"
+		else
+			M.client.bypass_ssd_guard = TRUE
+			to_chat(M, "<span class='warning'>You have been given temporary permission to interact with SSD players.</span>")
+
+		log_admin("[key_name(usr)] has [onoff] SSD Guard for [key_name(M)].")
+		message_admins("[key_name_admin(usr)] has [onoff] SSD Guard for [key_name(M)]")
+
+	else if(href_list["toggleantigrief"])
+		var/mob/M = locate(href_list["toggleantigrief"])
+
+		if(!check_rights(R_ADMIN))
+			return
+
+		if(!M.client)
+			to_chat(usr, "<span class='warning'>[M] doesn't have an attached client.</span>")
+			return
+
+		M.client.antigrief = !M.client.antigrief
+
+		log_admin("[key_name(usr)] has [M.client.antigrief ? "Enabled" : "Disabled"] antigrief for [key_name(M)].")
+		message_admins("[key_name_admin(usr)] has [M.client.antigrief ? "Enabled" : "Disabled"] antigrief for [key_name(M)]")
 
 	else if(href_list["tdome1"])
 		if(!check_rights(R_FUN))	return
@@ -1222,7 +1264,6 @@
 			for(var/client/X in admins)
 				if((R_ADMIN|R_MOD|R_CBIA|R_SERVER) & X.holder.rights)
 					to_chat(X, take_msg)
-			post_webhook_event(WEBHOOK_ADMIN_PM, list("title"="Help is nolonger needed", "message"="Request for Help from **[key_name(M)]** is being tended to by **[key_name(usr)]**."))
 			to_chat(M, "<span class='notice'><b>Your adminhelp is being attended to by [usr.client]. Thanks for your patience!</b></span>")
 		else
 			to_chat(usr, "<span class='warning'>Unable to locate mob.</span>")

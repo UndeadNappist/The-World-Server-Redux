@@ -175,6 +175,11 @@
 	..()
 	gear_tweaks = list(gear_tweak_free_color_choice)
 
+
+/datum/gear/shoes/heels/long
+	display_name = "long high heels"
+	path = /obj/item/clothing/shoes/heels/long
+
 /datum/gear/shoes/slippers
 	display_name = "bunny slippers"
 	path = /obj/item/clothing/shoes/slippers
@@ -194,7 +199,7 @@
 	allowed_roles = list("Research Director","Scientist", "Roboticist", "Xenobiologist")
 
 /datum/gear/shoes/boots/winter/command
-	display_name = "colony director's winter boots"
+	display_name = "mayor's winter boots"
 	path = /obj/item/clothing/shoes/boots/winter/command
 	allowed_roles = list("Mayor")
 
@@ -211,7 +216,7 @@
 /datum/gear/shoes/boots/winter/medical
 	display_name = "medical winter boots"
 	path = /obj/item/clothing/shoes/boots/winter/medical
-	allowed_roles = list("Doctor","Chief Medical Officer","Chemist","Paramedic","Geneticist", "Psychiatrist")
+	allowed_roles = list("Physician","Chief Medical Officer","Chemist","Paramedic","Geneticist", "Psychiatrist")
 
 /datum/gear/shoes/boots/winter/mining
 	display_name = "mining winter boots"
@@ -227,3 +232,19 @@
 	display_name = "hydroponics winter boots"
 	path = /obj/item/clothing/shoes/boots/winter/hydro
 	allowed_roles = list("Botanist", "Xenobiologist")
+
+/datum/gear/shoes/boots/stylish
+	display_name = "stylish boots selection"
+	path = /obj/item/clothing/shoes/boots/stylish
+	cost = 2
+
+/datum/gear/shoes/boots/stylish/New()
+	..()
+	var/list/stylish_boots = list()
+	stylish_boots["brown stylish boots"] = /obj/item/clothing/shoes/boots/stylish
+	stylish_boots["charcoal stylish boots"] = /obj/item/clothing/shoes/boots/stylish/charcoal
+	stylish_boots["navy stylish boots"] = /obj/item/clothing/shoes/boots/stylish/navy
+	stylish_boots["red stylish boots"] = /obj/item/clothing/shoes/boots/stylish/red
+	stylish_boots["silver stylish boots"] = /obj/item/clothing/shoes/boots/stylish/silver
+	gear_tweaks += new/datum/gear_tweak/path(sortAssoc(stylish_boots))
+

@@ -6,6 +6,9 @@
 	plane = ABOVE_PLANE
 	opacity = 1
 	density = 0
+	var/open_state = "open"
+	var/closed_state = "closed"
+	var/sheet_material = /obj/item/stack/material/cotton
 
 /obj/structure/curtain/open
 	icon_state = "open"
@@ -27,25 +30,30 @@
 /obj/structure/curtain/proc/toggle()
 	set_opacity(!opacity)
 	if(opacity)
-		icon_state = "closed"
+		icon_state = closed_state
 		layer = SHOWER_CLOSED_LAYER
 	else
-		icon_state = "open"
+		icon_state = open_state
 		layer = SHOWER_OPEN_LAYER
 
 /obj/structure/curtain/attackby(obj/item/P, mob/user)
+
 	if(istype(P, /obj/item/weapon/wirecutters))
 		playsound(src, P.usesound, 50, 1)
-		user << "<span class='notice'>You start to cut the shower curtains.</span>"
+		user << "<span class='notice'>You start to cut \the [src].</span>"
 		if(do_after(user, 10))
-			user << "<span class='notice'>You cut the shower curtains.</span>"
-			var/obj/item/stack/material/plastic/A = new /obj/item/stack/material/plastic( src.loc )
+			user << "<span class='notice'>You cut \the [src].</span>"
+			var/obj/item/stack/material/A = new sheet_material( src.loc )
 			A.amount = 3
+			A.stack_color = color
 			qdel(src)
 		return
-	else
-		src.attack_hand(user)
-	return
+
+	if(istype(P, /obj/item/weapon/screwdriver))
+		user.visible_message("<span class='warning'>[user] uses [P] on [src].</span>", "<span class='notice'>You use [P] on [src]</span>", "You hear rustling noises.")
+		if(do_after(user, 10))
+			anchored = !anchored
+			to_chat(user, "<span class='notice'>You [anchored ? "screw" : "unscrewed"] [src] to the floor.</span>")
 
 /obj/structure/curtain/black
 	name = "black curtain"
@@ -68,6 +76,7 @@
 	name = "shower curtain"
 	color = "#ACD1E9"
 	alpha = 200
+	sheet_material = /obj/item/stack/material/plastic
 
 /obj/structure/curtain/open/shower/engineering
 	color = "#FFA500"
@@ -139,6 +148,21 @@
 	color = "#204f13"
 /obj/structure/curtain/open/color/forest
 	color = "#204f13"
+
+
+/obj/structure/curtain/blinds
+	name = "blinds"
+	desc = "What goes on behind these? Who knows. All people have secrets."
+	icon_state = "blinds_closed"
+	open_state = "blinds_open"
+	closed_state = "blinds_closed"
+	sheet_material = /obj/item/stack/material/plastic
+
+/obj/structure/curtain/blinds/open
+	icon_state = "blinds_open"
+	layer = SHOWER_CLOSED_LAYER
+	opacity = 0
+
 
 #undef SHOWER_OPEN_LAYER
 #undef SHOWER_CLOSED_LAYER

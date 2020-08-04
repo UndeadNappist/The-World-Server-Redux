@@ -11,12 +11,20 @@
 	throwforce = 1.0
 	throw_speed = 1
 	throw_range = 2
-	w_class = 2.0
+	w_class = ITEMSIZE_TINY
 	var/access = list()
 	access = access_crate_cash
 	var/worth = 0
 	drop_sound = 'sound/items/drop/paper.ogg'
 	var/list/possible_values = list(100,50,20,10,5,2,1)
+
+	unique_save_vars = list("worth")
+
+/obj/item/weapon/spacecash/on_persistence_load()
+	update_icon()
+
+/obj/item/weapon/spacecash/get_item_cost()
+	return worth	// lol
 
 /obj/item/weapon/spacecash/attackby(obj/item/weapon/W as obj, mob/user as mob)
 	if(istype(W, /obj/item/weapon/spacecash))
@@ -38,7 +46,7 @@
 			h_user.drop_from_inventory(src)
 			h_user.drop_from_inventory(bundle)
 			h_user.put_in_hands(bundle)
-		user << "<span class='notice'>You add [src.worth] credits worth of money to the bundles.<br>It holds [bundle.worth] credits now.</span>"
+		user << "<span class='notice'>You add [cash2text( worth, FALSE, TRUE, TRUE )] credits worth of money to the bundles.<br>It holds [cash2text( bundle.worth, FALSE, TRUE, TRUE )] credits now.</span>"
 		qdel(src)
 
 /obj/item/weapon/spacecash/bundle
@@ -73,7 +81,7 @@
 
 	add_overlay(ovr)
 	compile_overlays()	// The delay looks weird, so we force an update immediately.
-	src.desc = "They are worth [worth] credits."
+	src.desc = "They are worth [cash2text( worth, FALSE, TRUE, TRUE )] credits."
 
 /obj/item/weapon/spacecash/bundle/attack_self(mob/user as mob)
 	var/amount = input(user, "How many credits do you want to take? (0 to [src.worth])", "Take Money", 20) as num
@@ -106,43 +114,43 @@
 	if(!worth)
 		qdel(src)
 
-/obj/item/weapon/spacecash/c1
+/obj/item/weapon/spacecash/bundle/c1
 	name = "1 credit chip"
 	icon_state = "1"
 	desc = "It's worth 1 credit."
 	worth = 1
 
-/obj/item/weapon/spacecash/c2
+/obj/item/weapon/spacecash/bundle/c2
 	name = "2 credit chip"
 	icon_state = "2"
 	desc = "It's worth 2 credits."
 	worth = 2
 
-/obj/item/weapon/spacecash/c5
+/obj/item/weapon/spacecash/bundle/c5
 	name = "5 credit chip"
 	icon_state = "5"
 	desc = "It's worth 5 credits."
 	worth = 5
 
-/obj/item/weapon/spacecash/c10
+/obj/item/weapon/spacecash/bundle/c10
 	name = "10 credit chip"
 	icon_state = "10"
 	desc = "It's worth 10 credits."
 	worth = 10
 
-/obj/item/weapon/spacecash/c20
+/obj/item/weapon/spacecash/bundle/c20
 	name = "20 credit chip"
 	icon_state = "20"
 	desc = "It's worth 20 credits."
 	worth = 20
 
-/obj/item/weapon/spacecash/c50
+/obj/item/weapon/spacecash/bundle/c50
 	name = "50 credit chip"
 	icon_state = "50"
 	desc = "It's worth 50 credits."
 	worth = 50
 
-/obj/item/weapon/spacecash/c100
+/obj/item/weapon/spacecash/bundle/c100
 	name = "100 credit chip"
 	icon_state = "100"
 	desc = "It's worth 100 credits."
@@ -163,7 +171,7 @@
 
 proc/spawn_money(var/sum, spawnloc, mob/living/carbon/human/human_user as mob)
 	if(sum in list(100,50,20,10,5,2,1))
-		var/cash_type = text2path("/obj/item/weapon/spacecash/c[sum]")
+		var/cash_type = text2path("/obj/item/weapon/spacecash/bundle/c[sum]")
 		var/obj/cash = new cash_type (usr.loc)
 		if(ishuman(human_user) && !human_user.get_active_hand())
 			human_user.put_in_hands(cash)
@@ -181,10 +189,13 @@ proc/spawn_money(var/sum, spawnloc, mob/living/carbon/human/human_user as mob)
 	desc = "A card that holds an amount of money."
 	var/owner_name = "" //So the ATM can set it so the EFTPOS can put a valid name on transactions.
 
+	unique_save_vars = list("owner_name", "worth")
+
 /obj/item/weapon/spacecash/ewallet/examine(mob/user)
 	..(user)
 	if (!(user in view(2)) && user!=src.loc) return
-	user << "<span class='notice'>Charge card's owner: [src.owner_name]. Credit chips remaining: [src.worth].</span>"
+	to_chat(user, "<span class='notice'>Charge card's owner: [src.owner_name]. </span>")
+	to_chat(user, "<span class='notice'>Credit chips remaining: [src.worth]. </span>")
 
 /obj/item/weapon/spacecash/ewallet/lotto
 	name = "space lottery card"
@@ -192,6 +203,8 @@ proc/spawn_money(var/sum, spawnloc, mob/living/carbon/human/human_user as mob)
 	worth = 0
 	var/scratches_remaining = 3
 	var/next_scratch = 0
+
+	unique_save_vars = list("owner_name", "worth", "scratches_remaining", "next_scratch")
 
 /obj/item/weapon/spacecash/ewallet/lotto/attack_self(mob/user)
 

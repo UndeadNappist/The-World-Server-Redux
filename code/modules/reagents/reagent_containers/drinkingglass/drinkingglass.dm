@@ -2,6 +2,7 @@
 
 /var/const/DRINK_FIZZ = "fizz"
 /var/const/DRINK_ICE = "ice"
+/var/const/DRINK_VAPOR = "vapor"
 /var/const/DRINK_ICON_DEFAULT = ""
 /var/const/DRINK_ICON_NOISY = "_noise"
 
@@ -27,6 +28,28 @@
 
 	matter = list("glass" = 60)
 	drop_sound = 'sound/items/drop/glass.ogg'
+	var/smash_when_thrown = TRUE
+
+//when thrown on impact, glasses smash and spill their contents
+/obj/item/weapon/reagent_containers/food/drinks/glass2/throw_impact(atom/hit_atom, var/speed)
+	..()
+	if(smash_when_thrown)
+		var/mob/M = thrower
+		if(istype(M) && M.a_intent == I_HURT)
+			M.drop_from_inventory(src)
+			playsound(src, "shatter", 70, 1)
+
+			if(reagents && !isemptylist(reagents.reagent_list))
+				hit_atom.visible_message("<span class='notice'>The contents of \the [src] splash all over [hit_atom]!</span>")
+				reagents.splash(hit_atom, reagents.total_volume)
+
+			if(ishuman(hit_atom))
+				var/mob/living/carbon/human/H = hit_atom
+				H.Paralyse(3)
+
+			var/obj/item/weapon/material/shard/newshard = new(get_turf(hit_atom)) // Create a glass shard at the target's location!
+			src.transfer_fingerprints_to(newshard)
+			qdel(src)
 
 /obj/item/weapon/reagent_containers/food/drinks/glass2/examine(mob/M as mob)
 	..()
@@ -63,6 +86,18 @@
 				if("fizz" in re.glass_special)
 					totalfizzy += re.volume
 			if(totalfizzy >= reagents.total_volume / 5) // 20% fizzy by volume
+				return 1
+	return 0
+
+/obj/item/weapon/reagent_containers/food/drinks/glass2/proc/has_vapor()
+	if(reagents.reagent_list.len > 0)
+		var/datum/reagent/R = reagents.get_master_reagent()
+		if(!("vapor" in R.glass_special))
+			var/totalvape = 0
+			for(var/datum/reagent/re in reagents.reagent_list)
+				if("vapor" in re.glass_special)
+					totalvape += re.volume
+			if(totalvape >= volume * 0.6) // 60% vapor by container volume
 				return 1
 	return 0
 
@@ -105,6 +140,9 @@
 
 		if(has_fizz())
 			over_liquid |= "[base_icon][amnt]_fizz"
+
+		if(has_vapor())
+			over_liquid |= "[base_icon]_vapor"
 
 		for(var/S in R.glass_special)
 			if("[base_icon]_[S]" in icon_states(DRINK_ICON_FILE))

@@ -19,10 +19,15 @@
 	id_type = /obj/item/weapon/card/id/engineering/head
 	pda_type = /obj/item/device/pda/heads/ce
 
+	backpack_contents = list(
+	/obj/item/weapon/card/department/maintenance = 1)
+
+
 /decl/hierarchy/outfit/job/engineering/engineer
 	name = OUTFIT_JOB_NAME("City Engineer")
 	head = /obj/item/clothing/head/hardhat
 	uniform = /obj/item/clothing/under/rank/engineer
+	suit = /obj/item/clothing/suit/storage/toggle/hivisjacket
 	id_type = /obj/item/weapon/card/id/engineering/atmos
 	pda_type = /obj/item/device/pda/engineering
 

@@ -10,8 +10,34 @@ var/global/list/stool_cache = list() //haha stool
 	throwforce = 10
 	w_class = ITEMSIZE_HUGE
 	var/base_icon = "stool_base"
+	var/padding_icon = "stool_padding"
 	var/material/material
 	var/material/padding_material
+
+/obj/item/weapon/stool/get_persistent_metadata()
+	if(!material)
+		return FALSE
+
+	var/list/stool_data = list()
+	stool_data["material"] = material.name
+	if(padding_material)
+		stool_data["padding_material"] = padding_material.name
+
+	return stool_data
+
+/obj/item/weapon/stool/load_persistent_metadata(metadata)
+	var/list/stool_data = metadata
+	if(!islist(stool_data))
+		return
+	if(get_material_by_name(stool_data["material"]))
+		material = get_material_by_name(stool_data["material"])
+	if(get_material_by_name(stool_data["padding_material"]))
+		padding_material = get_material_by_name(stool_data["padding_material"])
+
+	update_icon()
+
+	return TRUE
+
 
 /obj/item/weapon/stool/wooden
 	burn_state = 0 //Buuuurn baby burn. Disco inferno!
@@ -45,7 +71,7 @@ var/global/list/stool_cache = list() //haha stool
 	icon_state = ""
 	overlays.Cut()
 	// Base icon.
-	var/cache_key = "stool-[material.name]"
+	var/cache_key = "[base_icon]-[material.name]"
 	if(isnull(stool_cache[cache_key]))
 		var/image/I = image(icon, base_icon)
 		I.color = material.icon_colour
@@ -53,9 +79,9 @@ var/global/list/stool_cache = list() //haha stool
 	overlays |= stool_cache[cache_key]
 	// Padding overlay.
 	if(padding_material)
-		var/padding_cache_key = "stool-padding-[padding_material.name]"
+		var/padding_cache_key = "[base_icon]-padding-[padding_material.name]"
 		if(isnull(stool_cache[padding_cache_key]))
-			var/image/I =  image(icon, "stool_padding")
+			var/image/I =  image(icon, padding_icon)
 			I.color = padding_material.icon_colour
 			stool_cache[padding_cache_key] = I
 		overlays |= stool_cache[padding_cache_key]
@@ -155,3 +181,21 @@ var/global/list/stool_cache = list() //haha stool
 		remove_padding()
 	else
 		..()
+
+
+/obj/item/weapon/stool/bar
+	name = "bar stool"
+	icon_state = "barstool"
+
+	base_icon = "barstool"
+	padding_icon = "barstool_padding"
+
+/obj/item/weapon/stool/bar/padded/New(var/newloc, var/new_material)
+	..(newloc, "steel", "carpet")
+
+/obj/item/weapon/stool/bar/wooden/New(var/newloc, var/new_material)
+	..(newloc, "wood")
+
+/obj/item/weapon/stool/bar/wooden/padded/New(var/newloc, var/new_material)
+	..(newloc, "wood", "carpet")
+

@@ -62,36 +62,38 @@ var/global/list/damage_icon_parts = list() //see UpdateDamageIcon()
 //Human Overlays Indexes/////////
 #define MUTATIONS_LAYER			1		//Mutations like fat, and lasereyes
 #define SKIN_LAYER				2		//Skin things added by a call on species
-#define BLOOD_LAYER				3		//Bloodied hands/feet/anything else
-#define DAMAGE_LAYER			4		//Injury overlay sprites like open wounds
-#define SURGERY_LAYER			5		//Overlays for open surgical sites
-#define UNDERWEAR_LAYER  		6		//Underwear/bras/etc
-#define SHOES_LAYER_ALT			7		//Shoe-slot item (when set to be under uniform via verb)
-#define UNIFORM_LAYER			8		//Uniform-slot item
-#define ID_LAYER				9		//ID-slot item
-#define SHOES_LAYER				10		//Shoe-slot item
-#define GLOVES_LAYER			11		//Glove-slot item
-#define BELT_LAYER				12		//Belt-slot item
-#define SUIT_LAYER				13		//Suit-slot item
-#define TAIL_LAYER				14		//Some species have tails to render
-#define GLASSES_LAYER			15		//Eye-slot item
-#define BELT_LAYER_ALT			16		//Belt-slot item (when set to be above suit via verb)
-#define SUIT_STORE_LAYER		17		//Suit storage-slot item
-#define BACK_LAYER				18		//Back-slot item
-#define HAIR_LAYER				19		//The human's hair
-#define EARS_LAYER				20		//Both ear-slot items (combined image)
-#define EYES_LAYER				21		//Mob's eyes (used for glowing eyes)
-#define FACEMASK_LAYER			22		//Mask-slot item
-#define HEAD_LAYER				23		//Head-slot item
-#define HANDCUFF_LAYER			24		//Handcuffs, if the human is handcuffed, in a secret inv slot
-#define LEGCUFF_LAYER			25		//Same as handcuffs, for legcuffs
-#define L_HAND_LAYER			26		//Left-hand item
-#define R_HAND_LAYER			27		//Right-hand item
-#define MODIFIER_EFFECTS_LAYER	28		//Effects drawn by modifiers
-#define FIRE_LAYER				29		//'Mob on fire' overlay layer
-#define WATER_LAYER				30		//'Mob submerged' overlay layer
-#define TARGETED_LAYER			31		//'Aimed at' overlay layer
-#define TOTAL_LAYERS			31//<---- KEEP THIS UPDATED, should always equal the highest number here, used to initialize a list.
+#define FACE_STYLE_LAYER			3		//Mob's lipstyles, or any type of face decor.
+#define BLOOD_LAYER				4		//Bloodied hands/feet/anything else
+#define DAMAGE_LAYER			5		//Injury overlay sprites like open wounds
+#define SURGERY_LAYER			6		//Overlays for open surgical sites
+#define UNDERWEAR_LAYER  		7		//Underwear/bras/etc
+#define SHOES_LAYER_ALT			8		//Shoe-slot item (when set to be under uniform via verb)
+#define UNIFORM_LAYER			9		//Uniform-slot item
+#define ID_LAYER				10		//ID-slot item
+#define SHOES_LAYER				11		//Shoe-slot item
+#define GLOVES_LAYER			12		//Glove-slot item
+#define BELT_LAYER				13		//Belt-slot item
+#define SUIT_LAYER				14		//Suit-slot item
+#define TAIL_LAYER				15		//Some species have tails to render
+#define GLASSES_LAYER			16		//Eye-slot item
+#define BELT_LAYER_ALT			17		//Belt-slot item (when set to be above suit via verb)
+#define SUIT_STORE_LAYER			18		//Suit storage-slot item
+#define BACK_LAYER				19		//Back-slot item
+#define HAIR_LAYER				20		//The human's hair
+#define EARS_LAYER				21		//Both ear-slot items (combined image)
+#define EYES_LAYER				22		//Mob's eyes (used for glowing eyes)
+#define FACEMASK_LAYER			23		//Mask-slot item
+#define HEAD_LAYER				24		//Head-slot item
+#define HANDCUFF_LAYER			25		//Handcuffs, if the human is handcuffed, in a secret inv slot
+#define LEGCUFF_LAYER			26		//Same as handcuffs, for legcuffs
+#define L_HAND_LAYER			27		//Left-hand item
+#define R_HAND_LAYER			28		//Right-hand item
+#define MODIFIER_EFFECTS_LAYER	29		//Effects drawn by modifiers
+#define FIRE_LAYER				30		//'Mob on fire' overlay layer
+#define WATER_LAYER				31		//'Mob submerged' overlay layer
+#define TARGETED_LAYER			32		//'Aimed at' overlay layer
+#define TOTAL_LAYERS			32//<---- KEEP THIS UPDATED, should always equal the highest number here, used to initialize a list.
+
 //////////////////////////////////
 
 /mob/living/carbon/human
@@ -245,10 +247,7 @@ var/global/list/damage_icon_parts = list() //see UpdateDamageIcon()
 		g = "female"
 
 	var/icon_key = "[species.get_race_key(src)][g][s_tone][r_skin][g_skin][b_skin]"
-	if(lip_style)
-		icon_key += "[lip_style]"
-	else
-		icon_key += "nolips"
+
 	var/obj/item/organ/internal/eyes/eyes = internal_organs_by_name[O_EYES]
 	if(eyes)
 		icon_key += "[rgb(eyes.eye_colour[1], eyes.eye_colour[2], eyes.eye_colour[3])]"
@@ -340,10 +339,12 @@ var/global/list/damage_icon_parts = list() //see UpdateDamageIcon()
 	stand_icon.Blend(base_icon,ICON_OVERLAY)
 	icon = stand_icon
 
-
-
 	//tail
 	update_tail_showing()
+
+	//face style
+	update_face_style()
+
 
 /mob/living/carbon/human/proc/update_skin()
 	if(QDESTROYING(src))
@@ -749,6 +750,8 @@ var/global/list/damage_icon_parts = list() //see UpdateDamageIcon()
 
 	if(suit.index)
 		suit_sprite = "[INV_SUIT_DEF_ICON]_[suit.index].dmi"
+	else if(istype(suit, /obj/item/clothing) && !isnull(suit.update_icon_define))
+		suit_sprite = suit.update_icon_define
 	else
 		suit_sprite = "[INV_SUIT_DEF_ICON].dmi"
 
@@ -1012,6 +1015,44 @@ var/global/list/damage_icon_parts = list() //see UpdateDamageIcon()
 		overlays_standing[SURGERY_LAYER] = total
 		apply_layer(SURGERY_LAYER)
 
+
+/mob/living/carbon/human/proc/update_face_style()
+	remove_layer(FACE_STYLE_LAYER)
+
+	if(! (lip_style && (species && (species.appearance_flags & HAS_LIPS))) )
+		return 0
+
+	var/icon/lips = icon('icons/mob/human_facestyle.dmi', "[lip_style]")
+	lips.Blend(lip_color, ICON_MULTIPLY)
+
+	overlays_standing[FACE_STYLE_LAYER] = lips
+	apply_layer(FACE_STYLE_LAYER)
+
+	return 1
+
+/mob/living/carbon/human/proc/set_face_style(style, color)
+	if(!(species && (species.appearance_flags & HAS_LIPS)))
+		return 0
+
+	lip_style = style
+	lip_color = color
+
+	if(update_face_style())
+		return 1
+
+	lip_style = null
+	lip_color = null
+
+	return 0
+
+/mob/living/carbon/human/proc/remove_face_style()
+	remove_layer(FACE_STYLE_LAYER)
+	lip_style = null
+	lip_color = null
+	update_face_style()
+
+	return 1
+
 //Human Overlays Indexes/////////
 #undef MUTATIONS_LAYER
 #undef SKIN_LAYER
@@ -1030,12 +1071,12 @@ var/global/list/damage_icon_parts = list() //see UpdateDamageIcon()
 #undef BELT_LAYER_ALT
 #undef SUIT_STORE_LAYER
 #undef BACK_LAYER
+#undef FACE_STYLE_LAYER
 #undef HAIR_LAYER
 #undef EARS_LAYER
 #undef EYES_LAYER
 #undef FACEMASK_LAYER
 #undef HEAD_LAYER
-#undef COLLAR_LAYER
 #undef HANDCUFF_LAYER
 #undef LEGCUFF_LAYER
 #undef L_HAND_LAYER

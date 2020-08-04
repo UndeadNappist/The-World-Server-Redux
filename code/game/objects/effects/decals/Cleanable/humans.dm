@@ -22,6 +22,11 @@ var/global/list/image/splatter_cache=list()
 	var/amount = 5
 	var/drytime
 
+	unique_save_vars = list("synthblood", "amount", "invisibility", "fluorescent")
+
+/obj/effect/decal/cleanable/blood/on_persistence_load()
+	update_icon()
+
 /obj/effect/decal/cleanable/blood/reveal_blood()
 	if(!fluorescent)
 		fluorescent = 1
@@ -248,6 +253,7 @@ var/global/list/image/splatter_cache=list()
 
 //This version should be used for admin spawns and pre-mapped virus vectors (e.g. in PoIs), this version does not dry
 /obj/effect/decal/cleanable/mucus/mapped/New()
-	...()
-	virus2 = new /datum/disease2/disease
-	virus2.makerandom()
+	..()
+	var/datum/disease2/disease/D = new
+	D.makerandom()
+	virus2 += D

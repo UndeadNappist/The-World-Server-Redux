@@ -33,8 +33,8 @@ HALOGEN COUNTER	- Radcount on mobs
 	..()
 
 /obj/item/device/healthanalyzer/do_surgery(mob/living/M, mob/living/user)
-	if(user.a_intent != I_HELP) //in case it is ever used as a surgery tool
-		return ..()
+//	if(user.a_intent != I_HELP) //in case it is ever used as a surgery tool
+//		return ..()
 	scan_mob(M, user) //default surgery behaviour is just to scan as usual
 	return 1
 
@@ -55,6 +55,7 @@ HALOGEN COUNTER	- Radcount on mobs
 	if (!(ishuman(user) || ticker) && ticker.mode.name != "monkey")
 		to_chat(user, "<span class='warning'>You don't have the dexterity to do this!</span>")
 		return
+	flick("[icon_state]-scan", src)	//makes it so that it plays the scan animation on a succesful scan
 	user.visible_message("<span class='notice'>[user] has analyzed [M]'s vitals.</span>","<span class='notice'>You have analyzed [M]'s vitals.</span>")
 
 	if (!ishuman(M) || M.isSynthetic())

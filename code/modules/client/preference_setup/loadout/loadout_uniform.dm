@@ -76,9 +76,18 @@
 	..()
 	gear_tweaks = list(gear_tweak_free_color_choice)
 
+/datum/gear/uniform/pencil
+	display_name = "pencil skirt"
+	path = /obj/item/clothing/under/skirt/pencil
+
+/datum/gear/uniform/pencil/New()
+	..()
+	gear_tweaks = list(gear_tweak_free_color_choice)
+
+
 /datum/gear/uniform/pants
 	display_name = "pants selection"
-	path = /obj/item/clothing/under/pants/white
+	path = /obj/item/clothing/under/pants
 
 /datum/gear/uniform/pants/New()
 	..()
@@ -133,12 +142,12 @@
 /datum/gear/uniform/job_skirt/viro
 	display_name = "skirt, virologist"
 	path = /obj/item/clothing/under/rank/virologist/skirt
-	allowed_roles = list("Chief Medical Officer","Doctor")
+	allowed_roles = list("Chief Medical Officer","Physician")
 
 /datum/gear/uniform/job_skirt/med
 	display_name = "skirt, medical"
 	path = /obj/item/clothing/under/rank/medical/skirt
-	allowed_roles = list("Chief Medical Officer","Doctor","Chemist","Psychiatrist","Paramedic")
+	allowed_roles = list("Chief Medical Officer","Physician","Chemist","Psychiatrist","Paramedic")
 
 /datum/gear/uniform/job_skirt/sci
 	display_name = "skirt, scientist"
@@ -278,7 +287,7 @@
 	path = /obj/item/clothing/under/dress/dress_fire
 
 /datum/gear/uniform/uniform_captain
-	display_name = "uniform, colony director's dress"
+	display_name = "uniform, mayor's dress"
 	path = /obj/item/clothing/under/dress/dress_cap
 	allowed_roles = list("Mayor")
 
@@ -369,7 +378,7 @@
 	path = /obj/item/clothing/under/dress/sailordress
 
 /datum/gear/uniform/dresses/eveninggown
-	display_name = "red evening gown"
+	display_name = "evening gown"
 	path = /obj/item/clothing/under/dress/redeveninggown
 
 /datum/gear/uniform/dresses/eveninggown/New()
@@ -442,7 +451,7 @@
 /datum/gear/uniform/job_turtle/medical
 	display_name = "turtleneck, medical"
 	path = /obj/item/clothing/under/rank/medical/turtleneck
-	allowed_roles = list("Chief Medical Officer", "Paramedic", "Medical Doctor", "Psychologist", "Search and Rescue", "Chemist")
+	allowed_roles = list("Chief Medical Officer", "Paramedic", "Medical Physician", "Psychologist", "Search and Rescue", "Chemist")
 
 /datum/gear/uniform/mbill
 	display_name = "outfit, major bill's (Cargo)"
@@ -530,6 +539,39 @@
 	gear_tweaks = list(gear_tweak_free_color_choice)
 
 
+
+/datum/gear/uniform/flowergirl
+	display_name = "flowergirl dress"
+	path = /obj/item/clothing/under/dress/arisflowergirl/colorable
+
+/datum/gear/uniform/flowergirl/New()
+	..()
+	gear_tweaks = list(gear_tweak_free_color_choice)
+
+/datum/gear/uniform/ariswedding
+	display_name = "aristocratic wedding dress"
+	path = /obj/item/clothing/under/dress/ariswedding
+
+/datum/gear/uniform/arisbridesmaid
+	display_name = "aristocratic bridesmaid dress"
+	path = /obj/item/clothing/under/dress/arisbridesmaid
+
+/datum/gear/uniform/arisgroom
+	display_name = "aristocratic groom tuxedo"
+	path = /obj/item/clothing/under/arisgroom
+
+/datum/gear/uniform/arisbestman
+	display_name = "aristocratic best man's tuxedo"
+	path = /obj/item/clothing/under/arisbestman
+
+/datum/gear/uniform/club
+	display_name = "club dress"
+	path = /obj/item/clothing/under/dress/club
+
+/datum/gear/uniform/club/New()
+	..()
+	gear_tweaks = list(gear_tweak_free_color_choice)
+
 /datum/gear/uniform/polychrome/New()
 	..()
 	gear_tweaks = list(gear_tweak_polychrome_color_choice)
@@ -567,3 +609,66 @@
 	display_name = "polychromic jumpsuit"
 	path = /obj/item/clothing/under/polychromic/jumpsuit
 
+/datum/gear/uniform/polka
+	display_name = "polka dot dress"
+	path = /obj/item/clothing/under/dress/polka
+
+/datum/gear/uniform/twistfront
+	display_name = "twistfront crop dress"
+	path = /obj/item/clothing/under/dress/twistfront
+
+/datum/gear/uniform/cropdress
+	display_name = "crop dress"
+	path = /obj/item/clothing/under/dress/cropdress
+
+/datum/gear/uniform/vneckdress
+	display_name = "v-neck dress"
+	path = /obj/item/clothing/under/dress/vneck
+
+/datum/gear/uniform/bluedress
+	display_name = "blue dress"
+	path = /obj/item/clothing/under/dress/bluedress
+
+/datum/gear/uniform/wench
+	display_name = "wench's dress"
+	path = /obj/item/clothing/under/dress/wench
+
+/datum/gear/uniform/littleblackdress
+	display_name = "little black dress"
+	path = /obj/item/clothing/under/dress/littleblackdress
+
+/datum/gear/uniform/pinktutu
+	display_name = "pink tutu"
+	path = /obj/item/clothing/under/dress/pinktutu
+
+/datum/gear/uniform/festivedress
+	display_name = "festive dress"
+	path = /obj/item/clothing/under/dress/festivedress
+
+/datum/gear/uniform/haltertop
+	display_name = "halter top"
+	path = /obj/item/clothing/under/haltertop
+
+/datum/gear/uniform/hartsuit
+	display_name = "striped suit"
+	path = /obj/item/clothing/under/hartsuit
+
+/datum/gear/uniform/daisydukes
+	display_name = "daisy dukes selection"
+
+/datum/gear/uniform/daisydukes/New()
+	..()
+	var/list/daisydukes = list()
+	for(var/daisyduke in typesof(/obj/item/clothing/under/daisydukes))
+		var/obj/item/clothing/under/daisydukes/daisyduke_type = daisyduke
+		daisydukes[initial(daisyduke_type.name)] = daisyduke_type
+	gear_tweaks += new/datum/gear_tweak/path(sortAssoc(daisydukes))
+
+/datum/gear/uniform/punk
+	display_name = "punk outfit"
+	path = /obj/item/clothing/under/punk
+
+
+/datum/gear/uniform/aristocrat
+	display_name = "aristocrat formal wear"
+	path = /obj/item/clothing/under/aristocrat

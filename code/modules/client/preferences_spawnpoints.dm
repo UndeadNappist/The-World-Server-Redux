@@ -26,13 +26,14 @@ var/list/spawntypes = list()
 	return get_turf(pick(turfs))
 
 /datum/spawnpoint/arrivals
-	display_name = "Arrivals Shuttle"
-	msg = "will arrive to the station shortly by shuttle"
+	display_name = "City Arrivals Airbus"
+	msg = "will arrive to the city shortly by airbus"
 
 /datum/spawnpoint/arrivals/New()
 	..()
 	turfs = latejoin
 
+/*
 /datum/spawnpoint/gateway
 	display_name = "Gateway"
 	msg = "has completed translation from offsite gateway"
@@ -48,6 +49,7 @@ var/list/spawntypes = list()
 /datum/spawnpoint/elevator/New()
 	..()
 	turfs = latejoin_elevator
+*/
 
 /datum/spawnpoint/cryo
 	display_name = "Cryogenic Storage"
@@ -66,3 +68,13 @@ var/list/spawntypes = list()
 /datum/spawnpoint/cyborg/New()
 	..()
 	turfs = latejoin_cyborg
+
+
+/datum/spawnpoint/prison
+	display_name = "Prison"
+	msg = "will continue serving their sentence in police custody"
+	restrict_job = list("Prisoner")
+
+/datum/spawnpoint/prison/New()
+	..()
+	turfs = latejoin_prison

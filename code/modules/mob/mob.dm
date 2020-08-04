@@ -222,11 +222,17 @@
 	set category = "IC"
 
 	if((is_blind(src) || usr.stat) && !isobserver(src))
-		src << "<span class='notice'>Something is there but you can't see it.</span>"
+		to_chat(src, SPAN_NOTICE("Something is there but you can't see it."))
 		return 1
 
 	face_atom(A)
 	A.examine(src)
+
+//override examinate verb to update description holders when things are examined
+/mob/examinate(atom/A as mob|obj|turf in view())
+	if(..())
+		return TRUE
+	update_examine_panel(A)
 
 /mob/verb/pointed(atom/A as mob|obj|turf in view())
 	set name = "Point To"
@@ -323,7 +329,7 @@
 /mob/proc/print_flavor_text()
 	if (flavor_text && flavor_text != "")
 		var/msg = replacetext(flavor_text, "\n", " ")
-		if(lentext(msg) <= 40)
+		if(length(msg) <= 40)
 			return "<font color='blue'>[msg]</font>"
 		else
 			return "<font color='blue'>[copytext_preserve_html(msg, 1, 37)]... <a href='byond://?src=\ref[src];flavor_more=1'>More...</font></a>"
@@ -536,7 +542,7 @@
 			for(var/name in H.organs_by_name)
 				var/obj/item/organ/external/e = H.organs_by_name[name]
 				if(e && H.lying)
-					if((e.status & ORGAN_BROKEN && (!e.splinted || (e.splinted && e.splinted in e.contents && prob(30))) || e.status & ORGAN_BLEEDING) && (H.getBruteLoss() + H.getFireLoss() >= 100))
+					if((e.status & ORGAN_BROKEN && (!e.splinted || (e.splinted && (e.splinted in e.contents) && prob(30))) || e.status & ORGAN_BLEEDING) && (H.getBruteLoss() + H.getFireLoss() >= 100))
 						return 1
 						break
 	return 0
@@ -884,10 +890,10 @@
 	return
 
 /mob/proc/AdjustLosebreath(amount)
-	losebreath = Clamp(0, losebreath + amount, 25)
+	losebreath = CLAMP(losebreath + amount, 0, 25)
 
 /mob/proc/SetLosebreath(amount)
-	losebreath = Clamp(0, amount, 25)
+	losebreath = CLAMP(amount, 0, 25)
 
 /mob/proc/get_species()
 	return ""
@@ -1065,6 +1071,13 @@ mob/proc/yank_out_object()
 /mob/proc/setEarDamage()
 	return
 
+// Set client view distance (size of client's screen). Returns TRUE if anything changed.
+/mob/proc/set_viewsize(var/new_view = world.view)
+	if (client && new_view != client.view)
+		client.view = new_view
+		return TRUE
+	return FALSE
+
 //Throwing stuff
 
 /mob/proc/toggle_throw_mode()
@@ -1092,10 +1105,10 @@ mob/proc/yank_out_object()
 //Exploitable Info Update
 
 /mob/proc/amend_exploitable(var/obj/item/I)
-	var/obj/item/exploit_item = new I(src.loc)
-	exploit_addons |= exploit_item
-	var/exploitmsg = html_decode("\n" + "Has " + exploit_item.name + ".")
-	exploit_record += exploitmsg
+	if(istype(I))
+		exploit_addons |= I
+		var/exploitmsg = html_decode("\n" + "Has " + I.name + ".")
+		exploit_record += exploitmsg
 
 /client/proc/check_has_body_select()
 	return mob && mob.hud_used && istype(mob.zone_sel, /obj/screen/zone_sel)

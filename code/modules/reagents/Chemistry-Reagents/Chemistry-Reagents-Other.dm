@@ -8,6 +8,7 @@
 	reagent_state = LIQUID
 	color = "#888888"
 	overdose = 5
+	price_tag = 0.1
 
 /datum/reagent/crayon_dust/red
 	name = "Red crayon dust"
@@ -114,8 +115,12 @@
 	color_weight = 20
 
 /datum/reagent/paint/touch_turf(var/turf/T)
-	if(istype(T) && !istype(T, /turf/space))
-		T.color = color
+	if(istype(T, /turf/simulated/wall))
+		var/turf/simulated/wall/wall = T
+		wall.paint_color = color
+	else
+		if(istype(T) && !istype(T, /turf/space))
+			T.color = color
 
 /datum/reagent/paint/touch_obj(var/obj/O)
 	if(istype(O))
@@ -205,7 +210,8 @@
 	description = "Gold is a dense, soft, shiny metal and the most malleable and ductile metal known."
 	taste_description = "metal"
 	reagent_state = SOLID
-	color = "#F7C430"
+	color = COLOR_GOLD
+	price_tag = 3.2
 
 /datum/reagent/silver
 	name = "Silver"
@@ -213,7 +219,8 @@
 	description = "A soft, white, lustrous transition metal, it has the highest electrical conductivity of any element and the highest thermal conductivity of any metal."
 	taste_description = "metal"
 	reagent_state = SOLID
-	color = "#D0D0D0"
+	color = COLOR_SILVER
+	price_tag = 2.2
 
 /datum/reagent/uranium
 	name ="Uranium"
@@ -221,7 +228,8 @@
 	description = "A silvery-white metallic chemical element in the actinide series, weakly radioactive."
 	taste_description = "metal"
 	reagent_state = SOLID
-	color = "#B8B8C0"
+	color = COLOR_URANIUM
+	price_tag = 3.2
 
 /datum/reagent/platinum
 	name = "Platinum"
@@ -229,7 +237,8 @@
 	description = "Platinum is a dense, malleable, ductile, highly unreactive, precious, gray-white transition metal.  It is very resistant to corrosion."
 	taste_description = "metal"
 	reagent_state = SOLID
-	color = "#777777"
+	color = COLOR_PLATINUM
+	price_tag = 3.9
 
 /datum/reagent/uranium/affect_touch(var/mob/living/carbon/M, var/alien, var/removed)
 	affect_ingest(M, alien, removed)
@@ -350,6 +359,7 @@
 	reagent_state = LIQUID
 	color = "#A5F0EE"
 	touch_met = 50
+	price_tag = 0.2
 
 /datum/reagent/space_cleaner/touch_obj(var/obj/O)
 	O.clean_blood()
@@ -402,12 +412,13 @@
 			M.vomit()
 
 /datum/reagent/lube // TODO: spraying on borgs speeds them up
-	name = "Space Lube"
+	name = "Lube"
 	id = "lube"
-	description = "Lubricant is a substance introduced between two moving surfaces to reduce the friction and wear between them. giggity."
+	description = "Lubricant is a substance introduced between two moving surfaces to reduce the friction and wear between them, giggity."
 	taste_description = "slime"
 	reagent_state = LIQUID
 	color = "#009CA8"
+	price_tag = 0.7
 
 /datum/reagent/lube/touch_turf(var/turf/simulated/T)
 	if(!istype(T))
@@ -422,6 +433,7 @@
 	taste_description = "plastic"
 	reagent_state = LIQUID
 	color = "#C7FFFF"
+	price_tag = 0.5
 
 /datum/reagent/silicate/touch_obj(var/obj/O)
 	if(istype(O, /obj/structure/window))
@@ -437,6 +449,7 @@
 	taste_description = "sweetness"
 	reagent_state = LIQUID
 	color = "#808080"
+	price_tag = 0.9
 
 /datum/reagent/nitroglycerin
 	name = "Nitroglycerin"
@@ -445,6 +458,7 @@
 	taste_description = "oil"
 	reagent_state = LIQUID
 	color = "#808080"
+	price_tag = 0.7
 
 /datum/reagent/coolant
 	name = "Coolant"
@@ -454,6 +468,7 @@
 	taste_mult = 1.1
 	reagent_state = LIQUID
 	color = "#C8A5DC"
+	price_tag = 0.5
 
 /datum/reagent/ultraglue
 	name = "Ultra Glue"
@@ -461,6 +476,7 @@
 	description = "An extremely powerful bonding agent."
 	taste_description = "a special education class"
 	color = "#FFFFCC"
+	price_tag = 0.5
 
 /datum/reagent/woodpulp
 	name = "Wood Pulp"
@@ -469,6 +485,7 @@
 	taste_description = "wood"
 	reagent_state = LIQUID
 	color = "#B97A57"
+	price_tag = 0.9
 
 /datum/reagent/luminol
 	name = "Luminol"
@@ -477,6 +494,7 @@
 	taste_description = "metal"
 	reagent_state = LIQUID
 	color = "#F2F3F4"
+	price_tag = 0.7
 
 /datum/reagent/luminol/touch_obj(var/obj/O)
 	O.reveal_blood()
@@ -491,6 +509,10 @@
 	taste_description = "a bitter gooey substance"
 	reagent_state = LIQUID
 	color = "#755202"
+	price_tag = 0.8
+
+	get_tax()
+		return DRUG_TAX
 
 /datum/reagent/coca
 	name = "coca extract"
@@ -499,3 +521,68 @@
 	taste_description = "bitterness"
 	reagent_state = LIQUID
 	color = "#755202"
+	price_tag = 0.9
+
+	get_tax()
+		return DRUG_TAX
+
+/datum/reagent/menthol
+	name = "Menthol"
+	id = "menthol"
+	description = "Tastes naturally minty, and imparts a very mild numbing sensation."
+	taste_description = "mint"
+	reagent_state = LIQUID
+	color = "#80af9c"
+	metabolism = REM * 0.002
+	overdose = REAGENTS_OVERDOSE * 0.25
+	scannable = 1
+	price_tag = 0.3
+
+/datum/reagent/caapi
+	name = "caapi extract"
+	id = "caapi_extract"
+	description = "An extract from the caapi plant."
+	taste_description = "a bitter gooey substance"
+	reagent_state = LIQUID
+	color = "#755202"
+	price_tag = 1.8
+
+	get_tax()
+		return DRUG_TAX
+
+/datum/reagent/chacruna
+	name = "chacruna extract"
+	id = "chacruna_extract"
+	description = "An extract from the chacruna plant."
+	taste_description = "a bitter gooey substance"
+	reagent_state = LIQUID
+	color = "#755202"
+	price_tag = 1.8
+
+	get_tax()
+		return DRUG_TAX
+
+/datum/reagent/wax
+	name = "Wax"
+	id = "wax"
+	description = "An ester solid substance used for a variety of purposes."
+	taste_description = "wax"
+	reagent_state = LIQUID
+	color = COLOR_PLATINUM
+
+/datum/reagent/toiletwater
+	name = "Toilet Water"
+	id = "toiletwater"
+	description = "Nasty water taken from a toilet."
+	taste_description = "feces and urine"
+	reagent_state = LIQUID
+	color = "#757547"
+
+/datum/reagent/nutriment/biomass
+	name = "Biomass"
+	id = "biomass"
+	description = "A slurry of compounds that contains the basic requirements for life."
+	taste_description = "salty meat"
+	reagent_state = LIQUID
+	color = "#DF9FBF"
+

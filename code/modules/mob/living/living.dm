@@ -550,12 +550,12 @@ default behaviour is:
 	return 0
 
 
-/mob/living/proc/can_inject()
+/mob/living/proc/can_inject(var/mob/user, var/error_msg, var/target_zone, var/ignore_thickness = FALSE)
 	return 1
 
 /mob/living/proc/get_organ_target()
 	var/mob/shooter = src
-	var/t = shooter:zone_sel.selecting
+	var/t = shooter.zone_sel.selecting
 	if ((t in list( O_EYES, O_MOUTH )))
 		t = BP_HEAD
 	var/obj/item/organ/external/def_zone = ran_zone(t)
@@ -665,6 +665,13 @@ default behaviour is:
 	reload_fullscreen()
 
 	return
+
+/mob/living/rejuvenate()
+	var/was_dead = stat == DEAD
+	..()
+	if(was_dead && stat != DEAD)
+		// Arise!
+		cultnet.updateVisibility(src, 0)
 
 /mob/living/proc/UpdateDamageIcon()
 	return
@@ -1248,3 +1255,35 @@ default behaviour is:
 		BRAIN:<a href='?_src_=vars;mobToDamage=\ref[src];adjustDamage=brain'>[getBrainLoss()]</a>
 		</font>
 		"}
+
+// ++++ROCKDTBEN++++ MOB PROCS //END
+
+// Applies direct "cold" damage while checking protection against the cold.
+/mob/living/proc/inflict_cold_damage(amount)
+	amount *= 1 - get_cold_protection(50) // Within spacesuit protection.
+	if(amount > 0)
+		adjustFireLoss(amount)
+
+// Ditto, but for "heat".
+/mob/living/proc/inflict_heat_damage(amount)
+	amount *= 1 - get_heat_protection(10000) // Within firesuit protection.
+	if(amount > 0)
+		adjustFireLoss(amount)
+
+// and one for electricity because why not
+/mob/living/proc/inflict_shock_damage(amount)
+	electrocute_act(amount, null, 1 - get_shock_protection(), pick(BP_HEAD, BP_TORSO, BP_GROIN))
+
+// also one for water (most things resist it entirely, except for slimes)
+/mob/living/proc/inflict_water_damage(amount)
+	amount *= 1 - get_water_protection()
+	if(amount > 0)
+		adjustToxLoss(amount)
+
+// one for abstracted away ""poison"" (mostly because simplemobs shouldn't handle reagents)
+/mob/living/proc/inflict_poison_damage(amount)
+	if(isSynthetic())
+		return
+	amount *= 1 - get_poison_protection()
+	if(amount > 0)
+		adjustToxLoss(amount)

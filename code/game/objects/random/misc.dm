@@ -183,7 +183,7 @@
 	icon_state = "pill_canister"
 
 /obj/random/medical/pillbottle/item_to_spawn()
-	return pick(prob(1);/obj/item/weapon/storage/pill_bottle/spaceacillin,
+	return pick(prob(1);/obj/item/weapon/storage/pill_bottle/penicillin,
 				prob(1);/obj/item/weapon/storage/pill_bottle/dermaline,
 				prob(1);/obj/item/weapon/storage/pill_bottle/dexalin_plus,
 				prob(1);/obj/item/weapon/storage/pill_bottle/bicaridine,
@@ -256,11 +256,11 @@
 
 /obj/random/cash/item_to_spawn()
 	return pick(prob(320);/obj/random/maintenance/clean,
-				prob(12);/obj/item/weapon/spacecash/c1,
-				prob(8);/obj/item/weapon/spacecash/c10,
-				prob(4);/obj/item/weapon/spacecash/c20,
-				prob(1);/obj/item/weapon/spacecash/c50,
-				prob(1);/obj/item/weapon/spacecash/c100)
+				prob(12);/obj/item/weapon/spacecash/bundle/c1,
+				prob(8);/obj/item/weapon/spacecash/bundle/c10,
+				prob(4);/obj/item/weapon/spacecash/bundle/c20,
+				prob(1);/obj/item/weapon/spacecash/bundle/c50,
+				prob(1);/obj/item/weapon/spacecash/bundle/c100)
 
 /obj/random/soap
 	name = "Random Soap"
@@ -488,3 +488,193 @@
 				/obj/item/toy/prize/mauler,
 				/obj/item/toy/prize/odysseus,
 				/obj/item/toy/prize/phazon)
+
+//Random MRE stuff
+
+/obj/random/mre
+	name = "random MRE"
+	desc = "This is a random single MRE."
+	icon = 'icons/obj/food.dmi'
+	icon_state = "mre"
+
+/obj/random/mre/item_to_spawn()
+	return pick(/obj/item/weapon/storage/mre,
+				/obj/item/weapon/storage/mre/menu2,
+				/obj/item/weapon/storage/mre/menu3,
+				/obj/item/weapon/storage/mre/menu4,
+				/obj/item/weapon/storage/mre/menu5,
+				/obj/item/weapon/storage/mre/menu6,
+				/obj/item/weapon/storage/mre/menu7,
+				/obj/item/weapon/storage/mre/menu8,
+				/obj/item/weapon/storage/mre/menu9,
+				/obj/item/weapon/storage/mre/menu10)
+
+
+/obj/random/mre/main
+	name = "random MRE main course"
+	desc = "This is a random main course for MREs."
+	icon_state = "pouch"
+
+/obj/random/mre/main/item_to_spawn()
+	return pick(/obj/item/weapon/storage/mrebag,
+				/obj/item/weapon/storage/mrebag/menu2,
+				/obj/item/weapon/storage/mrebag/menu3,
+				/obj/item/weapon/storage/mrebag/menu4,
+				/obj/item/weapon/storage/mrebag/menu5,
+				/obj/item/weapon/storage/mrebag/menu6,
+				/obj/item/weapon/storage/mrebag/menu7,
+				/obj/item/weapon/storage/mrebag/menu8)
+
+/obj/random/mre/side
+	name = "random MRE side dish"
+	desc = "This is a random side dish for MREs."
+	icon_state = "pouch"
+
+/obj/random/mre/side/item_to_spawn()
+	return pick(/obj/item/weapon/reagent_containers/food/snacks/tossedsalad,
+				/obj/item/weapon/reagent_containers/food/snacks/boiledrice,
+				/obj/item/weapon/reagent_containers/food/snacks/poppypretzel,
+				/obj/item/weapon/reagent_containers/food/snacks/twobread,
+				/obj/item/weapon/reagent_containers/food/snacks/jelliedtoast)
+
+/obj/random/mre/dessert
+	name = "random MRE dessert"
+	desc = "This is a random dessert for MREs."
+	icon_state = "pouch"
+
+/obj/random/mre/dessert/item_to_spawn()
+	return pick(/obj/item/weapon/reagent_containers/food/snacks/candy,
+				/obj/item/weapon/reagent_containers/food/snacks/candy/proteinbar,
+				/obj/item/weapon/reagent_containers/food/snacks/donut/normal,
+				/obj/item/weapon/reagent_containers/food/snacks/donut/cherryjelly,
+				/obj/item/weapon/reagent_containers/food/snacks/chocolatebar,
+				/obj/item/weapon/reagent_containers/food/snacks/cookie)
+
+/obj/random/mre/dessert/vegan
+	name = "random vegan MRE dessert"
+	desc = "This is a random vegan dessert for MREs."
+
+/obj/random/mre/dessert/vegan/item_to_spawn()
+	return pick(/obj/item/weapon/reagent_containers/food/snacks/candy,
+				/obj/item/weapon/reagent_containers/food/snacks/chocolatebar,
+				/obj/item/weapon/reagent_containers/food/snacks/donut/cherryjelly,
+				/obj/item/weapon/reagent_containers/food/snacks/plumphelmetbiscuit)
+
+/obj/random/mre/drink
+	name = "random MRE drink"
+	desc = "This is a random drink for MREs."
+	icon_state = "packet"
+
+/obj/random/mre/drink/item_to_spawn()
+	return pick(/obj/item/weapon/reagent_containers/food/condiment/small/packet/coffee,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/tea,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/cocoa,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/grape,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/orange,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/watermelon,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/apple)
+
+/obj/random/mre/spread
+	name = "random MRE spread"
+	desc = "This is a random spread packet for MREs."
+	icon_state = "packet"
+
+/obj/random/mre/spread/item_to_spawn()
+	return pick(/obj/item/weapon/reagent_containers/food/condiment/small/packet/jelly,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/honey)
+
+/obj/random/mre/spread/vegan
+	name = "random vegan MRE spread"
+	desc = "This is a random vegan spread packet for MREs"
+
+/obj/random/mre/spread/vegan/item_to_spawn()
+	return pick(/obj/item/weapon/reagent_containers/food/condiment/small/packet/jelly)
+
+/obj/random/mre/sauce
+	name = "random MRE sauce"
+	desc = "This is a random sauce packet for MREs."
+	icon_state = "packet"
+
+/obj/random/mre/sauce/item_to_spawn()
+	return pick(/obj/item/weapon/reagent_containers/food/condiment/small/packet/salt,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/pepper,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/sugar,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/capsaicin,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/ketchup,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/mayo,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/soy)
+
+/obj/random/mre/sauce/vegan/item_to_spawn()
+	return pick(/obj/item/weapon/reagent_containers/food/condiment/small/packet/salt,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/pepper,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/sugar,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/soy)
+
+/obj/random/mre/sauce/sugarfree/item_to_spawn()
+	return pick(/obj/item/weapon/reagent_containers/food/condiment/small/packet/salt,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/pepper,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/capsaicin,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/ketchup,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/mayo,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/soy)
+
+/obj/random/mre/sauce/crayon/item_to_spawn()
+	return pick(/obj/item/weapon/reagent_containers/food/condiment/small/packet/crayon/generic,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/crayon/red,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/crayon/orange,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/crayon/yellow,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/crayon/green,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/crayon/blue,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/crayon/purple,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/crayon/grey,
+				/obj/item/weapon/reagent_containers/food/condiment/small/packet/crayon/brown)
+
+/obj/random/sushi
+	name = "random sushi"
+	desc = "A random type of sushi."
+
+/obj/random/sushi/item_to_spawn()
+	return pick(/obj/item/weapon/reagent_containers/food/snacks/sushi/sushi_Ebi,
+				/obj/item/weapon/reagent_containers/food/snacks/sushi/sushi_Ikura,
+				/obj/item/weapon/reagent_containers/food/snacks/sushi/sushi_Sake,
+				/obj/item/weapon/reagent_containers/food/snacks/sushi/sushi_SmokedSalmon,
+				/obj/item/weapon/reagent_containers/food/snacks/sushi/sushi_Tamago,
+				/obj/item/weapon/reagent_containers/food/snacks/sushi/sushi_Inari,
+				/obj/item/weapon/reagent_containers/food/snacks/sushi/sushi_Masago,
+				/obj/item/weapon/reagent_containers/food/snacks/sushi/sushi_Tobiko,
+				/obj/item/weapon/reagent_containers/food/snacks/sushi/sushi_TobikoEgg,
+				/obj/item/weapon/reagent_containers/food/snacks/sushi/sushi_Tai,
+				/obj/item/weapon/reagent_containers/food/snacks/sushi/sushi_Unagi)
+
+/obj/random/pottedplant
+	name = "random potted plant"
+	desc = "A random type of potted plant."
+
+/obj/random/pottedplant/item_to_spawn()
+	return pick(/obj/structure/flora/pottedplant/large,
+				/obj/structure/flora/pottedplant/fern,
+				/obj/structure/flora/pottedplant/overgrown,
+				/obj/structure/flora/pottedplant/bamboo,
+				/obj/structure/flora/pottedplant/largebush,
+				/obj/structure/flora/pottedplant/thinbush,
+				/obj/structure/flora/pottedplant/mysterious,
+				/obj/structure/flora/pottedplant/smalltree,
+				/obj/structure/flora/pottedplant/unusual,
+				/obj/structure/flora/pottedplant/orientaltree,
+				/obj/structure/flora/pottedplant/smallcactus,
+				/obj/structure/flora/pottedplant/tall,
+				/obj/structure/flora/pottedplant/sticky,
+				/obj/structure/flora/pottedplant/smelly,
+				/obj/structure/flora/pottedplant/small,
+				/obj/structure/flora/pottedplant/aquatic,
+				/obj/structure/flora/pottedplant/shoot,
+				/obj/structure/flora/pottedplant/flower,
+				/obj/structure/flora/pottedplant/crystal,
+				/obj/structure/flora/pottedplant/subterranean,
+				/obj/structure/flora/pottedplant/minitree,
+				/obj/structure/flora/pottedplant/stoutbush,
+				/obj/structure/flora/pottedplant/drooping,
+				/obj/structure/flora/pottedplant/tropical,
+				/obj/structure/flora/pottedplant/dead,
+				/obj/structure/flora/pottedplant/decorative,
+				/obj/structure/flora/pottedplant/xmas)

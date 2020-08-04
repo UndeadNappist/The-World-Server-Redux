@@ -36,19 +36,78 @@
 	var/list/connections = list("0", "0", "0", "0")
 	var/list/blend_objects = list(/obj/structure/wall_frame, /obj/structure/window, /obj/structure/grille) // Objects which to blend with
 
+	//keypad stuff
+	var/locked
+	var/keypad = FALSE
+
+	var/code = ""
+	var/l_code = null
+	var/l_set = 0
+	var/l_setshort = 0
+	var/l_hacking = 0
+	var/open = 0
+
+	unique_save_vars = list("code", "door_color", "stripe_color", "locked", "open", "panel_open", "l_hacking", "l_set", "l_code", "l_setshort", "keypad", "req_access", "req_one_access")
+
 	// turf animation
 	var/atom/movable/overlay/c_animation = null
 
+	var/can_knock = TRUE
+
+/obj/machinery/door/on_persistence_load()
+	update_connections(1)
+	update_icon()
+
+
+/obj/machinery/door/verb/knock(mob/user)
+	set name = "Knock Door"
+	set desc = "Knocks the door to see if someone will open it."
+	set category = "Object"
+	set src in view(1)
+
+	if(!user || user.stat || user.restrained() || user.lying || !istype(user, /mob/living))
+		to_chat(user, "<span class='warning'>You can't do that.</span>")
+		return
+
+	if(!Adjacent(user))
+		to_chat(user, "You can't reach it.")
+		return
+
+	if(!can_knock)
+		to_chat(user, "<span class='notice'>You can't seem to knock on \the [src]...</span>")
+		return
+
+	to_chat(user, "<span class='notice'>You knock on \the [src].</span>")
+
+
+	var/sound_volume = 50
+	if(!(user.a_intent == "harm"))
+		visible_message("<span class='notice'><b>You hear a knock on the \the [src].</b></span>")
+	else
+		visible_message("<span class='danger'><b>You hear a very [pick("urgent", "loud", "persistent")] knock on the \the [src]!</b></span>")
+		sound_volume = 90
+
+	playsound(src.loc, 'sound/effects/door_knocking.ogg', sound_volume, 0)
+
 /obj/machinery/door/attack_generic(var/mob/user, var/damage)
 	if(isanimal(user))
-		var/mob/living/simple_animal/S = user
+		var/mob/living/simple_animal/A = user
+
+		if(!A.can_destroy_structures())
+			damage = 0
 		if(damage >= 10)
-			visible_message("<span class='danger'>\The [user] smashes into the [src]!</span>")
-			playsound(src, S.attack_sound, 75, 1)
+			visible_message("<span class='danger'>\The [user] smashes into \the [src]!</span>")
+
 			take_damage(damage)
 		else
-			visible_message("<span class='notice'>\The [user] bonks \the [src] harmlessly.</span>")
-	user.do_attack_animation(src)
+
+			if(A.can_destroy_structures())
+				visible_message("<span class='notice'>\The [user] bonks \the [src] harmlessly.</span>")
+
+		playsound(src, A.attack_sound, 75, 1)
+		user.do_attack_animation(src)
+
+
 
 /obj/machinery/door/New()
 	. = ..()
@@ -103,6 +162,10 @@
 /obj/machinery/door/Bumped(atom/AM)
 	if(p_open || operating)
 		return
+
+	if(locked)
+		return
+
 	if(ismob(AM))
 		var/mob/M = AM
 		if(world.time - M.last_bumped <= 10)
@@ -205,6 +268,7 @@
 /obj/machinery/door/attack_tk(mob/user as mob)
 	if(requiresID() && !allowed(null))
 		return
+
 	..()
 
 /obj/machinery/door/attackby(obj/item/I as obj, mob/user as mob)
@@ -212,10 +276,10 @@
 
 	if(istype(I, /obj/item/stack/material) && I.get_material_name() == src.get_material_name())
 		if(stat & BROKEN)
-			user << "<span class='notice'>It looks like \the [src] is pretty busted. It's going to need more than just patching up now.</span>"
+			to_chat(user, "<span class='notice'>It looks like \the [src] is pretty busted. It's going to need more than just patching up now.</span>")
 			return
 		if(health >= maxhealth)
-			user << "<span class='notice'>Nothing to fix!</span>"
+			to_chat(user, "<span class='notice'>Nothing to fix!</span>")
 			return
 		if(!density)
 			user << "<span class='warning'>\The [src] must be closed before you can repair it.</span>"
@@ -384,7 +448,7 @@
 		icon_state = "door1"
 	else
 		icon_state = "door0"
-	radiation_repository.resistance_cache.Remove(get_turf(src))
+	SSradiation.resistance_cache.Remove(get_turf(src))
 	return
 
 
@@ -531,3 +595,4 @@
 		if(success)
 			dirs |= direction
 	connections = dirs
+

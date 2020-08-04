@@ -3,6 +3,7 @@
 
 
 /obj/item/trash
+	name = "trash"
 	var/age = 0
 
 /obj/item/trash/New(var/newloc, var/_age)
@@ -56,7 +57,7 @@
 	icon_state = "sosjerky"
 
 /obj/item/trash/unajerky
-	name = "Moghes Imported Sissalik Jerky"
+	name = "Sol Imported Lizard Jerky"
 	icon_state = "unathitinred"
 
 /obj/item/trash/syndi_cakes
@@ -95,6 +96,9 @@
 	icon = 'icons/obj/candle.dmi'
 	icon_state = "candle4"
 
+/obj/item/trash/candle/candelabra_stand
+	icon_state = "candelabra_stand"
+
 /obj/item/trash/liquidfood
 	name = "\improper \"LiquidFood\" ration"
 	icon_state = "liquidfood"
@@ -105,3 +109,7 @@
 
 /obj/item/trash/attack(mob/M as mob, mob/living/user as mob)
 	return
+
+/obj/item/trash/liquidprotein
+	name = "\improper \"LiquidProtein\" ration"
+	icon_state = "liquidprotein"

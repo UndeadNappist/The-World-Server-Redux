@@ -1,13 +1,10 @@
-#define ZONE_BLOCKED 2
-#define AIR_BLOCKED 1
-
 //Interactions
 /turf/simulated/wall/proc/toggle_open(var/mob/user)
 
 	if(can_open == WALL_OPENING)
 		return
 
-	radiation_repository.resistance_cache.Remove(src)
+	SSradiation.resistance_cache.Remove(src)
 
 	if(density)
 		can_open = WALL_OPENING
@@ -36,9 +33,6 @@
 
 	can_open = WALL_CAN_OPEN
 	update_icon()
-
-#undef ZONE_BLOCKED
-#undef AIR_BLOCKED
 
 /turf/simulated/wall/proc/update_air()
 	if(!air_master)
@@ -90,8 +84,6 @@
 			dismantle_wall()
 			return 1
 
-	if(..()) return 1
-
 	if(!can_open)
 		to_chat(user, "<span class='notice'>You push the wall, but nothing happens.</span>")
 		playsound(src, 'sound/weapons/Genhit.ogg', 25, 1)
@@ -141,7 +133,7 @@
 	if(!construction_stage && try_graffiti(user, W))
 		return
 
-	if (!user.)
+	if(!user.IsAdvancedToolUser())
 		to_chat(user, "<span class='warning'>You don't have the dexterity to do this!</span>")
 		return
 
@@ -198,6 +190,9 @@
 
 	//THERMITE related stuff. Calls src.thermitemelt() which handles melting simulated walls and the relevant effects
 	if(thermite)
+		if(user.IsAntiGrief())
+			to_chat(user, "<span class='notice'>You don't want to do this.</span>")
+			return
 		if( istype(W, /obj/item/weapon/weldingtool) )
 			var/obj/item/weapon/weldingtool/WT = W
 			if( WT.remove_fuel(0,user) )
@@ -222,7 +217,6 @@
 	var/turf/T = user.loc	//get user's location for delay checks
 
 	if(damage && istype(W, /obj/item/weapon/weldingtool))
-
 		var/obj/item/weapon/weldingtool/WT = W
 
 		if(!WT.isOn())
@@ -242,7 +236,9 @@
 
 	// Basic dismantling.
 	if(isnull(construction_stage) || !reinf_material)
-
+		if(user.IsAntiGrief())
+			to_chat(user, "<span class='notice'>You don't want to do this.</span>")
+			return
 		var/cut_delay = 60 - material.cut_delay
 		var/dismantle_verb
 		var/dismantle_sound
@@ -289,6 +285,9 @@
 		switch(construction_stage)
 			if(6)
 				if (istype(W, /obj/item/weapon/wirecutters))
+					if(user.IsAntiGrief())
+						to_chat(user, "<span class='notice'>You don't want to do this.</span>")
+						return
 					playsound(src, W.usesound, 100, 1)
 					construction_stage = 5
 					user.update_examine_panel(src)
@@ -297,6 +296,9 @@
 					return
 			if(5)
 				if (istype(W, /obj/item/weapon/screwdriver))
+					if(user.IsAntiGrief())
+						to_chat(user, "<span class='notice'>You don't want to do this.</span>")
+						return
 					to_chat(user, "<span class='notice'>You begin removing the support lines.</span>")
 					playsound(src, W.usesound, 100, 1)
 					if(!do_after(user,40 * W.toolspeed) || !istype(src, /turf/simulated/wall) || construction_stage != 5)
@@ -319,6 +321,9 @@
 					var/obj/item/weapon/weldingtool/WT = W
 					if(!WT.isOn())
 						return
+					if(user.IsAntiGrief())
+						to_chat(user, "<span class='notice'>You don't want to do this.</span>")
+						return
 					if(WT.remove_fuel(0,user))
 						cut_cover=1
 					else
@@ -327,6 +332,9 @@
 				else if (istype(W, /obj/item/weapon/pickaxe/plasmacutter))
 					cut_cover = 1
 				if(cut_cover)
+					if(user.IsAntiGrief())
+						to_chat(user, "<span class='notice'>You don't want to do this.</span>")
+						return
 					to_chat(user, "<span class='notice'>You begin slicing through the metal cover.</span>")
 					playsound(src, W.usesound, 100, 1)
 					if(!do_after(user, 60 * W.toolspeed) || !istype(src, /turf/simulated/wall) || construction_stage != 4)
@@ -348,6 +356,9 @@
 					return
 			if(3)
 				if (istype(W, /obj/item/weapon/crowbar))
+					if(user.IsAntiGrief())
+						to_chat(user, "<span class='notice'>You don't want to do this.</span>")
+						return
 					to_chat(user, "<span class='notice'>You struggle to pry off the cover.</span>")
 					playsound(src, W.usesound, 100, 1)
 					if(!do_after(user,100 * W.toolspeed) || !istype(src, /turf/simulated/wall) || construction_stage != 3)
@@ -359,6 +370,9 @@
 					return
 			if(2)
 				if (istype(W, /obj/item/weapon/wrench))
+					if(user.IsAntiGrief())
+						to_chat(user, "<span class='notice'>You don't want to do this.</span>")
+						return
 					to_chat(user, "<span class='notice'>You start loosening the anchoring bolts which secure the support rods to their frame.</span>")
 					playsound(src, W.usesound, 100, 1)
 					if(!do_after(user,40 * W.toolspeed) || !istype(src, /turf/simulated/wall) || construction_stage != 2)
@@ -370,6 +384,9 @@
 					return
 			if(1)
 				var/cut_cover
+				if(user.IsAntiGrief())
+					to_chat(user, "<span class='notice'>You don't want to do this.</span>")
+					return
 				if(istype(W, /obj/item/weapon/weldingtool))
 					var/obj/item/weapon/weldingtool/WT = W
 					if( WT.remove_fuel(0,user) )
@@ -390,6 +407,9 @@
 					to_chat(user, "<span class='notice'>The slice through the support rods.</span>")
 					return
 			if(0)
+				if(user.IsAntiGrief())
+					to_chat(user, "<span class='notice'>You don't want to do this.</span>")
+					return
 				if(istype(W, /obj/item/weapon/crowbar))
 					to_chat(user, "<span class='notice'>You struggle to pry off the outer sheath.</span>")
 					playsound(src, W.usesound, 100, 1)

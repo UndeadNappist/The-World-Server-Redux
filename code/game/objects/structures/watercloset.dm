@@ -53,6 +53,12 @@
 			update_icon()
 			return
 
+	var/obj/item/weapon/reagent_containers/RG = I
+	if (istype(RG) && RG.is_open_container())
+		RG.reagents.add_reagent("toiletwater", min(RG.volume - RG.reagents.total_volume, RG.amount_per_transfer_from_this))
+		user.visible_message("<span class='notice'>[user] fills \the [RG] using \the [src].</span>","<span class='notice'>You fill \the [RG] using \the [src].</span>")
+		return 1
+
 	if(istype(I, /obj/item/weapon/grab))
 		user.setClickCooldown(user.get_attack_speed(I))
 		var/obj/item/weapon/grab/G = I
@@ -132,6 +138,7 @@
 	var/is_washing = 0
 	var/list/temperature_settings = list("normal" = 310, "boiling" = T0C+100, "freezing" = T0C)
 //	var/datum/looping_sound/showering/soundloop
+	var/id
 
 /obj/machinery/shower/initialize()
 	create_reagents(50)
@@ -154,6 +161,9 @@
 	mouse_opacity = 0
 
 /obj/machinery/shower/attack_hand(mob/M as mob)
+	toggle_wash(M)
+
+/obj/machinery/shower/proc/toggle_wash(mob/M as mob)
 	on = !on
 	update_icon()
 	if(on)

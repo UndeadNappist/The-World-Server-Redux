@@ -4,16 +4,16 @@ var/list/gamemode_cache = list()
 	var/server_name = null				// server name (for world name / status)
 	var/server_suffix = 0				// generate numeric suffix based on server port
 
-	var/nudge_script_path = "nudge.py"  // where the nudge.py script is located
+	var/nudge_script_path = "nudge.py"  	// where the nudge.py script is located
 
 	var/canonicity = 0					// if we're canon or not.
 	var/years_in_future = 544			// how many years in the future are we?
 	var/days_in_future = 0				// how many years in the future are we?
-	var/months_in_future = 0			// how many years in the future are we?
+	var/months_in_future = 0				// how many years in the future are we?
 
-	var/log_ooc = 0						// log OOC channel
+	var/log_ooc = 0					// log OOC channel
 	var/log_access = 0					// log login/logout
-	var/log_say = 0						// log client say
+	var/log_say = 0					// log client say
 	var/log_admin = 0					// log admin actions
 	var/log_debug = 0					// log debug output
 	var/log_game = 0					// log game events
@@ -23,41 +23,42 @@ var/list/gamemode_cache = list()
 	var/log_attack = 0					// log attack messages
 	var/log_adminchat = 0				// log admin chat messages
 	var/log_adminwarn = 0				// log warnings admins get about bomb construction and such
-	var/log_pda = 0						// log pda messages
+	var/log_pda = 0					// log pda messages
 	var/log_hrefs = 0					// logs all links clicked in-game. Could be used for debugging and tracking down exploits
 	var/log_runtime = 0					// logs world.log to a file
-	var/log_world_output = 0			// log world.log << messages
+	var/log_world_output = 0				// log world.log << messages
 	var/sql_enabled = 0					// for sql switching
-	var/allow_admin_ooccolor = 0		// Allows admins with relevant permissions to have their own ooc colour
+	var/hard_saving = 1					// If database decides to fail, do we save things to file?
+	var/allow_admin_ooccolor = 0			// Allows admins with relevant permissions to have their own ooc colour
 	var/allow_vote_restart = 0 			// allow votes to restart
 	var/ert_admin_call_only = 0
 	var/allow_vote_mode = 0				// allow votes to change mode
-	var/allow_admin_jump = 1			// allows admin jumping
-	var/allow_admin_spawning = 1		// allows admin item spawning
+	var/allow_admin_jump = 1				// allows admin jumping
+	var/allow_admin_spawning = 1			// allows admin item spawning
 	var/allow_admin_rev = 1				// allows admin revives
 	var/vote_delay = 6000				// minimum time between voting sessions (deciseconds, 10 minute default)
 	var/vote_period = 600				// length of voting period (deciseconds, default 1 minute)
-	var/vote_autotransfer_initial = 108000 // Length of time before the first autotransfer vote is called
-	var/vote_autotransfer_interval = 36000 // length of time before next sequential autotransfer vote
-	var/vote_autogamemode_timeleft = 100 //Length of time before round start when autogamemode vote is called (in seconds, default 100).
+	var/vote_autotransfer_initial = 108000  // Length of time before the first autotransfer vote is called
+	var/vote_autotransfer_interval = 36000  // length of time before next sequential autotransfer vote
+	var/vote_autogamemode_timeleft = 100    //Length of time before round start when autogamemode vote is called (in seconds, default 100).
 	var/vote_no_default = 0				// vote does not default to nochange/norestart (tbi)
 	var/vote_no_dead = 0				// dead people can't vote (tbi)
-//	var/enable_authentication = 0		// goon authentication
+//	var/enable_authentication = 0			// goon authentication
 	var/del_new_on_log = 1				// del's new players if they log before they spawn in
-	var/feature_object_spell_system = 0 //spawns a spellbook which gives object-type spells instead of verb-type spells for the wizard
-	var/traitor_scaling = 0 			//if amount of traitors scales based on amount of players
+	var/feature_object_spell_system = 0	 //spawns a spellbook which gives object-type spells instead of verb-type spells for the wizard
+	var/traitor_scaling = 0 				//if amount of traitors scales based on amount of players
 	var/objectives_disabled = 0 			//if objectives are disabled or not
-	var/protect_roles_from_antagonist = 0// If security and such can be traitor/cult/other
-	var/continous_rounds = 0			// Gamemodes which end instantly will instead keep on going until the round ends by escape shuttle or nuke.
+	var/protect_roles_from_antagonist = 0	// If security and such can be traitor/cult/other
+	var/continous_rounds = 0				// Gamemodes which end instantly will instead keep on going until the round ends by escape shuttle or nuke.
 	var/allow_Metadata = 0				// Metadata is supported.
 	var/popup_admin_pm = 0				//adminPMs to non-admins show in a pop-up 'reply' window when set to 1.
 	var/fps = 30
 	var/tick_limit_mc_init = TICK_LIMIT_MC_INIT_DEFAULT	//SSinitialization throttling
 	var/Tickcomp = 0
-	var/socket_talk	= 0					// use socket_talk to communicate with other processes
+	var/socket_talk	= 0				// use socket_talk to communicate with other processes
 	var/list/resource_urls = null
 	var/antag_hud_allowed = 0			// Ghosts can turn on Antagovision to see a HUD of who is the bad guys this round.
-	var/antag_hud_restricted = 0                    // Ghosts that turn on Antagovision cannot rejoin the round.
+	var/antag_hud_restricted = 0            // Ghosts that turn on Antagovision cannot rejoin the round.
 	var/list/mode_names = list()
 	var/list/modes = list()				// allowed modes
 	var/list/votable_modes = list()		// votable modes
@@ -80,20 +81,23 @@ var/list/gamemode_cache = list()
 	var/load_jobs_from_txt = 0
 	var/ToRban = 0
 	var/automute_on = 0					//enables automuting/spam prevention
-	var/jobs_have_minimal_access = 0	//determines whether jobs use minimal access or expanded access.
+	var/jobs_have_minimal_access = 0		//determines whether jobs use minimal access or expanded access.
 
-	var/cult_ghostwriter = 1               //Allows ghosts to write in blood in cult rounds...
-	var/cult_ghostwriter_req_cultists = 10 //...so long as this many cultists are active.
+	var/cult_ghostwriter = 1                //Allows ghosts to write in blood in cult rounds...
+	var/cult_ghostwriter_req_cultists = 10  //...so long as this many cultists are active.
 
 	var/character_slots = 10				// The number of available character slots
-	var/loadout_slots = 3					// The number of loadout slots per character
+	var/loadout_slots = 3				// The number of loadout slots per character
 
 	var/max_maint_drones = 5				//This many drones can spawn,
-	var/allow_drone_spawn = 1				//assuming the admin allow them to.
-	var/drone_build_time = 1200				//A drone will become available every X ticks since last drone spawn. Default is 2 minutes.
+	var/allow_drone_spawn = 1			//assuming the admin allow them to.
+	var/drone_build_time = 1200			//A drone will become available every X ticks since last drone spawn. Default is 2 minutes.
 
 	var/disable_player_mice = 0
-	var/uneducated_mice = 0 //Set to 1 to prevent newly-spawned mice from understanding human speech
+	var/uneducated_mice = 0 				//Set to 1 to prevent newly-spawned mice from understanding human speech
+
+	var/middle_class_age = 7 			// How many days a player must be before they can make a middle class character
+	var/upper_class_age = 14 			// How many days a player must be before they can make a upper class character
 
 	var/usealienwhitelist = 0
 	var/limitalienplayers = 0
@@ -102,6 +106,30 @@ var/list/gamemode_cache = list()
 	var/guests_allowed = 1
 	var/debugparanoid = 0
 	var/panic_bunker = 0
+
+	var/min_byond_age = 0				//This denies anyone under this byond age from joining.
+
+	var/byond_antigrief_age = 0
+	var/player_antigrief_age = 0
+	//A softer option. Clients under this age will be marked with "antigrief" which prevents certain items
+	//from being used such as weapons, explosives, atmos, etc. until they reach a certain age
+
+	var/allow_byond_links = 0
+	var/allow_discord_links = 0
+	var/allow_url_links = 0					// honestly if I were you i'd leave this one off, only use in dire situations
+
+	var/allow_repeat_ooc_messages = 0			 // if set to true, you can't send same message in OOC twice in a row.
+
+
+	var/ip_reputation = FALSE		//Should we query IPs to get scores? Generates HTTP traffic to an API service.
+	var/ipr_email					//Left null because you MUST specify one otherwise you're making the internet worse.
+	var/ipr_block_bad_ips = FALSE		//Should we block anyone who meets the minimum score below? Otherwise we just log it (If paranoia logging is on, visibly in chat).
+	var/ipr_bad_score = 1			//The API returns a value between 0 and 1 (inclusive), with 1 being 'definitely VPN/Tor/Proxy'. Values equal/above this var are considered bad.
+	var/ipr_allow_existing = FALSE 	//Should we allow known players to use VPNs/Proxies? If the player is already banned then obviously they still can't connect.
+	var/ipr_minimum_age = 5			//How many days before a player is considered 'fine' for the purposes of allowing them to use VPNs.
+
+
+	var/gamemode_vote = 0
 
 	var/serverurl
 	var/server
@@ -231,9 +259,28 @@ var/list/gamemode_cache = list()
 	var/allow_chat_markup = 0 // Mark-up enabling
 	var/show_human_death_message = 1
 
+	var/radiation_resistance_calc_mode = RAD_RESIST_CALC_SUB // 0:1 subtraction:division for computing effective radiation on a turf
 	var/radiation_decay_rate = 1 //How much radiation is reduced by each tick
 	var/radiation_resistance_multiplier = 6.5
+	var/radiation_material_resistance_divisor = 1
 	var/radiation_lower_limit = 0.35 //If the radiation level for a turf would be below this, ignore it.
+
+	var/ssd_protect = 0
+
+	// can lots be saved? if this is set to false, this disables lots. it will auto-toggle if lot loading is borked in process to prevent data corruption.
+	var/lot_saving = FALSE
+
+	// allow businesses to be made?
+	var/allow_businesses = FALSE
+
+	// redbot settings
+	var/comms_key = ""
+	var/bot_ip = ""
+
+	// can antagonists join from the lobby?
+	var/allow_lobby_antagonists = FALSE
+
+
 
 /datum/configuration/New()
 	var/list/L = typesof(/datum/game_mode) - /datum/game_mode
@@ -303,6 +350,12 @@ var/list/gamemode_cache = list()
 				if ("multi_z_explosion_scalar")
 					multi_z_explosion_scalar = text2num(value)
 
+				if ("upper_class_age")
+					upper_class_age = text2num(value)
+
+				if ("middle_class_age")
+					middle_class_age = text2num(value)
+
 				if ("log_ooc")
 					config.log_ooc = 1
 
@@ -312,11 +365,32 @@ var/list/gamemode_cache = list()
 				if ("sql_enabled")
 					config.sql_enabled = 1
 
+				if ("hard_saving")
+					config.hard_saving = 1
+
+				if ("lot_saving")
+					config.lot_saving = 1
+
+				if("allow_businesses")
+					config.allow_businesses = 1
+
+				if("comms_key")
+					config.comms_key = text2num(value)
+
+				if("bot_ip")
+					config.bot_ip = text2num(value)
+
+				if("allow_lobby_antagonists")
+					config.allow_lobby_antagonists = 1
+
 				if ("log_say")
 					config.log_say = 1
 
 				if ("debug_paranoid")
 					config.debugparanoid = 1
+
+				if("panic_bunker")
+					config.panic_bunker = 1
 
 				if ("log_admin")
 					config.log_admin = 1
@@ -629,6 +703,9 @@ var/list/gamemode_cache = list()
 				if("continuous_rounds")
 					config.continous_rounds = 1
 
+				if("gamemode_vote")
+					config.gamemode_vote = 1
+
 				if("ghost_interaction")
 					config.ghost_interaction = 1
 
@@ -699,6 +776,49 @@ var/list/gamemode_cache = list()
 				if("player_levels")
 					using_map.player_levels = text2numlist(value, ";")
 */
+
+				if("ip_reputation")
+					config.ip_reputation = 1
+
+				if("ipr_email")
+					config.ipr_email = value
+
+				if("ipr_block_bad_ips")
+					config.ipr_block_bad_ips = 1
+
+				if("ipr_bad_score")
+					config.ipr_bad_score = text2num(value)
+
+				if("ipr_allow_existing")
+					config.ipr_allow_existing = 1
+
+				if("ipr_minimum_age")
+					config.ipr_minimum_age = text2num(value)
+
+				if ("min_byond_age")
+					config.min_byond_age = text2num(value)
+
+				if ("byond_antigrief_age")
+					config.byond_antigrief_age = text2num(value)
+
+				if ("player_antigrief_age")
+					config.player_antigrief_age = text2num(value)
+
+				if ("allow_byond_links")
+					config.allow_byond_links = 1
+
+				if ("allow_discord_links")
+					config.allow_discord_links = 1
+
+				if ("allow_url_links")
+					config.allow_url_links = 1
+
+				if ("allow_repeat_ooc_messages")
+					config.allow_repeat_ooc_messages = 1
+
+				if("ssd_protect")
+					config.ssd_protect = text2num(value)
+
 				if("expected_round_length")
 					config.expected_round_length = MinutesToTicks(text2num(value))
 
@@ -754,6 +874,21 @@ var/list/gamemode_cache = list()
 
 				if("radiation_lower_limit")
 					radiation_lower_limit = text2num(value)
+
+				if("radiation_resistance_calc_divide")
+					radiation_resistance_calc_mode = RAD_RESIST_CALC_DIV
+
+				if("radiation_resistance_calc_subtract")
+					radiation_resistance_calc_mode = RAD_RESIST_CALC_SUB
+
+				if("radiation_resistance_multiplier")
+					radiation_resistance_multiplier = text2num(value)
+
+				if("radiation_material_resistance_divisor")
+					radiation_material_resistance_divisor = text2num(value)
+
+				if("radiation_decay_rate")
+					radiation_decay_rate = text2num(value)
 
 				else
 					log_misc("Unknown setting in configuration: '[name]'")

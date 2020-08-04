@@ -67,7 +67,10 @@
 	var/list/candidates =          list()   // Potential candidates.
 	var/list/faction_members =     list()   // Semi-antags (in-round revs, borer thralls)
 
-	var/allow_latejoin = 0					//Determines whether or not the game mode will allow for the template to spawn try_latespawn
+	var/allow_latejoin = 0				//Determines whether or not the game mode will allow for the template to spawn try_latespawn
+
+	var/allow_lobbyjoin = FALSE			//If this antagonist type can join from the lobby or not.
+	var/police_per_antag = 1				//If it is a lobby join antag, how many police needed per antag?
 
 	// ID card stuff.
 	var/default_access = list()
@@ -98,6 +101,8 @@
 		if(role_text) hud_icon_reference[role_text] = antaghud_indicator
 		if(faction_role_text) hud_icon_reference[faction_role_text] = antaghud_indicator
 
+
+
 /datum/antagonist/proc/tick()
 	return 1
 
@@ -126,9 +131,12 @@
 		else if(player_is_antag(player))
 			candidates -= player
 			log_debug("[key_name(player)] is not eligible to become a [role_text]: They are already an antagonist! They have been removed from the draft.")
-		else if(player.prefs.age < 16)
+		else if(player.current.client.prefs.age < 16)
 			candidates -= player
 			log_debug("[key_name(player)] is not eligible to become a [role_text]: They are too young! They have been removed from the draft.")
+		else if(player.current.client.prefs.criminal_status == "Incarcerated")
+			candidates -= player
+			log_debug("[key_name(player)] is not eligible to become a [role_text]: They are in prison! They have been removed from the draft.")
 
 
 	return candidates
@@ -182,7 +190,7 @@
 
 /datum/antagonist/proc/draft_antagonist(var/datum/mind/player)
 	//Check if the player can join in this antag role, or if the player has already been given an antag role.
-	if(!can_become_antag(player) || player.assigned_role in roundstart_restricted)
+	if(!can_become_antag(player) || (player.assigned_role in roundstart_restricted))
 		log_debug("[player.key] was selected for [role_text] by lottery, but is not allowed to be that role.")
 		return 0
 	if(player.current.client.prefs.economic_status in disallowed_classes)

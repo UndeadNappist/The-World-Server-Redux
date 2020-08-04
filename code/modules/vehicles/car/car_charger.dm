@@ -13,6 +13,9 @@
 	/obj/item/weapon/car_charger/hyper = 450,
 	/obj/item/weapon/car_charger/full = 600)
 
+
+	vendor_department = "Emergency and Maintenance"
+
 /obj/vehicle/car/attackby(obj/item/weapon/car_charger/W as obj, mob/user as mob)
 	..()
 	var/obj/item/weapon/cell/ch_cell = get_cell() //get the current cell
@@ -47,9 +50,9 @@
 /obj/item/weapon/car_charger/examine(mob/user)
 	..()
 	if(full)
-		user << "It will charge your car's battery to the full amount."
+		to_chat(user, "It will charge your car's battery to the full amount.")
 	else
-		user << "It adds <b>[charge_amt]mAh</b> to your car's battery."
+		to_chat(user, "It adds <b>[charge_amt]mAh</b> to your car's battery.")
 
 /obj/item/weapon/car_charger/advanced
 	name = "advanced porta-charger"

@@ -45,6 +45,7 @@
 	update_strings()
 	return 1
 
+
 /obj/item/stack/material/get_material()
 	return material
 
@@ -90,47 +91,59 @@
 
 /obj/item/stack/material/iron
 	name = "iron"
-	icon_state = "sheet-silver"
+	icon_state = "sheet-ingot"
 	default_type = "iron"
 	apply_colour = 1
 	no_variants = FALSE
+	associated_reagents = list("iron")
 
 /obj/item/stack/material/lead
 	name = "lead"
-	icon_state = "sheet-adamantine"
+	icon_state = "sheet-ingot"
 	default_type = "lead"
 	apply_colour = 1
 	no_variants = TRUE
+	stack_color = COLOR_LEAD
 
 /obj/item/stack/material/sandstone
 	name = "sandstone brick"
-	icon_state = "sheet-sandstone"
+	icon_state = "sheet-brick"
 	default_type = "sandstone"
 	no_variants = FALSE
+	associated_reagents = list("silicon")
+	stack_color = COLOR_SANDSTONE
+	dyeable = TRUE
 
 /obj/item/stack/material/marble
 	name = "marble brick"
-	icon_state = "sheet-marble"
+	icon_state = "sheet-brick"
 	default_type = "marble"
 	no_variants = FALSE
+	associated_reagents = list("carbon")
+	stack_color = COLOR_MARBLE
 
 /obj/item/stack/material/diamond
 	name = "diamond"
 	icon_state = "sheet-diamond"
 	default_type = "diamond"
 	drop_sound = 'sound/items/drop/glass.ogg'
+	associated_reagents = list("carbon")
+
 
 /obj/item/stack/material/uranium
 	name = "uranium"
 	icon_state = "sheet-uranium"
 	default_type = "uranium"
 	no_variants = FALSE
+	associated_reagents = list("uranium")
+	stack_color = COLOR_URANIUM
 
 /obj/item/stack/material/phoron
 	name = "solid phoron"
 	icon_state = "sheet-phoron"
 	default_type = "phoron"
 	no_variants = FALSE
+	associated_reagents = list("phoron")
 
 /obj/item/stack/material/plastic
 	name = "plastic"
@@ -140,25 +153,33 @@
 	burn_state = 0 //Burnable
 	burntime = 5
 	drop_sound = 'sound/items/drop/boots.ogg'
+	associated_reagents = list("silicon")
+	dyeable = TRUE
 
 /obj/item/stack/material/gold
 	name = "gold"
-	icon_state = "sheet-gold"
+	icon_state = "sheet-ingot"
 	default_type = "gold"
 	no_variants = FALSE
+	associated_reagents = list("gold")
+	stack_color = COLOR_GOLD
 
 /obj/item/stack/material/silver
 	name = "silver"
-	icon_state = "sheet-silver"
+	icon_state = "sheet-ingot"
 	default_type = "silver"
 	no_variants = FALSE
+	associated_reagents = list("silver")
+	stack_color = COLOR_SILVER
 
 //Valuable resource, cargo can sell it.
 /obj/item/stack/material/platinum
 	name = "platinum"
-	icon_state = "sheet-adamantine"
+	icon_state = "sheet-ingot"
 	default_type = "platinum"
 	no_variants = FALSE
+	associated_reagents = list("platinum")
+	stack_color = COLOR_PLATINUM
 
 //Extremely valuable to Research.
 /obj/item/stack/material/mhydrogen
@@ -166,18 +187,20 @@
 	icon_state = "sheet-mythril"
 	default_type = "mhydrogen"
 	no_variants = FALSE
+	associated_reagents = list("hydrogen")
 
 //Fuel for MRSPACMAN generator.
 /obj/item/stack/material/tritium
 	name = "tritium"
-	icon_state = "sheet-silver"
+	icon_state = "sheet-ingot"
 	default_type = "tritium"
 	apply_colour = 1
 	no_variants = FALSE
+	stack_color = COLOR_TRITIUM
 
 /obj/item/stack/material/osmium
 	name = "osmium"
-	icon_state = "sheet-silver"
+	icon_state = "sheet-ingot"
 	default_type = "osmium"
 	apply_colour = 1
 	no_variants = FALSE
@@ -186,29 +209,40 @@
 // Fusion fuel.
 /obj/item/stack/material/deuterium
 	name = "deuterium"
-	icon_state = "sheet-silver"
+	icon_state = "sheet-ingot"
 	default_type = "deuterium"
 	apply_colour = 1
 	no_variants = FALSE
+
+	stack_color = "#999999"
 
 /obj/item/stack/material/steel
 	name = DEFAULT_WALL_MATERIAL
 	icon_state = "sheet-metal"
 	default_type = DEFAULT_WALL_MATERIAL
 	no_variants = FALSE
+	associated_reagents = list("iron")
+
+	stack_color = COLOR_GRAY40
 
 /obj/item/stack/material/plasteel
 	name = "plasteel"
 	icon_state = "sheet-plasteel"
 	default_type = "plasteel"
 	no_variants = FALSE
+	associated_reagents = list("iron", "carbon", "platinum")
+
+	stack_color = COLOR_GRAY40
 
 /obj/item/stack/material/durasteel
 	name = "durasteel"
-	icon_state = "sheet-durasteel"
+	icon_state = "sheet-metal"
 	item_state = "sheet-metal"
 	default_type = "durasteel"
 	no_variants = FALSE
+	associated_reagents = list("iron")
+
+	stack_color = COLOR_GRAY
 
 /obj/item/stack/material/wood
 	name = "wooden plank"
@@ -216,6 +250,9 @@
 	default_type = MAT_WOOD
 	burn_state = 0 //Burnable
 	burntime = MEDIUM_BURN
+	associated_reagents = list("woodpulp")
+	stack_color = WOOD_COLOR_GENERIC
+	no_variants = FALSE
 
 /obj/item/stack/material/wood/ten
 	amount = 10
@@ -226,6 +263,7 @@
 /obj/item/stack/material/wood/mahogany
 	name = "mahogany plank"
 	default_type = MATERIAL_MAHOGANY
+	stack_color = WOOD_COLOR_RICH
 
 /obj/item/stack/material/wood/mahogany/ten
 	amount = 10
@@ -236,6 +274,7 @@
 /obj/item/stack/material/wood/maple
 	name = "maple plank"
 	default_type = MATERIAL_MAPLE
+	stack_color = WOOD_COLOR_PALE
 
 /obj/item/stack/material/wood/maple/ten
 	amount = 10
@@ -246,6 +285,7 @@
 /obj/item/stack/material/wood/ebony
 	name = "ebony plank"
 	default_type = MATERIAL_EBONY
+	stack_color = WOOD_COLOR_BLACK
 
 /obj/item/stack/material/wood/ebony/ten
 	amount = 10
@@ -256,6 +296,7 @@
 /obj/item/stack/material/wood/walnut
 	name = "walnut plank"
 	default_type = MATERIAL_WALNUT
+	stack_color = WOOD_COLOR_CHOCOLATE
 
 /obj/item/stack/material/wood/walnut/ten
 	amount = 10
@@ -266,6 +307,7 @@
 /obj/item/stack/material/wood/bamboo
 	name = "bamboo plank"
 	default_type = MATERIAL_BAMBOO
+	stack_color = WOOD_COLOR_PALE2
 
 /obj/item/stack/material/wood/bamboo/ten
 	amount = 10
@@ -273,10 +315,21 @@
 /obj/item/stack/material/wood/bamboo/fifty
 	amount = 50
 
+/obj/item/stack/material/wood/yew
+	name = "yew plank"
+	default_type = MATERIAL_YEW
+	stack_color = WOOD_COLOR_YELLOW
+
+/obj/item/stack/material/wood/yew/ten
+	amount = 10
+
+/obj/item/stack/material/wood/yew/fifty
+	amount = 50
+
 /obj/item/stack/material/wood/sif
 	name = "alien wooden plank"
-	color = "#0099cc"
 	default_type = MAT_SIFWOOD
+	stack_color = "#0099cc"
 
 /obj/item/stack/material/log
 	name = "log"
@@ -285,11 +338,12 @@
 	no_variants = FALSE
 	burn_state = 0 //Burnable
 	burntime = LONG_BURN
-	color = "#824B28"
+	stack_color = WOOD_COLOR_GENERIC
 	max_amount = 25
 	w_class = ITEMSIZE_HUGE
 	description_info = "Use inhand to craft things, or use a sharp and edged object on this to convert it into two wooden planks."
 	var/plank_type = /obj/item/stack/material/wood
+	associated_reagents = list("woodpulp")
 
 /obj/item/stack/material/log/sif
 	name = "alien log"
@@ -320,38 +374,119 @@
 		return ..()
 
 
-/obj/item/stack/material/cloth
-	name = "cloth"
-	icon_state = "sheet-cloth"
-	default_type = "cloth"
-	no_variants = FALSE
-
 /obj/item/stack/material/cardboard
 	name = "cardboard"
 	icon_state = "sheet-card"
 	default_type = "cardboard"
 	no_variants = FALSE
+	dyeable = TRUE
 
 /obj/item/stack/material/snow
 	name = "snow"
 	desc = "The temptation to build a snowman rises."
 	icon_state = "sheet-snow"
 	default_type = "snow"
+	associated_reagents = list("water")
+	stack_color = COLOR_WHITE
 
 /obj/item/stack/material/snowbrick
 	name = "snow brick"
 	desc = "For all of your igloo building needs."
-	icon_state = "sheet-snowbrick"
+	icon_state = "sheet-brick"
 	default_type = "packed snow"
+	associated_reagents = list("water")
+	stack_color = COLOR_WHITE
 
 /obj/item/stack/material/leather
 	name = "leather"
 	desc = "The by-product of mob grinding."
-	icon_state = "sheet-leather"
+	icon_state = "sheet-fabric"
 	default_type = "leather"
 	no_variants = FALSE
 	burn_state = 0 //Burnable
 	burntime = 5
+	associated_reagents = list("protein")
+	dyeable = TRUE
+	stack_color = COLOR_BROWN
+	drop_sound = 'sound/items/drop/clothing.ogg'
+
+/obj/item/stack/material/silk
+	name = "silk"
+	desc = "Many lives were lost trying to wrangle the silk from giant spiders, but it was a risk we were willing to take."
+	icon_state = "sheet-cloth"
+	default_type = "silk"
+	no_variants = FALSE
+	burn_state = 0 //Burnable
+	burntime = 5
+	associated_reagents = list("protein")
+	dyeable = TRUE
+	drop_sound = 'sound/items/drop/clothing.ogg'
+
+/obj/item/stack/material/cotton
+	name = "cotton"
+	desc = "Picked from cotton plants."
+	icon_state = "sheet-cloth"
+	default_type = "cotton"
+	no_variants = FALSE
+	burn_state = 0 //Burnable
+	burntime = 5
+	associated_reagents = list("protein")
+	dyeable = TRUE
+	drop_sound = 'sound/items/drop/clothing.ogg'
+
+
+
+/obj/item/stack/material/cotton/black
+	stack_color = COLOR_BLACK
+
+/obj/item/stack/material/cotton/red
+	stack_color = COLOR_BLACK
+
+/obj/item/stack/material/cotton/maroon
+	stack_color = COLOR_MAROON
+
+/obj/item/stack/material/cotton/forest
+	stack_color = COLOR_FOREST_GREEN
+
+/obj/item/stack/material/cotton/navy
+	stack_color = COLOR_NAVY
+
+/obj/item/stack/material/cotton/beige
+	stack_color = COLOR_BEIGE
+
+/obj/item/stack/material/cotton/gray
+	stack_color = COLOR_GRAY
+
+/obj/item/stack/material/cotton/green
+	stack_color = COLOR_GREEN
+
+/obj/item/stack/material/cotton/pink
+	stack_color = COLOR_PINK
+
+/obj/item/stack/material/denim
+	name = "denim"
+	desc = "The worker's fabric as many would say."
+	icon_state = "sheet-fabric"
+	default_type = "denim"
+	no_variants = FALSE
+	burn_state = 0 //Burnable
+	burntime = 5
+	associated_reagents = list("protein")
+	dyeable = TRUE
+	stack_color = COLOR_DENIM
+	drop_sound = 'sound/items/drop/clothing.ogg'
+
+/obj/item/stack/material/wool
+	name = "wool"
+	desc = "Sheared from your local sheep. A so-done sheep."
+	icon_state = "sheet-fabric"
+	default_type = "wool"
+	no_variants = FALSE
+	burn_state = 0 //Burnable
+	burntime = 5
+	associated_reagents = list("protein")
+	dyeable = TRUE
+	drop_sound = 'sound/items/drop/clothing.ogg'
 
 /obj/item/stack/material/glass
 	name = "glass"
@@ -359,6 +494,8 @@
 	default_type = "glass"
 	no_variants = FALSE
 	drop_sound = 'sound/items/drop/glass.ogg'
+	associated_reagents = list("silicon")
+	stack_color = COLOR_DEEP_SKY_BLUE
 
 /obj/item/stack/material/glass/reinforced
 	name = "reinforced glass"
@@ -381,3 +518,4 @@
 	icon_state = "sheet-phoronrglass"
 	default_type = "reinforced borosilicate glass"
 	no_variants = FALSE
+

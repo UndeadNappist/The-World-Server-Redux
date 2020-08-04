@@ -6,6 +6,10 @@
 	var/totalPlayers = 0		 //Player counts for the Lobby tab
 	var/totalPlayersReady = 0
 	var/datum/browser/panel
+
+	var/selected_job = "Civilian"
+	var/job_select_mode = "ALL"	// Options: All, Public or Private
+
 	universal_speak = 1
 	invisibility = 101
 
@@ -17,6 +21,10 @@
 
 /mob/new_player/New()
 	mob_list += src
+
+/mob/new_player/say(var/message, var/datum/language/speaking = null, var/verb="says", var/alt_name="", whispering)
+	if (client)
+		client.ooc(message)
 
 /mob/new_player/verb/new_player_panel()
 	set src = usr
@@ -69,15 +77,17 @@
 	else
 		output += "<a href='byond://?src=\ref[src];manifest=1'>Citizen's Roster</A><br>"
 		output += "<p><a href='byond://?src=\ref[src];late_join=1'>Join Game!</A>"
+		if(config.allow_lobby_antagonists)
+			output += "<p><a href='byond://?src=\ref[src];join_as_antag=1'>Join As Antagonist</A>"
 
 
 	output += "<hr>Current character: <b>[client.prefs.real_name]</b>, [client.prefs.economic_status]<br>"
+	output += "Money: <b>[cash2text( client.prefs.money_balance, FALSE, TRUE, TRUE )]</b><br>"
 
 	output += "</div>"
 
 	if(news_data.city_newspaper && !client.seen_news)
 		show_latest_news(news_data.city_newspaper)
-
 
 	panel = new(src, "Welcome","Welcome, [client.prefs.real_name]", 500, 480, src)
 	panel.set_window_options("can_close=0")
@@ -163,27 +173,73 @@
 	if(href_list["late_join"])
 
 		if(!ticker || ticker.current_state != GAME_STATE_PLAYING)
-			usr << "<font color='red'>The round is either not ready, or has already finished...</font>"
+			to_chat(usr,"<font color='red'>The round is either not ready, or has already finished...</font>")
 			return
 
 		LateChoices()
 
+
+	if(href_list["join_as_antag"])
+		if(!ticker || ticker.current_state != GAME_STATE_PLAYING)
+			to_chat(usr,"<font color='red'>The round is either not ready, or has already finished...</font>")
+			return
+
+		JoinAsAntag()
+
 	if(href_list["manifest"])
 		ViewManifest()
+
+
+	if(href_list["set_alt_title"])
+		var/E = locate(href_list["job"])
+
+		var/datum/job/job = E
+
+		if(!client || !client.prefs || !job)
+			return
+
+		var/choices = list(job.title) + job.alt_titles
+		var/new_title = input("Choose a title for [job.title].", "Choose Title", client.prefs.GetPlayerAltTitle(job)) as anything in choices|null
+
+		// remove existing entry
+		client.prefs.player_alt_titles -= job.title
+
+		if(job.title != new_title)
+			client.prefs.player_alt_titles[job.title] = new_title
+
+		LateChoices()
+		return
+
+	if(href_list["SelectJob"])	//pre- SelectedJob usage for new menu
+		var/E = href_list["SelectJob"]
+
+		var/select_job = "[E]"
+
+		selected_job = select_job
+		LateChoices()
+		return
+
+	if(href_list["SelectDeptType"])	//pre- SelectedJob usage for new menu
+		var/E = href_list["SelectDeptType"]
+		var/new_dept = E
+
+		job_select_mode = new_dept
+		LateChoices()
+		return
 
 	if(href_list["SelectedJob"])
 		//Prevents people rejoining as same character.
 		for (var/mob/living/carbon/human/C in mob_list)
 			var/char_name = client.prefs.real_name
 			if(char_name == C.real_name)
-				usr << "<span class='notice'>There is a character that already exists with the same name - <b>[C.real_name]</b>, please join with a different one.</span>"
+				to_chat(usr, "<span class='notice'>There is a character that already exists with the same name - <b>[C.real_name]</b>, please join with a different one.</span>")
 				return
 
 		if(!config.enter_allowed)
-			usr << "<span class='notice'>There is an administrative lock on entering the game!</span>"
+			to_chat(usr, "<span class='notice'>There is an administrative lock on entering the game!</span>")
 			return
 		else if(ticker && ticker.mode && ticker.mode.explosion_in_progress)
-			usr << "<span class='danger'>The city is currently exploding. Joining would go poorly.</span>"
+			to_chat(usr, "<span class='danger'>The city is currently exploding. Joining would go poorly.</span>")
 			return
 
 		if(!is_alien_whitelisted(src, all_species[client.prefs.species]))
@@ -321,14 +377,23 @@
 		popup.open()
 
 /mob/new_player/proc/IsJobAvailable(rank)
-	var/datum/job/job = job_master.GetJob(rank)
+	var/datum/job/job = SSjobs.GetJob(rank)
 	if(!job)	return 0
+	if(!job.enabled) return 0
 	if(!job.is_position_available()) return 0
 	if(jobban_isbanned(src,rank))	return 0
 	if(!is_hard_whitelisted(src, job)) return 0
 	if(!job.player_old_enough(src.client))	return 0
-	return 1
+	if(job.minimum_character_age && (client.prefs.age < job.minimum_character_age)) return 0
+	if(job.title == "Prisoner" && client.prefs.criminal_status != "Incarcerated")	return 0
+	if(job.title != "Prisoner" && client.prefs.criminal_status == "Incarcerated")	return 0
+	if(job.clean_record_required && client.prefs.crime_record && !isemptylist(client.prefs.crime_record)) return 0
+	if(!isemptylist(job.exclusive_employees) && !(client.prefs.unique_id in job.exclusive_employees)) return 0
+	if(job.business)
+		var/datum/business/biz = get_business_by_biz_uid(job.business)
+		if(biz && biz.suspended) return 0
 
+	return 1
 
 /mob/new_player/proc/AttemptLateSpawn(rank,var/spawning_at)
 	if (src != usr)
@@ -345,8 +410,13 @@
 	if(!client)
 		return 0
 
+	var/is_prisoner
+	if(rank == "Prisoner")
+		is_prisoner = 1
+
+
 	//Find our spawning point.
-	var/list/join_props = job_master.LateSpawn(client, rank)
+	var/list/join_props = SSjobs.LateSpawn(client, rank)
 	var/turf/T = join_props["turf"]
 	var/join_message = join_props["msg"]
 
@@ -356,10 +426,10 @@
 	spawning = 1
 	close_spawn_windows()
 
-	job_master.AssignRole(src, rank, 1)
+	SSjobs.AssignRole(src, rank, 1)
 
 	var/mob/living/character = create_character(T)	//creates the human and transfers vars and mind
-	character = job_master.EquipRank(character, rank, 1)					//equips the human
+	character = SSjobs.EquipRank(character, rank, 1)					//equips the human
 	UpdateFactionList(character)
 	log_game("JOINED [key_name(character)] as \"[rank]\"")
 
@@ -380,9 +450,9 @@
 		qdel(C)
 		qdel(src)
 		return
-
-	// Equip our custom items only AFTER deploying to spawn points eh?
-	equip_custom_items(character)
+	if(!is_prisoner)
+		// Equip our custom items only AFTER deploying to spawn points eh? Also, not as a prisoner, since they can break out.
+		equip_custom_items(character)
 
 	character.apply_traits()
 
@@ -414,6 +484,8 @@
 	else
 		AnnounceCyborg(character, rank, join_message)
 
+
+
 	qdel(src)
 
 /mob/new_player/proc/AnnounceCyborg(var/mob/living/character, var/rank, var/join_message)
@@ -422,36 +494,6 @@
 			rank = character.mind.role_alt_title
 		// can't use their name here, since cyborg namepicking is done post-spawn, so we'll just say "A new Cyborg has arrived"/"A new Android has arrived"/etc.
 		global_announcer.autosay("A new[rank ? " [rank]" : " visitor" ] [join_message ? join_message : "has arrived to the city"].", "Arrivals Announcement Computer")
-
-/mob/new_player/proc/LateChoices()
-	var/name = client.prefs.real_name
-
-	var/dat = "<html><body><center>"
-	dat += "<b>Welcome, [name].<br></b>"
-	dat += "Round Duration: [roundduration2text()]<br>"
-
-	if(emergency_shuttle) //In case NanoTrasen decides reposess CentCom's shuttles.
-		if(emergency_shuttle.going_to_centcom()) //Shuttle is going to CentCom, not recalled
-			dat += "<font color='red'><b>The city has been evacuated.</b></font><br>"
-		if(emergency_shuttle.online())
-			if (emergency_shuttle.evac)	// Emergency shuttle is past the point of no recall
-				dat += "<font color='red'>The city is currently undergoing evacuation procedures.</font><br>"
-			else						// Crew transfer initiated
-				dat += "<font color='red'>The city is currently undergoing civilian transfer procedures.</font><br>"
-
-	dat += "Choose from the following open/valid positions:<br>"
-	for(var/datum/job/job in job_master.occupations)
-		if(job && IsJobAvailable(job.title))
-			if(job.minimum_character_age && (client.prefs.age < job.minimum_character_age))
-				continue
-			var/active = 0
-			// Only players with the job assigned and AFK for less than 10 minutes count as active
-			for(var/mob/M in player_list) if(M.mind && M.client && M.mind.assigned_role == job.title && M.client.inactivity <= 10 * 60 * 10)
-				active++
-			dat += "<a href='byond://?src=\ref[src];SelectedJob=[job.title]'>[job.title] ([job.current_positions]) (Active: [active])</a><br>"
-
-	dat += "</center>"
-	src << browse(dat, "window=latechoices;size=300x640;can_close=1")
 
 
 /mob/new_player/proc/create_character(var/turf/T)

@@ -28,6 +28,7 @@
 	var/base_state
 	flash_protection = FLASH_PROTECTION_MAJOR
 	tint = TINT_HEAVY
+	price_tag = 10
 
 /obj/item/clothing/head/welding/attack_self()
 	toggle()
@@ -99,7 +100,7 @@
 		slot_l_hand_str = "engiewelding",
 		slot_r_hand_str = "engiewelding",
 		)
-.
+
 
 /*
  * Cakehat

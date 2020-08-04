@@ -54,20 +54,6 @@
 		)
 	starts_with = list(/obj/item/weapon/reagent_containers/food/snacks/egg = 12)
 
-/*
- * Candle Box
- */
-
-/obj/item/weapon/storage/fancy/candle_box
-	name = "candle pack"
-	desc = "A pack of red candles."
-	icon = 'icons/obj/candle.dmi'
-	icon_state = "candlebox5"
-	icon_type = "candle"
-	item_state = "candlebox5"
-	throwforce = 2
-	slot_flags = SLOT_BELT
-	starts_with = list(/obj/item/weapon/flame/candle = 5)
 
 /*
  * Crayon Box
@@ -174,6 +160,30 @@
 	starts_with = list(/obj/item/clothing/mask/smokable/cigarette = 6)
 	var/brand = "\improper Trans-Stellar Duty-free"
 
+	get_tax()
+		return TOBACCO_TAX
+
+/obj/item/weapon/storage/fancy/cigarettes/get_tax()
+	var/has_tobacco
+	for(var/obj/item/clothing/mask/smokable/cigarette/C in src)
+		if(C.nicotine_amt)
+			tax_type = TOBACCO_TAX
+			has_tobacco++
+
+	if(!has_tobacco)
+		tax_type = null
+
+	return tax_type
+
+/obj/item/weapon/storage/fancy/cigarettes/get_item_cost()
+	var/total
+
+	for(var/obj/item/clothing/mask/smokable/cigarette/C in src)
+		if(C.nicotine_amt > 1)
+			total += C.nicotine_amt * 0.1
+
+	return total
+
 /obj/item/weapon/storage/fancy/cigarettes/initialize()
 	. = ..()
 	flags |= NOREACT
@@ -224,49 +234,49 @@
 		..()
 
 /obj/item/weapon/storage/fancy/cigarettes/dromedaryco
-	name = "\improper DromedaryCo packet"
+	name = "DromedaryCo packet"
 	desc = "A packet of six imported DromedaryCo cancer sticks. A label on the packaging reads, \"Wouldn't a slow death make a change?\""
 	icon_state = "Dpacket"
-	brand = "\improper Dromedary Co. cigarette"
+	brand = "Dromedary Co. cigarette"
 
 /obj/item/weapon/storage/fancy/cigarettes/killthroat
-	name = "\improper AcmeCo packet"
+	name = "AcmeCo packet"
 	desc = "A packet of six AcmeCo cigarettes. For those who somehow want to obtain the record for the most amount of cancerous tumors."
 	icon_state = "Bpacket"
-	brand = "\improper Acme Co. cigarette"
+	brand = "Acme Co. cigarette"
 
 // New exciting ways to kill your lungs! - Earthcrusher //
 
 /obj/item/weapon/storage/fancy/cigarettes/luckystars
-	name = "\improper pack of Lucky Stars"
+	name = "Lucky Stars"
 	desc = "A mellow blend made from synthetic, pod-grown tobacco. The commercial jingle is guaranteed to get stuck in your head."
 	icon_state = "LSpacket"
-	brand = "\improper Lucky Star"
+	brand = "Lucky Star"
 
 /obj/item/weapon/storage/fancy/cigarettes/jerichos
-	name = "\improper pack of Jerichos"
+	name = "Jerichos"
 	desc = "Typically seen dangling from the lips of Martian soldiers and border world hustlers. Tastes like hickory smoke, feels like warm liquid death down your lungs."
 	icon_state = "Jpacket"
-	brand = "\improper Jericho"
+	brand = "Jericho"
 
 /obj/item/weapon/storage/fancy/cigarettes/menthols
 	name = "\improper pack of Temperamento Menthols"
 	desc = "With a sharp and natural organic menthol flavor, these Temperamentos are a favorite of NDV crews. Hardly anyone knows they make 'em in non-menthol!"
 	icon_state = "TMpacket"
-	brand = "\improper Temperamento Menthol"
+	brand = "Temperamento Menthol"
 	starts_with = list(/obj/item/clothing/mask/smokable/cigarette/menthol = 6)
 
 /obj/item/weapon/storage/fancy/cigarettes/carcinomas
-	name = "\improper pack of Carcinoma Angels"
+	name = "Carcinoma Angels"
 	desc = "This unknown brand was slated for the chopping block, until they were publicly endorsed by an old Earthling gonzo journalist. The rest is history. They sell a variety for cats, too."
 	icon_state = "CApacket"
-	brand = "\improper Carcinoma Angel"
+	brand = "Carcinoma Angel"
 
 /obj/item/weapon/storage/fancy/cigarettes/professionals
-	name = "\improper pack of Professional 120s"
+	name = "Professional 120s"
 	desc = "Let's face it - if you're smoking these, you're either trying to look upper-class or you're 80 years old. That's the only excuse. They are, however, very good quality."
 	icon_state = "P100packet"
-	brand = "\improper Professional 120"
+	brand = "Professional 120"
 
 /obj/item/weapon/storage/fancy/cigar
 	name = "cigar case"
@@ -281,6 +291,9 @@
 	icon_type = "cigar"
 	starts_with = list(/obj/item/clothing/mask/smokable/cigarette/cigar = 7)
 
+	get_tax()
+		return TOBACCO_TAX
+
 /obj/item/weapon/storage/fancy/cigar/initialize()
 	. = ..()
 	flags |= NOREACT
@@ -289,6 +302,19 @@
 /obj/item/weapon/storage/fancy/cigar/update_icon()
 	icon_state = "[initial(icon_state)][contents.len]"
 	return
+
+
+/obj/item/weapon/storage/fancy/cigar/havana
+	name = "havana cigar case"
+	starts_with = list(/obj/item/clothing/mask/smokable/cigarette/cigar/havana = 7)
+
+/obj/item/weapon/storage/fancy/cigar/cohiba
+	name = "cohiba cigar case"
+	starts_with = list(/obj/item/clothing/mask/smokable/cigarette/cigar/cohiba = 7)
+
+/obj/item/weapon/storage/fancy/cigar/empty
+	name = "cigar case"
+	starts_with = null
 
 /obj/item/weapon/storage/fancy/cigar/remove_from_storage(obj/item/W as obj, atom/new_location)
 	var/obj/item/clothing/mask/smokable/cigarette/cigar/C = W
@@ -307,6 +333,10 @@
 	storage_slots = 14
 	can_hold = list(/obj/item/weapon/rollingpaper)
 	starts_with = list(/obj/item/weapon/rollingpaper = 14)
+
+	get_tax()
+		return TOBACCO_TAX
+
 
 /*
  * Vial Box
@@ -404,3 +434,19 @@
 	new /obj/item/fish_net(src)
 	new /obj/item/tank_brush(src)
 	new /obj/item/fishfood(src)
+
+/*
+ * Cracker Packet
+ */
+
+/obj/item/weapon/storage/fancy/crackers
+	name = "Getmore Crackers"
+	icon = 'icons/obj/food.dmi'
+	icon_state = "crackerbox"
+	icon_type = "cracker"
+	max_storage_space = ITEMSIZE_COST_TINY * 6
+	max_w_class = ITEMSIZE_TINY
+	w_class = ITEMSIZE_SMALL
+	can_hold = list(/obj/item/weapon/reagent_containers/food/snacks/cracker)
+	starts_with = list(/obj/item/weapon/reagent_containers/food/snacks/cracker = 6)
+

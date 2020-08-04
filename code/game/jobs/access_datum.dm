@@ -3,6 +3,7 @@
 	var/desc = ""
 	var/region = ACCESS_REGION_NONE
 	var/access_type = ACCESS_TYPE_STATION
+	var/department_tag			// mostly for businesses, if this is something it'll appear next to it
 
 /datum/access/dd_SortValue()
 	return "[access_type][desc]"
@@ -121,7 +122,7 @@
 /var/const/access_heads = 19
 /datum/access/heads
 	id = access_heads
-	desc = "Bridge"
+	desc = "Council"
 	region = ACCESS_REGION_COMMAND
 
 /var/const/access_captain = 20
@@ -236,7 +237,7 @@
 /datum/access/lawyer
 	id = access_lawyer
 	desc = "Defense Attorney"
-	region = ACCESS_REGION_COMMAND
+	region = ACCESS_REGION_GENERAL
 
 /var/const/access_virology = 39
 /datum/access/virology
@@ -247,7 +248,7 @@
 /var/const/access_cmo = 40
 /datum/access/cmo
 	id = access_cmo
-	desc = "Chief Medical Officer"
+	desc = "Medical Director"
 	region = ACCESS_REGION_COMMAND
 
 /var/const/access_qm = 41
@@ -307,7 +308,7 @@
 /var/const/access_mailsorting = 50
 /datum/access/mailsorting
 	id = access_mailsorting
-	desc = "Cargo Office"
+	desc = "Factory Office"
 	region = ACCESS_REGION_SUPPLY
 
 /var/const/access_warrant = 51
@@ -340,7 +341,7 @@
 /var/const/access_ce = 56
 /datum/access/ce
 	id = access_ce
-	desc = "Chief Engineer"
+	desc = "Maintenance Director"
 	region = ACCESS_REGION_ENGINEERING
 
 /var/const/access_hop = 57
@@ -410,6 +411,12 @@
 	desc = "City Hall Guard"
 	region = ACCESS_REGION_COMMAND
 
+/var/const/access_legal = 67
+/datum/access/legal
+	id = access_legal
+	desc = "Legal"
+	region = ACCESS_REGION_GENERAL
+
 
 
 /******************
@@ -473,13 +480,13 @@
 /datum/access/president
 	id = access_president
 	desc = "President"
-	region = ACCESS_TYPE_CENTCOM
-	
+	access_type = ACCESS_TYPE_CENTCOM
+
 /var/const/access_cbia = 111
 /datum/access/cbia
 	id = access_cbia
-	desc = "CBIA Agent"
-	region = ACCESS_TYPE_CENTCOM
+	desc = "PDSI Agent"
+	access_type = ACCESS_TYPE_CENTCOM
 
 /***************
 * Antag access *

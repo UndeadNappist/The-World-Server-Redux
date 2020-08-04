@@ -77,6 +77,8 @@
 	// HUD element variable, see organ_icon.dm get_damage_hud_image()
 	var/image/hud_damage_image
 
+	unique_save_vars = list("model")
+
 /obj/item/organ/external/Destroy()
 
 	if(parent && parent.children)
@@ -102,6 +104,7 @@
 			owner.organs -= null
 
 	return ..()
+
 
 /obj/item/organ/external/emp_act(severity)
 	if(!(robotic >= ORGAN_ROBOT))
@@ -330,7 +333,7 @@
 		owner.updatehealth() //droplimb will call updatehealth() again if it does end up being called
 	if(status & ORGAN_BLEEDING)
 		owner.update_bandages()
-			
+
 	//If limb took enough damage, try to cut or tear it off
 	if(owner && loc == owner && !is_stump())
 		if(!cannot_amputate && config.limbs_can_break && (brute_dam + burn_dam) >= (max_damage * config.organ_health_multiplier))
@@ -548,7 +551,7 @@ This function completely restores a damaged organ to perfect condition.
 //external organs handle brokenness a bit differently when it comes to damage. Instead brute_dam is checked inside process()
 //this also ensures that an external organ cannot be "broken" without broken_description being set.
 /obj/item/organ/external/is_broken()
-	return ((status & ORGAN_CUT_AWAY) || (status & ORGAN_BROKEN) && (!splinted || (splinted && splinted in src.contents && prob(30))))
+	return ((status & ORGAN_CUT_AWAY) || (status & ORGAN_BROKEN) && (!splinted || (splinted && (splinted in src.contents) && prob(30))))
 
 //Determines if we even need to process this organ.
 /obj/item/organ/external/proc/need_process()
@@ -604,7 +607,7 @@ the actual time is dependent on RNG.
 INFECTION_LEVEL_ONE		below this germ level nothing happens, and the infection doesn't grow
 INFECTION_LEVEL_TWO		above this germ level the infection will start to spread to internal and adjacent organs
 INFECTION_LEVEL_THREE	above this germ level the player will take additional toxin damage per second, and will die in minutes without
-						antitox. also, above this germ level you will need to overdose on spaceacillin to reduce the germ_level.
+						antitox. also, above this germ level you will need to overdose on penicillin to reduce the germ_level.
 
 Note that amputating the affected organ does in fact remove the infection from the player's body.
 */
@@ -925,7 +928,7 @@ Note that amputating the affected organ does in fact remove the infection from t
 				I.throw_at(get_edge_target_turf(src,pick(alldirs)),rand(1,3),5)
 
 			qdel(src)
-			
+
 	if(victim.l_hand)
 		if(istype(victim.l_hand,/obj/item/weapon/material/twohanded)) //if they're holding a two-handed weapon, drop it now they've lost a hand
 			victim.l_hand.update_held_icon()
@@ -945,12 +948,12 @@ Note that amputating the affected organ does in fact remove the infection from t
 		holder = owner
 	if(!holder)
 		return
-	if (holder.handcuffed && body_part in list(ARM_LEFT, ARM_RIGHT, HAND_LEFT, HAND_RIGHT))
+	if (holder.handcuffed && (body_part in list(ARM_LEFT, ARM_RIGHT, HAND_LEFT, HAND_RIGHT)))
 		holder.visible_message(\
 			"\The [holder.handcuffed.name] falls off of [holder.name].",\
 			"\The [holder.handcuffed.name] falls off you.")
 		holder.drop_from_inventory(holder.handcuffed)
-	if (holder.legcuffed && body_part in list(FOOT_LEFT, FOOT_RIGHT, LEG_LEFT, LEG_RIGHT))
+	if (holder.legcuffed && (body_part in list(FOOT_LEFT, FOOT_RIGHT, LEG_LEFT, LEG_RIGHT)))
 		holder.visible_message(\
 			"\The [holder.legcuffed.name] falls off of [holder.name].",\
 			"\The [holder.legcuffed.name] falls off you.")
@@ -1005,7 +1008,7 @@ Note that amputating the affected organ does in fact remove the infection from t
 		W.germ_level = 0
 	return rval
 
-/obj/item/organ/external/proc/clamp()
+/obj/item/organ/external/proc/surgical_clamp()
 	var/rval = 0
 	src.status &= ~ORGAN_BLEEDING
 	for(var/datum/wound/W in wounds)

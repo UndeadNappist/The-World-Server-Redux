@@ -14,37 +14,39 @@ datum/preferences/proc/set_biological_gender(var/gender)
 	S["real_name"]				>> pref.real_name
 	S["nickname"]				>> pref.nickname
 //	S["name_is_always_random"]	>> pref.be_random_name
-	S["gender"]					>> pref.biological_gender
+	S["gender"]				>> pref.biological_gender
 	S["id_gender"]				>> pref.identifying_gender
 	S["age"]					>> pref.age
 	S["birth_day"]				>> pref.birth_day
 	S["birth_month"]			>> pref.birth_month
-	S["birth_year"]				>> pref.birth_year
-	S["spawnpoint"]				>> pref.spawnpoint
+	S["birth_year"]			>> pref.birth_year
+	S["spawnpoint"]			>> pref.spawnpoint
 	S["OOC_Notes"]				>> pref.metadata
-
+	S["email"]				>> pref.email
 	S["existing_character"]		>> pref.existing_character
-	S["played"]					>> pref.played
+	S["played"]				>> pref.played
 	S["unique_id"]				>> pref.unique_id
 
 /datum/category_item/player_setup_item/general/basic/save_character(var/savefile/S)
 	S["real_name"]				<< pref.real_name
 	S["nickname"]				<< pref.nickname
 //	S["name_is_always_random"]	<< pref.be_random_name
-	S["gender"]					<< pref.biological_gender
+	S["gender"]				<< pref.biological_gender
 	S["id_gender"]				<< pref.identifying_gender
 	S["age"]					<< pref.age
 	S["birth_day"]				<< pref.birth_day
 	S["birth_month"]			<< pref.birth_month
-	S["birth_year"]				<< pref.birth_year
-	S["spawnpoint"]				<< pref.spawnpoint
+	S["birth_year"]			<< pref.birth_year
+	S["spawnpoint"]			<< pref.spawnpoint
 	S["OOC_Notes"]				<< pref.metadata
-
+	S["email"]				<< pref.email
 	S["existing_character"]		<< pref.existing_character
-	S["played"]					<< pref.played
+	S["played"]				<< pref.played
 	S["unique_id"]				<< pref.unique_id
 
 /datum/category_item/player_setup_item/general/basic/delete_character()
+	if(pref.played)
+		pref.characters_created += pref.real_name
 	pref.real_name = null
 	pref.nickname = null
 //	pref.be_random_name = null
@@ -58,14 +60,19 @@ datum/preferences/proc/set_biological_gender(var/gender)
 	pref.metadata = null
 	pref.existing_character = null
 	pref.played = null
+	delete_persistent_inventory(pref.unique_id)
 	pref.unique_id = null
+	if(fdel("data/persistent/emails/[pref.email].sav"))
+		pref.email = null
+
+
 
 /datum/category_item/player_setup_item/general/basic/sanitize_character()
 
 	pref.biological_gender  = sanitize_inlist(pref.biological_gender, get_genders(), pick(get_genders()))
 	pref.identifying_gender = (pref.identifying_gender in all_genders_define_list) ? pref.identifying_gender : pref.biological_gender
 	pref.real_name		= sanitize_name(pref.real_name, pref.species, is_FBP())
-	if(!pref.real_name)
+	if(!pref.real_name || (pref.real_name in pref.characters_created))
 		pref.real_name      = random_name(pref.identifying_gender, pref.species)
 
 	if(!pref.birth_year)
@@ -82,15 +89,26 @@ datum/preferences/proc/set_biological_gender(var/gender)
 	if(!pref.unique_id)
 		pref.unique_id			= md5("[pref.client_ckey][rand(30,50)]")
 
+	if(!pref.email)
+		var/new_email = SSemails.generate_email(pref.real_name)
+
+		if(!ntnet_global.does_email_exist(new_email) || !SSemails.check_persistent_email(new_email))
+			pref.email = new_email
+
+
+
 // Moved from /datum/preferences/proc/copy_to()
 /datum/category_item/player_setup_item/general/basic/copy_to_mob(var/mob/living/carbon/human/character)
-	if(config.humans_need_surnames)
+	if(config.humans_need_surnames && !is_FBP())
 		var/firstspace = findtext(pref.real_name, " ")
 		var/name_length = length(pref.real_name)
 		if(!firstspace)	//we need a surname
 			pref.real_name += " [pick(last_names)]"
 		else if(firstspace == name_length)
 			pref.real_name += "[pick(last_names)]"
+
+	if(is_FBP() && !pref.real_name)
+		pref.real_name = "[pick(last_names)]"
 
 	character.real_name = pref.real_name
 	character.name = character.real_name
@@ -104,7 +122,8 @@ datum/preferences/proc/set_biological_gender(var/gender)
 	character.age = pref.age
 	character.birth_year = pref.birth_year
 	character.birth_month = pref.birth_month
-	character.adjust_aging()
+
+F
 
 /datum/category_item/player_setup_item/general/basic/content()
 	. = list()
@@ -126,12 +145,18 @@ datum/preferences/proc/set_biological_gender(var/gender)
 		. += "<a href='?src=\ref[src];bio_gender=1'><b>[gender2text(pref.biological_gender)]</b></a><br>"
 	else
 		. += "[gender2text(pref.biological_gender)]<br>"
+
 	. += "<b>Gender Identity:</b><br> <a href='?src=\ref[src];id_gender=1'><b>[gender2text(pref.identifying_gender)]</b></a><br>"
+
 	. += "<b>Age:</b><br>"
+	. += "<a href='?src=\ref[src];age=1'>[pref.age] ([age2agedescription(pref.age)])</a><br><br>"
+
+	. += "<b>Email Address:</b><br>"
+
 	if(!pref.existing_character)
-		. += "<a href='?src=\ref[src];age=1'>[pref.age] ([age2agedescription(pref.age)])</a><br><br>"
+		. += "Email: <a href='?src=\ref[src];email_domain=1'>[pref.email]</a><br><br>"
 	else
-		. += "[pref.age] ([age2agedescription(pref.age)])<br>"
+		. += "Login: [pref.email]<br>Password: [SSemails.get_persistent_email_password(pref.email)] <br><br>"
 
 	if(pref.existing_character)
 		. += "<b>Unique Character ID:</b> [pref.unique_id]<br>"
@@ -156,6 +181,11 @@ datum/preferences/proc/set_biological_gender(var/gender)
 		var/raw_name = input(user, "Choose your character's name:", "Character Name")  as text|null
 		if (!isnull(raw_name) && CanUseTopic(user))
 			var/new_name = sanitize_name(raw_name, pref.species, is_FBP())
+
+			if(new_name in pref.characters_created)
+				user << "<span class='warning'>You cannot play this character again. Ahelp if this is in error.</span>"
+				return TOPIC_NOACTION
+
 			if(new_name)
 				pref.real_name = new_name
 				return TOPIC_REFRESH
@@ -203,6 +233,37 @@ datum/preferences/proc/set_biological_gender(var/gender)
 			adjust_year()
 			return TOPIC_REFRESH
 
+
+	else if(href_list["email_domain"])
+		var/list/domains = using_map.usable_email_tlds
+		var/prefix = input(user, "Enter your email username.", "Email Username")  as text|null
+		if(!prefix)
+			return
+
+		var/domain = input(user, "What is the email domain provider you use?", "Email Provider") as null|anything in domains
+		if(!domain)
+			return
+
+		var/full_email = "[prefix]@[domain]"
+
+		if(full_email && SSemails.check_persistent_email(full_email))
+			alert(user, "This email already exists, please choose another.")
+			return
+
+		if(full_email && !SSemails.check_persistent_email(pref.email))
+			SSemails.new_persistent_email(full_email)
+
+
+		fcopy("data/persistent/emails/[pref.email].sav","data/persistent/emails/[full_email].sav")
+		fdel("data/persistent/emails/[pref.email].sav")
+		SSemails.change_persistent_email_address(pref.email, full_email)
+
+		pref.email = "[prefix]@[domain]"
+
+
+		return TOPIC_REFRESH
+
+
 	else if(href_list["birth_day"])
 		var/min_day = 1
 		var/max_day
@@ -248,7 +309,7 @@ datum/preferences/proc/set_biological_gender(var/gender)
 		return TOPIC_REFRESH
 
 	else if(href_list["metadata"])
-		var/new_metadata = sanitize(input(user, "Enter any information you'd like others to see, such as Roleplay-preferences:", "Game Preference" , pref.metadata)) as message|null
+		var/new_metadata = sanitize(input(user, "Enter any information you'd like others to see, such as Roleplay-preferences:", "Game Preference" , pref.metadata) as message|null)
 		if(new_metadata && CanUseTopic(user))
 			pref.metadata = new_metadata
 			return TOPIC_REFRESH

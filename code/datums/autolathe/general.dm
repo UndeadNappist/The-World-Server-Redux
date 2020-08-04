@@ -6,6 +6,18 @@
 	name = "water-cooler bottle"
 	path =/obj/item/weapon/reagent_containers/glass/cooler_bottle
 
+/datum/category_item/autolathe/general/spraybottle
+	name = "spray bottle"
+	path = /obj/item/weapon/reagent_containers/spray
+
+/datum/category_item/autolathe/general/grinder
+	name = "grinder"
+	path = /obj/item/weapon/grinder
+
+/datum/category_item/autolathe/general/ecig_cart
+	name = "ecigarette cartridge"
+	path = /obj/item/weapon/reagent_containers/ecig_cartridge/blank
+
 /datum/category_item/autolathe/general/drinkingglass_square
 	name = "half-pint glass"
 	path =/obj/item/weapon/reagent_containers/food/drinks/glass2/square
@@ -37,6 +49,34 @@
 /datum/category_item/autolathe/general/drinkingglass_wine
 	name = "wine glass"
 	path =/obj/item/weapon/reagent_containers/food/drinks/glass2/wine
+
+/datum/category_item/autolathe/general/drinkingglass_carafe
+	name = "glass carafe"
+	path =/obj/item/weapon/reagent_containers/food/drinks/glass2/carafe
+
+/datum/category_item/autolathe/general/drinkingglass_meta
+	name = "metamorphic glass"
+	path = /obj/item/weapon/reagent_containers/food/drinks/metaglass
+
+/datum/category_item/autolathe/general/shaker
+	name = "shaker"
+	path = /obj/item/weapon/reagent_containers/food/drinks/shaker
+
+/datum/category_item/autolathe/general/barflask
+	name = "bar flask"
+	path = /obj/item/weapon/reagent_containers/food/drinks/flask/barflask
+
+/datum/category_item/autolathe/general/vacuumflask
+	name = "vacuum flask"
+	path = /obj/item/weapon/reagent_containers/food/drinks/flask/vacuumflask
+
+/datum/category_item/autolathe/general/lithiumflask
+	name = "lithium flask"
+	path = /obj/item/weapon/reagent_containers/food/drinks/flask/lithium
+
+/datum/category_item/autolathe/general/shinyflask
+	name = "shiny flask"
+	path = /obj/item/weapon/reagent_containers/food/drinks/flask/shiny
 
 /datum/category_item/autolathe/general/flashlight
 	name = "flashlight"
@@ -94,10 +134,6 @@
 	name = "kitchen knife"
 	path =/obj/item/weapon/material/knife
 
-/datum/category_item/autolathe/general/taperecorder
-	name = "tape recorder"
-	path =/obj/item/device/taperecorder
-
 /datum/category_item/autolathe/general/tube
 	name = "light tube"
 	path =/obj/item/weapon/light/tube
@@ -126,3 +162,16 @@
 /datum/category_item/autolathe/general/ecigcartridge
 	name = "ecigarette cartridge"
 	path = /obj/item/weapon/reagent_containers/ecig_cartridge/blank
+
+/datum/category_item/autolathe/general/keypad
+	name = "door keypad"
+	path = /obj/item/keypad
+
+/datum/category_item/autolathe/general/toolbox
+	name = "toolbox"
+	path = /obj/item/weapon/storage/toolbox
+
+
+
+
+

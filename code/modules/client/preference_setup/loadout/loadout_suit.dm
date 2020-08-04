@@ -6,6 +6,15 @@
 	sort_category = "Suits and Overwear"
 	cost = 2
 
+/datum/gear/suit/coat
+	display_name = "coat"
+	path = /obj/item/clothing/suit/storage/toggle/coat
+
+/datum/gear/suit/coat/New()
+	..()
+	gear_tweaks = list(gear_tweak_free_color_choice)
+
+
 /datum/gear/suit/greatcoat
 	display_name = "greatcoat"
 	path = /obj/item/clothing/suit/greatcoat
@@ -90,7 +99,7 @@
 	display_name = "trenchcoat, grey"
 	path = /obj/item/clothing/suit/storage/trench/grey
 
-datum/gear/suit/duster
+/datum/gear/suit/duster
 	display_name = "cowboy duster"
 	path = /obj/item/clothing/suit/storage/duster
 
@@ -161,12 +170,12 @@ datum/gear/suit/duster
 /datum/gear/suit/labcoat/emt
 	display_name = "labcoat, EMT (Medical)"
 	path = /obj/item/clothing/suit/storage/toggle/labcoat/emt
-	allowed_roles = list("Doctor","Chief Medical Officer","Chemist","Paramedic","Geneticist", "Psychiatrist")
+	allowed_roles = list("Physician","Chief Medical Officer","Chemist","Paramedic","Geneticist", "Psychiatrist")
 
 /datum/gear/suit/roles/surgical_apron
 	display_name = "surgical apron"
 	path = /obj/item/clothing/suit/surgicalapron
-	allowed_roles = list("Doctor","Chief Medical Officer")
+	allowed_roles = list("Physician","Chief Medical Officer")
 
 /datum/gear/suit/overalls
 	display_name = "overalls"
@@ -232,7 +241,7 @@ datum/gear/suit/duster
 	allowed_roles = list("Factory Manager")
 
 /datum/gear/suit/roles/poncho/cloak/captain
-	display_name = "cloak, colony director"
+	display_name = "cloak, mayor"
 	path = /obj/item/clothing/accessory/poncho/roles/cloak/captain
 	allowed_roles = list("Mayor")
 
@@ -287,7 +296,7 @@ datum/gear/suit/duster
 	path = /obj/item/clothing/suit/storage/hooded/wintercoat
 
 /datum/gear/suit/wintercoat/captain
-	display_name = "winter coat, colony director"
+	display_name = "winter coat, mayor"
 	path = /obj/item/clothing/suit/storage/hooded/wintercoat/captain
 	allowed_roles = list("Mayor")
 
@@ -299,7 +308,7 @@ datum/gear/suit/duster
 /datum/gear/suit/wintercoat/medical
 	display_name = "winter coat, medical"
 	path = /obj/item/clothing/suit/storage/hooded/wintercoat/medical
-	allowed_roles = list("Doctor","Chief Medical Officer","Chemist","Paramedic","Geneticist", "Psychiatrist")
+	allowed_roles = list("Physician","Chief Medical Officer","Chemist","Paramedic","Geneticist", "Psychiatrist")
 
 /datum/gear/suit/wintercoat/science
 	display_name = "winter coat, science"
@@ -440,7 +449,7 @@ datum/gear/suit/duster
 /datum/gear/suit/snowsuit/medical
 	display_name = "snowsuit, medical"
 	path = /obj/item/clothing/suit/storage/snowsuit/medical
-	allowed_roles = list("Doctor","Chief Medical Officer","Chemist","Paramedic","Geneticist", "Psychiatrist")
+	allowed_roles = list("Physician","Chief Medical Officer","Chemist","Paramedic","Geneticist", "Psychiatrist")
 
 /datum/gear/suit/snowsuit/science
 	display_name = "snowsuit, science"
@@ -481,3 +490,47 @@ datum/gear/suit/duster
 		tailcoats[initial(tailcoat.name)] = tailcoat
 	gear_tweaks += new/datum/gear_tweak/path(sortAssoc(tailcoats))
 
+
+/datum/gear/suit/hartcoat
+	display_name = "fur-lined greatcoat"
+	path = /obj/item/clothing/suit/storage/toggle/hartcoat
+
+/datum/gear/suit/synthleatherjacket
+	display_name = "synth-leather jacket"
+	path = /obj/item/clothing/suit/storage/toggle/synthleatherjacket
+
+/datum/gear/suit/synthleatherjacket/New()
+	..()
+	gear_tweaks = list(gear_tweak_free_color_choice)
+
+/datum/gear/suit/poshblazer
+	display_name = "posh blazer"
+	path = /obj/item/clothing/suit/storage/poshblazer
+
+/datum/gear/suit/formalblazer
+	display_name = "formal blazer"
+	path = /obj/item/clothing/suit/storage/formalblazer
+
+/datum/gear/suit/formalblazer/New()
+	..()
+	gear_tweaks = list(gear_tweak_free_color_choice)
+
+
+/datum/gear/suit/peterpanblazer
+	display_name = "peter pan blazer"
+	path = /obj/item/clothing/suit/storage/peterpanblazer
+
+
+/datum/gear/suit/peterpanblazer/New()
+	..()
+	gear_tweaks = list(gear_tweak_free_color_choice)
+
+
+/datum/gear/suit/colorsuit
+	display_name = "colorable suit"
+	path = /obj/item/clothing/suit/storage/toggle/lawyer/whitejacket
+
+
+/datum/gear/suit/colorsuit/New()
+	..()
+	gear_tweaks = list(gear_tweak_free_color_choice)

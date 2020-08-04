@@ -28,6 +28,9 @@
 
 	var/blood_type = null
 
+/obj/item/weapon/reagent_containers/blood/can_empty()
+	return TRUE
+
 /obj/item/weapon/reagent_containers/blood/New()
 	..()
 	base_name = name
@@ -72,31 +75,37 @@
 		name = base_name
 	else if(length(label_text) > 10)
 		var/short_label_text = copytext(label_text, 1, 11)
-		name = "[base_name] ([short_label_text]...)"
+		name = "IV Pack ([short_label_text]...)"
 	else
-		name = "[base_name] ([label_text])"
-	desc = "[base_desc] It is labeled \"[label_text]\"."
+		name = "IV Pack ([label_text])"
+	desc = "Holds liquids used for transfusion. It is labeled \"[label_text]\"."
 
 /obj/item/weapon/reagent_containers/blood/APlus
+	name= "Blood Pack (A+)"
 	blood_type = "A+"
 
 /obj/item/weapon/reagent_containers/blood/AMinus
+	name= "Blood Pack (A-)"
 	blood_type = "A-"
 
 /obj/item/weapon/reagent_containers/blood/BPlus
+	name= "Blood Pack (B+)"
 	blood_type = "B+"
 
 /obj/item/weapon/reagent_containers/blood/BMinus
+	name= "Blood Pack (B-)"
 	blood_type = "B-"
 
 /obj/item/weapon/reagent_containers/blood/OPlus
+	name= "Blood Pack (O+)"
 	blood_type = "O+"
 
 /obj/item/weapon/reagent_containers/blood/OMinus
+	name= "Blood Pack (A-)"
 	blood_type = "O-"
 
 /obj/item/weapon/reagent_containers/blood/empty
-	name = "Empty BloodPack"
+	name = "Empty Blood Pack"
 	desc = "Seems pretty useless... Maybe if there were a way to fill it?"
 	icon_state = "empty"
 	item_state = "bloodpack_empty"

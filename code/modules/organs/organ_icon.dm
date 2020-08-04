@@ -46,15 +46,17 @@ var/global/list/limb_icon_cache = list()
 
 /obj/item/organ/external/head/sync_colour_to_human(var/mob/living/carbon/human/human)
 	..()
-	var/obj/item/organ/internal/eyes/eyes = owner.internal_organs_by_name[O_EYES]
-	if(eyes) eyes.update_colour()
-
+	
+	if(owner)
+		var/obj/item/organ/internal/eyes/eyes = owner.internal_organs_by_name[O_EYES]
+		if(eyes) eyes.update_colour()
+		
 /obj/item/organ/external/head/get_icon()
 	..()
-	
+
 	//The overlays are not drawn on the mob, they are used for if the head is removed and becomes an item
 	cut_overlays()
-	
+
 	//Every 'addon' below requires information from species
 	if(!owner || !owner.species)
 		return
@@ -78,12 +80,6 @@ var/global/list/limb_icon_cache = list()
 			eyes_icon.Blend(rgb(owner.r_eyes, owner.g_eyes, owner.b_eyes), ICON_ADD)
 		add_overlay(eyes_icon)
 		mob_icon.Blend(eyes_icon, ICON_OVERLAY)
-		
-	//Lip color/icon
-	if(owner.lip_style && (species && (species.appearance_flags & HAS_LIPS)))
-		var/icon/lip_icon = new/icon('icons/mob/human_face.dmi', "lips_[owner.lip_style]_s")
-		add_overlay(lip_icon)
-		mob_icon.Blend(lip_icon, ICON_OVERLAY)
 
 	//Head markings
 	for(var/M in markings)
@@ -93,6 +89,16 @@ var/global/list/limb_icon_cache = list()
 		add_overlay(mark_s) //So when it's not on your body, it has icons
 		mob_icon.Blend(mark_s, ICON_OVERLAY) //So when it's on your body, it has icons
 		icon_cache_key += "[M][markings[M]["color"]]"
+
+
+	//face style
+	if(owner.lip_style && (species && (species.appearance_flags & HAS_LIPS)))
+		var/icon/lips
+		lips = icon('icons/mob/human_facestyle.dmi', "[owner.lip_style]")
+		lips.Blend(owner.lip_color, ICON_MULTIPLY)
+
+		add_overlay(lips)
+		mob_icon.Blend(lips, ICON_OVERLAY)
 
 	//Facial hair
 	if(owner.f_style)
@@ -115,6 +121,10 @@ var/global/list/limb_icon_cache = list()
 			add_overlay(hair_s)
 
 	return mob_icon
+
+/obj/item/organ/external/head/removed()
+	owner.remove_face_style()
+	..()
 
 /obj/item/organ/external/proc/get_icon(var/skeletal)
 
@@ -166,6 +176,7 @@ var/global/list/limb_icon_cache = list()
 					limb_icon_cache[cache_key] = I
 				mob_icon.Blend(limb_icon_cache[cache_key], ICON_OVERLAY)
 
+
 	if(model)
 		icon_cache_key += "_model_[model]"
 		apply_colouration(mob_icon)
@@ -205,7 +216,7 @@ var/global/list/limb_icon_cache = list()
 	return applying
 
 /obj/item/organ/external/proc/bandage_level()
-	if(damage_state_text() == "00") 
+	if(damage_state_text() == "00")
 		return 0
 	if(!is_bandaged())
 		return 0
@@ -216,8 +227,8 @@ var/global/list/limb_icon_cache = list()
 	else if (burn_dam + brute_dam < (max_damage * 0.75 / 2))
 		. = 2
 	else
-		. = 3	
-	
+		. = 3
+
 /obj/item/organ/external/var/icon_cache_key
 
 // new damage icon system

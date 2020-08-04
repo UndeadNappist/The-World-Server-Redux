@@ -4,7 +4,11 @@
 
 /datum/gear/cane/white
 	display_name = "white cane"
-	path = /obj/item/weapon/cane/whitecane
+	path = /obj/item/weapon/cane/white
+
+/datum/gear/cane/white/collapsible
+	display_name = "telescopic white cane"
+	path = /obj/item/weapon/cane/white/collapsible
 
 /datum/gear/crutch
 	display_name = "crutch"
@@ -88,7 +92,7 @@
 
 /datum/gear/towel
 	display_name = "towel"
-	path = /obj/item/weapon/towel
+	path = /obj/item/clothing/suit/towel
 
 /datum/gear/towel/New()
 	..()
@@ -106,12 +110,12 @@
 
 /datum/gear/baby
 	display_name = "baby selection"
-	path = /obj/item/weapon/baby
+	path = /obj/item/clothing/suit/baby
 
 /datum/gear/baby/New()
 	..()
 	var/baby = list()
-	baby["baby, light"] = /obj/item/weapon/baby
-	baby["baby, tanned"] = /obj/item/weapon/baby/tanned
-	baby["baby, dark"] = /obj/item/weapon/baby/black
+	baby["baby, light"] = /obj/item/clothing/suit/baby
+	baby["baby, tanned"] = /obj/item/clothing/suit/baby/tanned
+	baby["baby, dark"] = /obj/item/clothing/suit/baby/black
 	gear_tweaks += new/datum/gear_tweak/path(baby)

@@ -17,8 +17,10 @@
 	var/is_reinforced = 0
 	default_type = "glass"
 
+	stack_color = GLASS_COLOR
+
 /obj/item/stack/material/glass/attack_self(mob/user as mob)
-	construct_window(user)
+	list_recipes(user)
 
 /obj/item/stack/material/glass/attackby(obj/item/W, mob/user)
 	..()
@@ -28,11 +30,10 @@
 			if (get_amount() < 1 || CC.get_amount() < 5)
 				user << "<span class='warning'>You need five lengths of coil and one sheet of glass to make wired glass.</span>"
 				return
-
 			CC.use(5)
 			use(1)
 			user << "<span class='notice'>You attach wire to the [name].</span>"
-//			new /obj/item/stack/light_w(user.loc)
+//			new /obj/item/stack/material/glass/light_w(user.loc)
 		else if(istype(W, /obj/item/stack/rods))
 			var/obj/item/stack/rods/V  = W
 			if (V.get_amount() < 1 || get_amount() < 1)
@@ -50,12 +51,12 @@
 			if (!G && replace)
 				user.put_in_hands(RG)
 
-
+/*
 /obj/item/stack/material/glass/proc/construct_window(mob/user as mob)
 	if(!user || !src)	return 0
 	if(!istype(user.loc,/turf)) return 0
 	if(!user.IsAdvancedToolUser())
-		user << "\red You don't have the dexterity to do this!"
+		to_chat(user, "<span class='warning'>You don't have the dexterity to do this!</span>")
 		return 0
 	var/title = "Sheet-Glass"
 	title += " ([src.amount] sheet\s left)"
@@ -67,7 +68,7 @@
 			for (var/obj/structure/window/win in user.loc)
 				directions-=win.dir
 				if(!(win.ini_dir in cardinal))
-					user << "\red Can't let you do that."
+					to_chat(user, "<span class='warning'>Can't let you do that...</span>")
 					return 1
 			var/dir_to_set = 2
 			//yes, this could probably be done better but hey... it works...
@@ -93,7 +94,7 @@
 			if(!src)	return 1
 			if(src.loc != user)	return 1
 			if(locate(/obj/structure/window) in user.loc)
-				user << "\red There is a window in the way."
+				to_chat(user, "<span class='warning'>There is a window in the way.</span>")
 				return 1
 			var/obj/structure/window/W
 			W = new /obj/structure/window/basic( user.loc, 0 )
@@ -102,7 +103,7 @@
 			W.anchored = 0
 			src.use(2)
 	return 0
-
+*/
 /*
  * Reinforced glass sheets
  */
@@ -119,8 +120,10 @@
 /obj/item/stack/material/glass/phoronglass
 	name = "phoron glass"
 	singular_name = "phoron glass sheet"
-	icon_state = "sheet-phoronglass"
 	default_type = "phoron glass"
+	associated_reagents = list("phoron")
+
+	stack_color = COLOR_PHORON
 
 /obj/item/stack/material/glass/phoronglass/attackby(obj/item/W, mob/user)
 	..()
@@ -145,6 +148,8 @@
 /obj/item/stack/material/glass/phoronrglass
 	name = "reinforced phoron glass"
 	singular_name = "reinforced phoron glass sheet"
-	icon_state = "sheet-phoronrglass"
+	icon_state = "sheet-rglass"
 	default_type = "reinforced phoron glass"
 	is_reinforced = 1
+	associated_reagents = list("phoron")
+	stack_color = COLOR_PHORON

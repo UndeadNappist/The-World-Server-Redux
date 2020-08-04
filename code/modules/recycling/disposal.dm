@@ -130,7 +130,7 @@
 				for (var/mob/C in viewers(src))
 					C.show_message("<font color='red'>[GM.name] has been placed in the [src] by [user].</font>", 3)
 				qdel(G)
-				
+
 				add_attack_logs(user,GM,"Disposals dunked")
 		return
 
@@ -168,9 +168,14 @@
 	var/msg
 	for (var/mob/V in viewers(usr))
 		if(target == user && !user.stat && !user.weakened && !user.stunned && !user.paralysis)
-			V.show_message("[usr] starts climbing into the disposal.", 3)
+			V.show_message("[usr] starts climbing into the disposal. It doesn't look like a good idea at all.", 3)
 		if(target != user && !user.restrained() && !user.stat && !user.weakened && !user.stunned && !user.paralysis)
 			if(target.anchored) return
+
+			if(user.IsAntiGrief())
+				to_chat(user, "<span class='danger'>You realise doing this might be an awful thing to do and stop.</span>")
+				return
+
 			V.show_message("[usr] starts stuffing [target.name] into the disposal.", 3)
 	if(!do_after(usr, 20))
 		return
@@ -668,6 +673,9 @@
 	var/base_icon_state	// initial icon state on map
 	var/sortType = ""
 	var/subtype = 0
+
+	unique_save_vars = list("icon_state", "dir", "dpdir", "sortType", "subtype", "health", "level")
+
 	// new pipe, set the icon_state as on map
 	New()
 		..()
@@ -1139,6 +1147,8 @@
 	icon_state = "pipe-tagger"
 	var/sort_tag = ""
 	var/partial = 0
+
+	unique_save_vars = list("partial", "sort_tag", "icon_state", "dir", "dpdir", "sortType", "subtype", "health", "level")
 
 	proc/updatedesc()
 		desc = initial(desc)

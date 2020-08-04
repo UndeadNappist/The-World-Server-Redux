@@ -4,6 +4,7 @@
 */
 /datum/supply_pack/sci
 	group = "Science"
+	spend_type = SPEND_SCIENCE
 
 /datum/supply_pack/sci/coolanttank
 	name = "Coolant tank crate"
@@ -23,7 +24,7 @@
 			/obj/item/device/assembly/signaler = 3,
 			/obj/item/device/transfer_valve = 3
 			)
-	cost = 10
+	cost = 100
 	containertype = /obj/structure/closet/crate/secure/phoron
 	containername = "Phoron assembly crate"
 	access = access_tox_storage
@@ -38,21 +39,39 @@
 			/obj/item/seeds/random = 6,
 			/obj/item/seeds/kudzuseed
 			)
-	cost = 15
+	cost = 150
 	containertype = /obj/structure/closet/crate/hydroponics
 	containername = "Exotic Seeds crate"
 	access = access_hydroponics
 
+/datum/supply_pack/sci/vatcubes
+	name = "Compressed Vatborns Crate"
+	contains = list(
+			/obj/item/weapon/storage/box/monkeycubes/vatborncubes = 1,
+			)
+	cost = 1000
+	containertype = /obj/structure/closet/crate/science
+	containername = "Compressed Living Lifeforms crate"
+
+/datum/supply_pack/sci/monkeycubes
+	name = "Monkey Cubes crate"
+	contains = list(
+			/obj/item/weapon/storage/box/monkeycubes = 5
+			)
+	cost = 200
+	containertype = /obj/structure/closet/crate/science
+	containername = "Compressed Living Lifeforms crate"
+
 /datum/supply_pack/sci/integrated_circuit_printer
 	name = "Integrated circuit printer"
 	contains = list(/obj/item/device/integrated_circuit_printer = 2)
-	cost = 15
+	cost = 150
 	containertype = /obj/structure/closet/crate
 	containername = "Integrated circuit crate"
 
 /datum/supply_pack/sci/integrated_circuit_printer_upgrade
 	name = "Integrated circuit printer upgrade - advanced designs"
 	contains = list(/obj/item/weapon/disk/integrated_circuit/upgrade/advanced)
-	cost = 30
+	cost = 300
 	containertype = /obj/structure/closet/crate
 	containername = "Integrated circuit crate"

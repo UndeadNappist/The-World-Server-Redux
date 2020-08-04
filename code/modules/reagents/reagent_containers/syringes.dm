@@ -246,14 +246,17 @@
 	item_state = "syringe_[rounded_vol]"
 
 	if(reagents.total_volume)
-		filling = image('icons/obj/reagentfillings.dmi', src, "syringe10")
-
+		var/image/filling = image('icons/obj/reagentfillings.dmi', src, "syringe10")
 		filling.icon_state = "syringe[rounded_vol]"
-
 		filling.color = reagents.get_color()
 		overlays += filling
 
 /obj/item/weapon/reagent_containers/syringe/proc/syringestab(mob/living/carbon/target as mob, mob/living/carbon/user as mob)
+
+	if(user && user.IsAntiGrief())
+		to_chat(user, "<span class='danger'>You don't want to stab them with a syringe, that would be rude...</span>")
+		return 0
+
 	if(istype(target, /mob/living/carbon/human))
 
 		var/mob/living/carbon/human/H = target
@@ -348,12 +351,12 @@
 	update_icon()
 
 /obj/item/weapon/reagent_containers/syringe/antiviral
-	name = "Syringe (spaceacillin)"
+	name = "Syringe (penicillin)"
 	desc = "Contains antiviral agents."
 
 /obj/item/weapon/reagent_containers/syringe/antiviral/New()
 	..()
-	reagents.add_reagent("spaceacillin", 15)
+	reagents.add_reagent("penicillin", 15)
 	mode = SYRINGE_INJECT
 	update_icon()
 

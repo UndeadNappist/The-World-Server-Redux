@@ -1,5 +1,5 @@
 var/list/obj/machinery/photocopier/faxmachine/allfaxes = list()
-var/list/admin_departments = list("[using_map.boss_name]", "Sif Governmental Authority", "Supply")
+var/list/admin_departments = list("[using_map.boss_name]", "Pollux Governmental Authority", "Supply")
 var/list/alldepartments = list()
 
 var/list/adminfaxes = list()	//cache for faxes that have been sent to admins
@@ -9,12 +9,13 @@ var/list/adminfaxes = list()	//cache for faxes that have been sent to admins
 	icon = 'icons/obj/library.dmi'
 	icon_state = "fax"
 	insert_anim = "faxsend"
-	req_one_access = list(access_lawyer, access_heads, access_armory, access_qm)
+	req_one_access = list()	// we'll deal with it
 
 	use_power = 1
 	idle_power_usage = 30
 	active_power_usage = 200
 	circuit = /obj/item/weapon/circuitboard/fax
+	table_drag = TRUE
 
 	var/obj/item/weapon/card/id/scan = null // identification
 	var/authenticated = 0
@@ -24,6 +25,8 @@ var/list/adminfaxes = list()	//cache for faxes that have been sent to admins
 
 	var/cciaa_present = 0
 	var/cciaa_afk = 0
+
+	unique_save_vars = list("department")
 
 /obj/machinery/photocopier/faxmachine/New()
 	allfaxes += src
@@ -199,7 +202,6 @@ var/list/adminfaxes = list()	//cache for faxes that have been sent to admins
 	sendcooldown = 1800
 	sleep(50)
 	visible_message("[src] beeps, \"Message transmitted successfully.\"")
-	post_webhook_event(WEBHOOK_CBIA_EMERGENCY_MESSAGE, list("message"=rcvdcopy, "sender"="[sender]", "cciaa_present"=cciaa_present, "cciaa_afk"=cciaa_afk))
 
 
 /obj/machinery/photocopier/faxmachine/proc/message_admins(var/mob/sender, var/faxname, var/obj/item/sent, var/reply_type, font_colour="#006100")
@@ -214,16 +216,3 @@ var/list/adminfaxes = list()	//cache for faxes that have been sent to admins
 			cciaa_present++
 			if (C.is_afk())
 				cciaa_afk++
-
-	var/discord_msg = "New fax arrived! [faxname]: \"[sent.name]\" by [sender]. ([cciaa_present] agents online"
-	if (cciaa_present)
-		if ((cciaa_present - cciaa_afk) <= 0)
-			discord_msg += ", **all AFK!**)"
-		else
-			discord_msg += ", [cciaa_afk] AFK.)"
-	else
-		discord_msg += ".)"
-
-	discord_msg += " Gamemode: [ticker.mode]"
-
-	discord_bot.send_to_cciaa(discord_msg)

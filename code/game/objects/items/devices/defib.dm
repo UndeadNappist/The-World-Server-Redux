@@ -1,5 +1,5 @@
-#define DEFIB_TIME_LIMIT (10 MINUTES) //past this many seconds, defib is useless.
-#define DEFIB_TIME_LOSS  (2 MINUTES) //past this many seconds, brain damage occurs.
+#define DEFIB_TIME_LIMIT (30 MINUTES) //past this many seconds, defib is useless.
+#define DEFIB_TIME_LOSS  (5 MINUTES) //past this many seconds, brain damage occurs.
 
 //backpack item
 /obj/item/device/defib_kit
@@ -613,12 +613,12 @@
 	return 1
 
 /obj/item/weapon/shockpaddles/standalone/checked_use(var/charge_amt)
-	radiation_repository.radiate(src, charge_amt/12) //just a little bit of radiation. It's the price you pay for being powered by magic I guess
+	SSradiation.radiate(src, charge_amt/12) //just a little bit of radiation. It's the price you pay for being powered by magic I guess
 	return 1
 
 /obj/item/weapon/shockpaddles/standalone/process()
 	if(fail_counter > 0)
-		radiation_repository.radiate(src, fail_counter--)
+		SSradiation.radiate(src, fail_counter--)
 	else
 		processing_objects.Remove(src)
 

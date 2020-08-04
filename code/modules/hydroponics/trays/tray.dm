@@ -125,6 +125,10 @@
 		"mutagen" = 15
 		)
 
+/obj/machinery/portable_atmospherics/hydroponics/map // for mapping since people can't stop stealing em.
+	name = "NanoTrasen supplied hydroponics tray"
+	dont_save = TRUE
+
 /obj/machinery/portable_atmospherics/hydroponics/AltClick()
 	if(mechanical && !usr.incapacitated() && Adjacent(usr))
 		close_lid(usr)
@@ -367,7 +371,7 @@
 		return
 
 	// Check if we should even bother working on the current seed datum.
-	if(seed.mutants. && seed.mutants.len && severity > 1)
+	if(seed.mutants && seed.mutants.len && severity > 1)
 		mutate_species()
 		return
 

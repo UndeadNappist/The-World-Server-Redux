@@ -1,19 +1,10 @@
-#define SOLID 1
-#define LIQUID 2
-#define GAS 3
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 /obj/machinery/chem_master
 	name = "ChemMaster 3000"
 	density = 1
 	anchored = 1
 	icon = 'icons/obj/chemical.dmi'
 	icon_state = "mixer0"
+	circuit = /obj/item/weapon/circuitboard/chem_master
 	use_power = 1
 	idle_power_usage = 20
 	var/beaker = null
@@ -72,12 +63,20 @@
 
 	else if(default_unfasten_wrench(user, B, 20))
 		return
+	if(default_deconstruction_screwdriver(user, B))
+		return
+	if(default_deconstruction_crowbar(user, B))
+		return
 
 	return
 
 /obj/machinery/chem_master/attack_hand(mob/user as mob)
 	if(stat & BROKEN)
 		return
+	if(user.IsAntiGrief())
+		to_chat(user, "<span class='notice'>You don't feel like messing around with chemistry right now.</span>")
+		return
+
 	user.set_machine(src)
 	ui_interact(user)
 
@@ -222,7 +221,7 @@
 
 			if (href_list["createpill_multiple"])
 				count = input("Select the number of pills to make.", "Max [max_pill_count]", pillamount) as num
-				count = Clamp(count, 1, max_pill_count)
+				count = CLAMP(round(count), 1, max_pill_count) // Fix decimals input and clamp to reasonable amounts
 
 			if(reagents.total_volume/count < 1) //Sanity checking.
 				return
@@ -234,7 +233,7 @@
 
 			if(reagents.total_volume/count < 1) //Sanity checking.
 				return
-			while (count--)
+			while(count-- > 0) // Will definitely eventually stop.
 				var/obj/item/weapon/reagent_containers/pill/P = new/obj/item/weapon/reagent_containers/pill(src.loc)
 				if(!name) name = reagents.get_master_reagent_name()
 				P.name = "[name] pill"
@@ -274,6 +273,7 @@
 /obj/machinery/chem_master/condimaster
 	name = "CondiMaster 3000"
 	condi = 1
+	circuit = /obj/item/weapon/circuitboard/condimaster
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -292,21 +292,7 @@
 	var/obj/item/weapon/reagent_containers/beaker = null
 	var/limit = 10
 	var/list/holdingitems = list()
-	var/list/sheet_reagents = list( //have a number of reageents divisible by REAGENTS_PER_SHEET (default 20) unless you like decimals,
-		/obj/item/stack/material/iron = list("iron"),
-		/obj/item/stack/material/uranium = list("uranium"),
-		/obj/item/stack/material/phoron = list("phoron"),
-		/obj/item/stack/material/gold = list("gold"),
-		/obj/item/stack/material/silver = list("silver"),
-		/obj/item/stack/material/platinum = list("platinum"),
-		/obj/item/stack/material/mhydrogen = list("hydrogen"),
-		/obj/item/stack/material/steel = list("iron", "carbon"),
-		/obj/item/stack/material/plasteel = list("iron", "iron", "carbon", "carbon", "platinum"), //8 iron, 8 carbon, 4 platinum,
-		/obj/item/stack/material/snow = list("water"),
-		/obj/item/stack/material/sandstone = list("silicon", "oxygen"),
-		/obj/item/stack/material/glass = list("silicon"),
-		/obj/item/stack/material/glass/phoronglass = list("platinum", "silicon", "silicon", "silicon"), //5 platinum, 15 silicon,
-		)
+
 
 /obj/machinery/reagentgrinder/New()
 	..()
@@ -384,9 +370,14 @@
 
 		return 0
 
-	if(!sheet_reagents[O.type] && (!O.reagents || !O.reagents.total_volume))
-		user << "\The [O] is not suitable for blending."
-		return 1
+
+	if(istype(O,/obj/item/stack))
+		var/obj/item/stack/stack = O
+
+		if(isemptylist(stack.associated_reagents))
+			to_chat(user, "\The [O] is not suitable for blending.")
+			return 0
+
 
 	user.remove_from_mob(O)
 	O.loc = src
@@ -504,22 +495,28 @@
 		if(remaining_volume <= 0)
 			break
 
-		if(sheet_reagents[O.type])
+		if(istype(O, /obj/item/stack))
 			var/obj/item/stack/stack = O
-			if(istype(stack))
-				var/list/sheet_components = sheet_reagents[stack.type]
-				var/amount_to_take = max(0,min(stack.amount,round(remaining_volume/REAGENTS_PER_SHEET)))
-				if(amount_to_take)
-					stack.use(amount_to_take)
-					if(QDELETED(stack))
-						holdingitems -= stack
-					if(islist(sheet_components))
-						amount_to_take = (amount_to_take/(sheet_components.len))
-						for(var/i in sheet_components)
-							beaker.reagents.add_reagent(i, (amount_to_take*REAGENTS_PER_SHEET))
-					else
-						beaker.reagents.add_reagent(sheet_components, (amount_to_take*REAGENTS_PER_SHEET))
-					continue
+			if(!isemptylist(stack.associated_reagents))
+				var/to_use = 0
+
+				if((stack.amount * stack.reagent_multiplier) > remaining_volume)
+					to_use += remaining_volume
+				else
+					to_use += stack.amount
+
+				var/divided_amount = (to_use / stack.associated_reagents.len) * stack.reagent_multiplier
+
+				for(var/G in stack.associated_reagents)
+					beaker.reagents.add_reagent(G, divided_amount)
+
+
+
+				qdel(stack)
+				holdingitems -= stack
+
+			if (beaker.reagents.total_volume >= beaker.reagents.maximum_volume)
+				break
 
 		if(O.reagents)
 			O.reagents.trans_to(beaker, min(O.reagents.total_volume, remaining_volume))

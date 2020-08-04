@@ -14,15 +14,15 @@
 	attack_verb = list("stamped")
 
 /obj/item/weapon/stamp/captain
-	name = "colony director's rubber stamp"
+	name = "mayor's rubber stamp"
 	icon_state = "stamp-cap"
 
 /obj/item/weapon/stamp/hop
-	name = "head of personnel's rubber stamp"
+	name = "city clerk's rubber stamp"
 	icon_state = "stamp-hop"
 
 /obj/item/weapon/stamp/hos
-	name = "head of security's rubber stamp"
+	name = "chief of police's rubber stamp"
 	icon_state = "stamp-hos"
 
 /obj/item/weapon/stamp/ward
@@ -39,6 +39,14 @@
 
 /obj/item/weapon/stamp/cmo
 	name = "chief medical officer's rubber stamp"
+	icon_state = "stamp-cmo"
+
+/obj/item/weapon/stamp/psych
+	name = "psych's rubber stamp"
+	icon_state = "stamp-cmo"
+
+/obj/item/weapon/stamp/doctor
+	name = "doctor's rubber stamp"
 	icon_state = "stamp-cmo"
 
 /obj/item/weapon/stamp/denied
@@ -58,11 +66,11 @@
 	icon_state = "stamp-cent"
 
 /obj/item/weapon/stamp/qm
-	name = "quartermaster's rubber stamp"
+	name = "supply chief's rubber stamp"
 	icon_state = "stamp-qm"
 
 /obj/item/weapon/stamp/cargo
-	name = "cargo rubber stamp"
+	name = "factory rubber stamp"
 	icon_state = "stamp-cargo"
 
 /obj/item/weapon/stamp/solgov
@@ -85,7 +93,7 @@
 
 	var/input_stamp = input(user, "Choose a stamp to disguise as.", "Choose a stamp.") in show_stamps
 
-	if(user && src in user.contents)
+	if(user && (src in user.contents))
 
 		var/obj/item/weapon/stamp/chosen_stamp = stamps[capitalize(input_stamp)]
 

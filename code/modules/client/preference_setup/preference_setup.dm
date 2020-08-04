@@ -1,9 +1,3 @@
-#define TOPIC_NOACTION 0
-#define TOPIC_HANDLED 1
-#define TOPIC_REFRESH 2
-#define TOPIC_UPDATE_PREVIEW 4
-#define TOPIC_REFRESH_UPDATE_PREVIEW (TOPIC_REFRESH|TOPIC_UPDATE_PREVIEW)
-
 #define PREF_FBP_CYBORG "cyborg"
 #define PREF_FBP_POSI "posi"
 #define PREF_FBP_SOFTWARE "software"
@@ -117,7 +111,7 @@
 
 	if(href_list["category"])
 		var/category = locate(href_list["category"])
-		if(category && category in categories)
+		if(category && (category in categories))
 			selected_category = category
 		. = 1
 
@@ -156,9 +150,9 @@
 	for(var/datum/category_item/player_setup_item/PI in items)
 		PI.delete_character(S)
 	for(var/datum/category_item/player_setup_item/PI in items)
-		PI.save_character(S)
-	for(var/datum/category_item/player_setup_item/PI in items)
 		PI.sanitize_character()
+	for(var/datum/category_item/player_setup_item/PI in items)
+		PI.save_character(S)
 
 /datum/category_group/player_setup_category/proc/load_preferences(var/savefile/S)
 	for(var/datum/category_item/player_setup_item/PI in items)

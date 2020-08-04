@@ -41,6 +41,9 @@
 	var/turf/base_turf //The base turf type of the area, which can be used to override the z-level's base turf
 	var/global/global_uid = 0
 	var/uid
+	var/there_can_be_many = FALSE
+	var/lot_id
+	dont_save = TRUE
 
 /area/New()
 	icon_state = ""
@@ -374,6 +377,9 @@ var/list/teleportlocs = list()
 	for(var/area/AR in world)
 		if(istype(AR, /area/shuttle) || istype(AR, /area/syndicate_station) || istype(AR, /area/wizard_station)) continue
 		if(teleportlocs.Find(AR.name)) continue
+		if(!LAZYLEN(get_area_turfs(AR.type)))
+			error("[AR] has no turfs, why?")
+
 		var/turf/picked = pick(get_area_turfs(AR.type))
 		if (picked.z in using_map.station_levels)
 			teleportlocs += AR.name

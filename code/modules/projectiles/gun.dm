@@ -92,6 +92,15 @@
 
 	var/last_shot = 0			//records the last shot fired
 	drop_sound = 'sound/items/drop/gun.ogg'
+
+	price_tag = 3500	// at a BASE, it should cost at least this.
+
+/obj/item/weapon/gun/get_tax()
+	return WEAPONS_TAX
+
+/obj/item/weapon/gun/is_contraband()
+	return CONTRABAND_GUN
+
 /obj/item/weapon/gun/New()
 	..()
 	for(var/i in 1 to firemodes.len)
@@ -146,6 +155,10 @@
 		var/mob/living/simple_animal/S = user
 		if(!S.IsHumanoidToolUser(src))
 			return 0
+
+	if(user.IsAntiGrief())
+		to_chat(user, "<span class='danger'>Fear sets in and you realise you're too scared to pull the trigger.</span>")
+		return 0
 
 	var/mob/living/M = user
 	if(dna_lock && attached_lock.stored_dna)
@@ -733,3 +746,10 @@
 
 /obj/item/weapon/gun/attack_self(mob/user)
 	switch_firemodes(user)
+
+/obj/item/weapon/gun/weapondraw(obj/item/weapon/gun/G, mob/living/user)
+	if(user.a_intent == I_HURT)
+		user.visible_message("<span class='danger'>[user] grabs \a [G], ready to use it!</span>")
+	else
+		user.visible_message("<span class='notice'>[user] pulls out \the [G], pointing it at the ground.</span>",)
+	//user.SetWeaponDrawDelay(max((4 * G.weapon_weight + 1),(user.AmountWeaponDrawDelay())))

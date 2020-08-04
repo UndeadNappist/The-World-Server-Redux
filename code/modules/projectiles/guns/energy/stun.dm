@@ -4,6 +4,7 @@
 	icon_state = "taser"
 	item_state = null	//so the human update icon uses the icon_state instead.
 	projectile_type = /obj/item/projectile/nonlethal
+	price_tag = 500
 
 /obj/item/weapon/gun/energy/taser/carbine
 	name = "taser carbine"
@@ -16,6 +17,12 @@
 	name = "mounted taser gun"
 	self_recharge = 1
 	use_external_power = 1
+
+/obj/item/weapon/gun/energy/taser/mounted/augment
+	self_recharge = 1
+	use_external_power = 0
+	use_organic_power = TRUE
+	canremove = FALSE
 
 /obj/item/weapon/gun/energy/taser/mounted/cyborg
 	name = "taser gun"
@@ -49,6 +56,7 @@
 	cell_type = /obj/item/weapon/cell/device/weapon/recharge
 	battery_lock = 1
 	charge_meter = 0
+	price_tag = 1500
 
 /obj/item/weapon/gun/energy/crossbow/ninja
 	name = "energy dart thrower"

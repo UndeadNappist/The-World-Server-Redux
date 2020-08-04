@@ -610,7 +610,8 @@
 			var/obj/mecha/M = loc
 			loc_temp =  M.return_temperature()
 		else if(istype(loc, /obj/machinery/atmospherics/unary/cryo_cell))
-			loc_temp = loc:air_contents.temperature
+			var/obj/machinery/atmospherics/unary/cryo_cell/C = loc
+			loc_temp = C?.air_contents?.temperature
 		else
 			loc_temp = environment.temperature
 
@@ -1080,7 +1081,7 @@
 			adjustHalLoss(-1)
 
 		if (drowsyness)
-			drowsyness--
+			drowsyness = max(0, drowsyness - 1)
 			eye_blurry = max(2, eye_blurry)
 			if (prob(5))
 				sleeping += 1
@@ -1204,7 +1205,7 @@
 			see_in_dark = species.darksight
 			see_invisible = see_in_dark>2 ? SEE_INVISIBLE_LEVEL_ONE : see_invisible_default
 
-		var/tmp/glasses_processed = 0
+		var/glasses_processed = 0
 		var/obj/item/weapon/rig/rig = back
 		if(istype(rig) && rig.visor)
 			if(!rig.helmet || (head && rig.helmet == head))
@@ -1381,9 +1382,10 @@
 
 		if(machine)
 			var/viewflags = machine.check_eye(src)
+			machine.apply_visual(src)
 			if(viewflags < 0)
 				reset_view(null, 0)
-			else if(viewflags)
+			else if(viewflags && !looking_elsewhere)
 				sight |= viewflags
 		else if(eyeobj)
 			if(eyeobj.owner != src)
@@ -1398,6 +1400,11 @@
 				remoteview_target = null
 				reset_view(null, 0)
 	return 1
+
+/mob/living/carbon/human/reset_view(atom/A)
+	..()
+	if(machine_visual && machine_visual != A)
+		machine_visual.remove_visual(src)
 
 /mob/living/carbon/human/proc/process_glasses(var/obj/item/clothing/glasses/G)
 	if(G && G.active)
@@ -1589,12 +1596,18 @@
 /mob/living/carbon/human/proc/handle_nourishment()
 	if (nutrition <= 0)
 		if (prob(1.5))
-			src << span("warning", "Your hunger pangs are excruciating as the stomach acid sears in your stomach... you feel weak.")
+			if(!isSynthetic())
+				to_chat(src, span("warning", "Your hunger pangs are excruciating as the stomach acid sears in your stomach... you feel weak."))
+			else
+				to_chat(src, span("warning", "Your internal battery makes a silent beep. It is time to recharge."))
+
 		return
 
 	if (hydration <= 0)
 		if (prob(1.5))
-			src << span("warning", "You feel dizzy and disorientated as your lack of hydration becomes impossible to ignore.")
+			if(!isSynthetic())
+				to_chat(src, span("warning", "You feel dizzy and disorientated as your lack of hydration becomes impossible to ignore."))
+
 		return
 
 

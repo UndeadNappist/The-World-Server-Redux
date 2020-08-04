@@ -16,6 +16,10 @@
 	var/colourName = "red" //for updateIcon purposes
 	var/list/validSurfaces = list(/turf/simulated/floor)
 	var/edible = 1 //so you can't eat a spraycan
+	price_tag = 1
+
+	unique_save_vars = list("uses", "shadeColour")
+
 
 /obj/item/weapon/pen/crayon/suicide_act(mob/user)
 	var/datum/gender/TU = gender_datums[user.get_visible_gender()]
@@ -106,12 +110,12 @@
 	if(is_type_in_list(target,validSurfaces))
 		var/drawtype = input("Choose what you'd like to draw.", "Crayon scribbles") in list("graffiti","rune","letter","arrow")
 		if(get_dist(target, user) > 1 || !(user.z == target.z))
-			return		
+			return
 		switch(drawtype)
 			if("letter")
 				drawtype = input("Choose the letter.", "Crayon scribbles") in list("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z")
 				if(get_dist(target, user) > 1 || !(user.z == target.z))
-					return				
+					return
 				to_chat(user, "You start drawing a letter on the [target.name].")
 			if("graffiti")
 				to_chat(user, "You start drawing graffiti on the [target.name].")
@@ -126,6 +130,11 @@
 		if(instant || do_after(user, 50))
 			new /obj/effect/decal/cleanable/crayon(target,colour,shadeColour,drawtype)
 			to_chat(user, "You finish drawing.")
+
+			var/msg = "[user.client.key] ([user]) has drawn [drawtype] (with [src]) at [target.x],[target.y],[target.z]."
+			message_admins(msg)
+			log_game(msg)
+
 			target.add_fingerprint(user)		// Adds their fingerprints to the floor the crayon is drawn on.
 			if(uses)
 				uses--
@@ -246,6 +255,8 @@
 	edible = 0
 	validSurfaces = list(/turf/simulated/wall)
 
+	unique_save_vars = list("uses", "shadeColour","capped","drawtype")
+
 /obj/item/weapon/pen/crayon/spraycan/suicide_act(mob/user)
 	var/mob/living/carbon/human/H = user
 	if(capped)
@@ -255,7 +266,8 @@
 
 		playsound(loc, 'sound/effects/spray.ogg', 5, 1, 5)
 		update_icon()
-		H.lip_style = "spray_face"
+		H.set_face_style("spray_face", colour)
+		H.update_icons_body()
 
 		uses = max(0, uses - 10)
 	return (OXYLOSS)
@@ -300,8 +312,9 @@
 					if(C.eyecheck() <= 0) // no eye protection? ARGH IT BURNS.
 						C.confused = max(C.confused, 3)
 						C.Weaken(3)
-				C.lip_style = "spray_face"
+				C.set_face_style("spray_face", colour)
 				C.update_icons_body()
+
 				uses = max(0,uses-10)
 	if(is_type_in_list(target,validSurfaces))
 		playsound(loc, 'sound/effects/spraycan_shake.ogg', 5, 1, 5)
@@ -309,7 +322,12 @@
 		if(instant || do_after(user, 50))
 			new /obj/effect/decal/cleanable/crayon(target,colour,shadeColour,drawtype)
 			playsound(loc, 'sound/effects/spray.ogg', 5, 1, 5)
-			user << "You finish drawing."
+			to_chat(user, "You finish drawing.")
+
+			var/msg = "[user.client.key] ([user]) has drawn [drawtype] (with [src]) at [target.x],[target.y],[target.z]."
+			message_admins(msg)
+			log_game(msg)
+
 			target.add_fingerprint(user)		// Adds their fingerprints to the floor the crayon is drawn on.
 			if(uses)
 				uses--
@@ -324,7 +342,7 @@
 	var/image/I = image('icons/obj/crayons.dmi',icon_state = "[capped ? "spraycan_cap_colors" : "spraycan_colors"]")
 	I.color = colour
 	overlays += I
-	
+
 /obj/item/weapon/pen/crayon/attack_self(var/mob/user)
-	return 
+	return
 

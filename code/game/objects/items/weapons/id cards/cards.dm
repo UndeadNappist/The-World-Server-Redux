@@ -19,7 +19,6 @@
 	slot_flags = SLOT_EARS
 	var/associated_account_number = 0
 	var/associated_pin_number = 0
-	var/associated_unique_ID
 
 	var/list/files = list(  )
 
@@ -71,6 +70,8 @@
 	item_state = "card-id"
 	origin_tech = list(TECH_MAGNET = 2, TECH_ILLEGAL = 2)
 	var/uses = 10
+
+	unique_save_vars = list("uses")
 
 /obj/item/weapon/card/emag/resolve_attackby(atom/A, mob/user)
 	var/used_uses = A.emag_act(uses, user, src)

@@ -6,7 +6,7 @@ var/global/list/additional_antag_types = list()
 	var/round_description = "How did you even vote this in?"
 	var/extended_round_description = "This roundtype should not be spawned, let alone votable. Someone contact a developer and tell them the game's broken again."
 	var/config_tag = null
-	var/votable = 1
+	var/votable = 0
 	var/probability = 0
 	var/canon = 0 							 // Is this gamemode canon? If 1, characters and money wills save.
 
@@ -40,11 +40,13 @@ var/global/list/additional_antag_types = list()
 	var/event_delay_mod_major                // As above.
 	var/antag_text = ""
 
+	var/allow_late_antag = FALSE
+
 /datum/game_mode/New()
 	..()
 
 /datum/game_mode/Topic(href, href_list[])
-	if(..())
+	if(!check_rights(R_ADMIN, FALSE))
 		return
 	if(href_list["toggle"])
 		switch(href_list["toggle"])
@@ -286,8 +288,6 @@ var/global/list/additional_antag_types = list()
 	return
 
 /datum/game_mode/proc/declare_completion()
-	var/antag_text = ""
-	var/discord_text = "A round of **[name]** has ended! \[Game ID: [game_id]\]\n\n"
 	var/is_antag_mode = (antag_templates && antag_templates.len)
 	check_victory()
 	if(is_antag_mode)
@@ -298,16 +298,9 @@ var/global/list/additional_antag_types = list()
 			antag.print_player_summary()
 
 			// Avoid the longest loop if we aren't actively using the bot.
-			if (discord_bot.active)
-				antag_text += antag.print_player_summary_discord()
-
 
 		sleep(10)
 		print_ownerless_uplinks()
-
-	discord_text += antag_text
-	discord_bot.send_to_announce(discord_text, 1)
-	discord_text = ""
 
 	var/clients = 0
 	var/surviving_humans = 0
@@ -323,17 +316,17 @@ var/global/list/additional_antag_types = list()
 
 	var/list/area/escape_locations = list(/area/shuttle/escape/centcom, /area/shuttle/escape_pod1/centcom, /area/shuttle/escape_pod2/centcom, /area/shuttle/escape_pod3/centcom, /area/shuttle/escape_pod5/centcom)
 
-	for(var/mob/M in player_list)
+	for(var/mob/M in player_list) //TODO: Refactor this entire for loop
 		if(M.client)
 			clients++
 			if(ishuman(M))
 				if(M.stat != DEAD)
 					surviving_humans++
-					if(M.loc && M.loc.loc && M.loc.loc.type in escape_locations)
+					if(M.loc && M.loc.loc && (M.loc.loc.type in escape_locations))
 						escaped_humans++
 			if(M.stat != DEAD)
 				surviving_total++
-				if(M.loc && M.loc.loc && M.loc.loc.type in escape_locations)
+				if(M.loc && M.loc.loc && (M.loc.loc.type in escape_locations))
 					escaped_total++
 
 				if(M.loc && M.loc.loc && M.loc.loc.type == /area/shuttle/escape/centcom)
@@ -358,9 +351,7 @@ var/global/list/additional_antag_types = list()
 	else
 		text += "There were <b>no survivors</b> (<b>[ghosts] ghosts</b>)."
 	world << text
-
-	discord_bot.send_to_announce(discord_text)
-	post_webhook_event(WEBHOOK_ROUNDEND, list("survivours"=surviving_total, "escaped"=escaped_total, "ghosts"=ghosts, "gamemode"=name, "gameid"=game_id, "antags"=antag_text))
+	SSwebhooks.send(WEBHOOK_ROUNDEND, list("survivors" = surviving_total, "escaped" = escaped_total, "ghosts" = ghosts))
 
 
 	if(clients > 0)

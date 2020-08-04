@@ -6,6 +6,8 @@
 	icon_state = "microscope"
 	anchored = 1
 	density = 1
+	table_drag = TRUE
+	circuit = /obj/item/weapon/circuitboard/microscope
 
 	var/obj/item/weapon/sample = null
 	var/report_num = 0
@@ -87,7 +89,7 @@
 
 /obj/machinery/microscope/proc/remove_sample(var/mob/living/remover)
 	if(!istype(remover) || remover.incapacitated() || !Adjacent(remover))
-		return ..()
+		return
 	if(!sample)
 		remover << "<span class='warning'>\The [src] does not have a sample in it.</span>"
 		return

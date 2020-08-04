@@ -77,6 +77,13 @@ var/list/outfits_decls_by_type_
 			else back = null
 
 /decl/hierarchy/outfit/proc/post_equip(mob/living/carbon/human/H)
+	for(var/obj/item/O in H.GetAllContents())
+		O.dont_save = TRUE
+
+		if(istype(O, /obj/item/weapon/card/department))
+			var/obj/item/weapon/card/department/D = O
+			D.owner_name = H.real_name
+
 	if(flags & OUTFIT_HAS_JETPACK)
 		var/obj/item/weapon/tank/jetpack/J = locate(/obj/item/weapon/tank/jetpack) in H
 		if(!J)
@@ -87,7 +94,7 @@ var/list/outfits_decls_by_type_
 /decl/hierarchy/outfit/proc/equip(mob/living/carbon/human/H, var/rank, var/assignment)
 	equip_base(H)
 
-	rank = id_pda_assignment || rank
+	rank = rank || id_pda_assignment
 	assignment = id_pda_assignment || assignment || rank
 	var/obj/item/weapon/card/id/W = equip_id(H, rank, assignment)
 	if(W)

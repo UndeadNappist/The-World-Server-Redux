@@ -29,6 +29,7 @@
 	syllables = list(
 "vol", "zum", "coo","zoo","bi","do","ooz","ite","og","re","si","ite","ish",
 "ar","at","on","ee","east","ma","da", "rim")
+	partial_understanding = list(LANGUAGE_SOL_COMMON = 30)
 
 //TODO flag certain languages to use the mob-type specific say_quote and then get rid of these.
 /datum/language/common/get_spoken_verb(var/msg_end)
@@ -42,7 +43,7 @@
 // Galactic common languages (systemwide accepted standards).
 /datum/language/trader
 	name = LANGUAGE_TRADEBAND
-	desc = "Spoken by the humans of the upper-class Sagittarius Heights, Tradeband was designed to be pleasing to both humans and their Skrellian trading partners."
+	desc = "Spoken by the humans of the upper-class Cascington region, Tradeband was designed to be both eloquent and pleasing to the senses. Use of the language has spread to various trading conglomerates in all of human space."
 	speech_verb = "enunciates"
 	colour = "say_quote"
 	key = "2"
@@ -55,12 +56,13 @@
 
 /datum/language/terminus
 	name = LANGUAGE_TERMINUS
-	desc = "A soft language spoken by the people of the sparsely populated, socially-conscious Precursors' Crypt region."
-	speech_verb = "mentions"
-	exclaim_verb = "insinuates"
+	desc = "A quickly spoken language adopted by the people of the industrial Terminus sector of Andromeda."
+	speech_verb = "rapidly says"
+	exclaim_verb = "quickly exclaims"
 	colour = "terminus"
 	key = "4"
 	flags = WHITELISTED
+	partial_understanding = list(LANGUAGE_SOL_COMMON = 30)
 	syllables = list (".a", "spa", "pan", "blaif", "stra", "!u", "!ei", "!am", "by", ".y", "gry", "zbly", "!y", "fl",
  	"sm", "rn", "cpi", "ku", "koi", "pr", "glau", "stu", "ved", "ki", "tsa", "xau", "jbu", "sny", "stro", "nu",
  	"uan", "ju", "!i", "ge", "luk", "an", "ar", "at", "es", "et", "bel", "ki", "jaa", "ch", "ki", "gh", "ll", "uu", "wat")
@@ -68,11 +70,12 @@
 // Criminal language.
 /datum/language/gutter
 	name = LANGUAGE_GUTTER
-	desc = "Gutter originated as a Thieves' Cant of sorts during the early colonization era. The language eventually spread from the cartels and triads to the disenfranchised people of the Bowl."
+	desc = "Gutter originated as a Thieves' Cant of sorts during the early colonization era. The language eventually spread from the cartels and triads to the disenfranchised people of Ocral Spax and beyond."
 	speech_verb = "growls"
 	colour = "rough"
 	key = "3"
 	space_chance = 45
+	partial_understanding = list(LANGUAGE_GALCOM = 10, LANGUAGE_TRADEBAND = 20, LANGUAGE_SOL_COMMON = 20)
 	syllables = list (
 "gra","ba","ba","breh","bra","rah","dur","ra","ro","gro","go","ber","bar","geh","heh", "gra",
 "a", "ai", "an", "ang", "ao", "ba", "bai", "ban", "bang", "bao", "bei", "ben", "beng", "bi", "bian", "biao",
@@ -133,6 +136,6 @@
 	key = "s"
 	flags = SIGNLANG|NO_STUTTER|NONVERBAL
 
-/datum/language/sign/can_speak_special(var/mob/speaker)
+/datum/language/sign/can_speak_special(var/mob/speaker)	// TODO: If ever we make external organs assist languages, convert this over to the new format
 	var/obj/item/organ/external/hand/hands = locate() in speaker //you can't sign without hands
 	return (hands || !iscarbon(speaker))

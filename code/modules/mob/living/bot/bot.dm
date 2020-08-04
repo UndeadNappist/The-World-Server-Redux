@@ -135,7 +135,7 @@
 /mob/living/bot/attack_ai(var/mob/user)
 	return attack_hand(user)
 
-/mob/living/bot/say(var/message)
+/mob/living/bot/say(var/message, whispering)
 	var/verb = "beeps"
 
 	message = sanitize(message)
@@ -275,7 +275,7 @@
 	return
 
 /mob/living/bot/proc/makeStep(var/list/path)
-	if(!path.len)
+	if(!path || !path.len)
 		return 0
 	var/turf/T = path[1]
 	if(get_turf(src) == T)

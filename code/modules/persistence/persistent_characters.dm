@@ -13,10 +13,13 @@
 	if(!(unique_id == mind.prefs.unique_id))
 		return 0
 
+	var/datum/data/record/police_record = get_sec_record(src)
+	var/datum/data/record/hospital_record = get_med_record(src)
+	var/datum/data/record/employment_record = get_gen_record(src)
+
 	//There's no way (that I know of) to edit the "real name" of a character unless
 	//it's a body transformation, admin or antag fuckery. So this works.
 
-	adjust_aging()
 
 	// Copy basic values
 	mind.prefs.nickname = nickname
@@ -54,9 +57,23 @@
 	mind.prefs.gen_record = gen_record
 	mind.prefs.exploit_record = exploit_record
 	mind.prefs.lip_style = lip_style
+	mind.prefs.lip_color = lip_color
 	mind.prefs.calories = calories
-
 	mind.prefs.weight = calories_to_weight(calories)
+	mind.prefs.nutrition = nutrition
+	mind.prefs.hydration = hydration
+
+	if(police_record)
+		mind.prefs.crime_record = police_record.fields["crim_record"]
+		mind.prefs.sec_record = police_record.fields["notes"]
+		mind.prefs.criminal_status = police_record.fields["criminal"]
+
+	if(hospital_record)
+		mind.prefs.med_record = hospital_record.fields["notes"]
+
+	if(employment_record)
+		mind.prefs.gen_record = employment_record.fields["notes"]
+
 	mind.prefs.existing_character = 1
 	mind.prefs.played = 1
 	//might need code for saving tattoos. Hm.
@@ -67,18 +84,41 @@
 
 	return 1
 
+/proc/handle_jail(var/mob/living/carbon/human/H)
+	// this proc determines if someone has escaped from prison or not.
+	var/datum/data/record/police_record = get_sec_record(H)
+	if(!police_record) return 0
+	if(H.is_dead())	return 0 // killing yourself won't get you out of jail :)
+
+	var/new_status = "None"
+	var/crim_statuses = list("*Arrest*","*Search*", "Incarcerated")
 
 
-/mob/living/carbon/human/proc/adjust_aging()
-	var/ideal_age
 
-	//get the age they should be
+	if(!(police_record.fields["criminal"] in crim_statuses)) // if you have arrest or incarcerated as your status...
+		return 0
+	else
 
-	ideal_age = get_game_year() - birth_year
+		if(police_record.fields["criminal"] in crim_statuses)
+			new_status = police_record.fields["criminal"]
 
-	//if it hasn't been their most recent birthday yet...
-	if((get_game_month() < birth_month) && (get_game_day() < birth_day))
-		ideal_age --
+		// If this returns 1, the character will have their criminal status changed and will be locked to the prison role next round.
+		var/turf/location = get_turf(H)
+		var/area/check_area = location.loc
 
-	age = ideal_age
+		if(!location || !check_area)
+			return 0
 
+		if(istype(check_area, /area/shuttle/escape/centcom)) // we're now in escape and arrived at centcom
+			if(H.handcuffed && istype(location, /turf/simulated/shuttle/floor)) // check if you have handcuffs and are in the shuttle brig
+				new_status = "Incarcerated" // if you are in cuffs, and in the prisoner area of the shuttle, you're officially captured
+		else if(istype(check_area, /area/security/prison)) // we've been left behind in prison, in the city
+			new_status = "Incarcerated" // if you are in cuffs, and in the prison, you are captured
+		else
+			new_status = "*Arrest*" // if you're not in handcuffs, or in the shuttle, you'll be reported to be "on the run"
+
+
+
+	police_record.fields["criminal"] = new_status	//update their records so it can be saved.
+
+	return 1

@@ -184,17 +184,18 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
 		/obj/item/clothing/under/pants/camo,
 		/obj/item/clothing/under/harness,
 		/obj/item/clothing/accessory/storage/webbing,
-		/obj/item/weapon/spacecash/c1,
-		/obj/item/weapon/spacecash/c10,
-		/obj/item/weapon/spacecash/c20,
+		/obj/item/weapon/spacecash/bundle/c1,
+		/obj/item/weapon/spacecash/bundle/c10,
+		/obj/item/weapon/spacecash/bundle/c20,
 		/obj/item/weapon/camera_assembly,
 		/obj/item/weapon/caution,
 		/obj/item/weapon/caution/cone,
 		/obj/item/weapon/card/emag_broken,
 		/obj/item/device/camera,
-		/obj/item/device/pda,
+//		/obj/item/device/pda,
 		/obj/item/device/radio/headset,
-		/obj/item/device/paicard
+		/obj/item/device/paicard,
+		/obj/item/clothing/head/tinfoil
 	)
 
 	uncommon_loot = list(
@@ -204,12 +205,18 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
 		/obj/item/weapon/beartrap,
 		/obj/item/clothing/suit/storage/vest/press,
 		/obj/item/weapon/material/knife/tacknife,
-		/obj/item/weapon/material/butterfly/switchblade
+		/obj/item/weapon/material/butterfly/switchblade,
+		/obj/item/clothing/head/helmet/tinfoil,
+		/obj/item/clothing/suit/storage/redbiker
 	)
 
 	rare_loot = list(
 		/obj/item/clothing/suit/storage/vest/heavy/merc,
 		/obj/item/clothing/shoes/boots/combat,
+		/obj/item/weapon/gun/energy/poxball/street,
+		/obj/item/dnalockingchip,
+		/obj/item/slime_crystal
+
 	)
 
 // Contains mostly useless garbage.
@@ -287,7 +294,11 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
 		/obj/item/weapon/storage/box/syringes,
 		/obj/item/weapon/storage/box/survival,
 		/obj/item/weapon/storage/box/gloves,
-		/obj/item/weapon/storage/box/PDAs
+		/obj/item/weapon/storage/box/flare,
+		/obj/item/weapon/storage/box/glasses/meta,
+		/obj/item/weapon/storage/box/monkeycubes
+
+
 	)
 
 	uncommon_loot = list(
@@ -297,7 +308,9 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
 		/obj/item/weapon/storage/box/smokes,
 		/obj/item/weapon/storage/box/metalfoam,
 		/obj/item/weapon/storage/box/handcuffs,
-		/obj/item/weapon/storage/box/seccarts
+		/obj/item/weapon/storage/box/autoinjectors,
+		/obj/item/weapon/storage/box/candle_box/random
+
 	)
 
 	rare_loot = list(
@@ -305,7 +318,9 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
 		/obj/item/weapon/storage/box/empslite,
 		/obj/item/weapon/storage/box/flashshells,
 		/obj/item/weapon/storage/box/stunshells,
-		/obj/item/weapon/storage/box/teargas
+		/obj/item/weapon/storage/box/teargas,
+		/obj/item/weapon/storage/box/cdeathalarm_kit
+
 	)
 
 // One of the more useful maint piles, contains electrical components.
@@ -354,6 +369,7 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
 		/obj/item/weapon/circuitboard/jukebox,
 		/obj/item/weapon/circuitboard/message_monitor,
 		/obj/item/weapon/circuitboard/rcon_console,
+		/obj/item/weapon/circuitboard/chem_master,
 		/obj/item/weapon/smes_coil,
 		/obj/item/weapon/cartridge/engineering,
 		/obj/item/device/analyzer,
@@ -422,7 +438,8 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
 		/obj/item/weapon/aiModule/paladin,
 		/obj/item/weapon/aiModule/safeguard,
 		/obj/item/weapon/disposable_teleporter,
-		/obj/item/mecha_parts/mecha_equipment/tesla_energy_relay
+		/obj/item/mecha_parts/mecha_equipment/tesla_energy_relay,
+		/obj/item/integrated_circuit/reagent/pump
 	)
 
 
@@ -531,9 +548,6 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
     common_loot = list(
         /obj/item/weapon/bone,
         /obj/item/weapon/bone/skull,
-        /obj/item/weapon/bone/skull/tajaran,
-        /obj/item/weapon/bone/skull/unathi,
-        /obj/item/weapon/bone/skull/unknown,
         /obj/item/weapon/bone/leg,
         /obj/item/weapon/bone/arm,
         /obj/item/weapon/bone/ribs,

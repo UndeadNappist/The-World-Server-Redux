@@ -203,3 +203,18 @@
 		icon_state = "launcherbtt"
 	else
 		icon_state = "launcheract"
+
+
+/*
+	Emitter remote control
+*/
+/obj/machinery/button/remote/sprinker
+	name = "sprinkler control"
+	desc = "It controls spinklers and showers, remotely."
+
+/obj/machinery/button/remote/sprinker/trigger(mob/user as mob)
+	for(var/obj/machinery/shower/E in machines)
+		if(E.id == id)
+			spawn(0)
+				E.toggle_wash(user)
+				return
